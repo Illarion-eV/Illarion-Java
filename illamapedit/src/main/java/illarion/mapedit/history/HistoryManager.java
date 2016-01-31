@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -74,7 +74,7 @@ public class HistoryManager {
     /**
      * Check if this history contains events that can be done again.
      *
-     * @return <code>true</code> in case there are events that can be done again
+     * @return {@code true} in case there are events that can be done again
      */
     public boolean canRedo() {
         return !redoList.isEmpty();
@@ -83,7 +83,7 @@ public class HistoryManager {
     /**
      * Check if this history contains events that can be undone.
      *
-     * @return <code>true</code> in case there are events that can be undone
+     * @return {@code true} in case there are events that can be undone
      */
     public boolean canUndo() {
         return !undoList.isEmpty();

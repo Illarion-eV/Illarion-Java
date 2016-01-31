@@ -20,25 +20,24 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
-import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.tools.SizeValue;
-import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.graphics.AvatarEntity;
 import illarion.client.gui.EntityRenderImage;
 import illarion.client.gui.controller.NiftyExecutor;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.account.AccountSystem;
-import illarion.client.util.account.response.*;
+import illarion.client.util.account.response.CharacterCreateGetResponse;
+import illarion.client.util.account.response.RaceResponse;
+import illarion.client.util.account.response.RaceTypeResponse;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.types.AvatarId;
 import illarion.common.types.Direction;
 import org.illarion.engine.GameContainer;
-import org.illarion.engine.graphic.Color;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -50,6 +49,8 @@ import java.util.Random;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GenderScreenController implements ScreenController {
+    @Nonnull
+    public static final String NEXT_SCREEN_ID = "characterCreateRace";
     @Nonnull
     private final AccountSystem accountSystem;
     @Nonnull
@@ -92,6 +93,10 @@ public final class GenderScreenController implements ScreenController {
         raceImages[9] = screen.findElementById("orcFemale");
         raceImages[10] = screen.findElementById("lizardMale");
         raceImages[11] = screen.findElementById("lizardFemale");
+
+        if (serverId == null) {
+            getNextScreenController().setServerId(serverId);
+        }
     }
 
     @Override
@@ -104,43 +109,18 @@ public final class GenderScreenController implements ScreenController {
 
         ListenableFuture<CharacterCreateGetResponse> response = accountSystem.getCharacterCreateInformation(serverId);
         ListenableFuture<EntityRenderImage[]> renderImages = Futures.transform(response, new CreateEntityImagesFunction());
-        Futures.addCallback(renderImages, new FutureCallback<EntityRenderImage[]>() {
-            @Override
-            public void onSuccess(@Nullable EntityRenderImage[] result) {
-                if (result == null) {
-                    return;
-                }
-                assert raceImages != null;
+        Futures.addCallback(renderImages, new SendEntityImagesToNiftyCallback(), new NiftyExecutor(nifty));
 
-                for (int i = 0; i < raceImages.length; i++) {
-                    EntityRenderImage image = result[i];
-                    if (image == null) {
-                        continue;
-                    }
-                    Element raceImageElement = raceImages[i];
+        getNextScreenController().setCharacterCreateData(response);
 
-                    ImageRenderer renderer = raceImageElement.getRenderer(ImageRenderer.class);
-                    assert renderer != null;
-                    NiftyImage niftyImage = new NiftyImage(nifty.getRenderEngine(), image);
-                    renderer.setImage(niftyImage);
-                    raceImageElement.setConstraintHeight(SizeValue.px(image.getHeight()));
-                    raceImageElement.setConstraintWidth(SizeValue.px(image.getWidth()));
-                    raceImageElement.getParent().layoutElements();
-                    raceImageElement.getParent().show();
-                }
-            }
-
-            @Override
-            public void onFailure(@Nonnull Throwable t) {
-
-            }
-        }, new NiftyExecutor(nifty));
-
+        nifty.subscribeAnnotations(this);
     }
 
     @Override
     public void onEndScreen() {
+        assert nifty != null: "Binding is not done, Nifty is NULL";
 
+        nifty.unsubscribeAnnotations(this);
     }
 
     @Nullable
@@ -150,6 +130,46 @@ public final class GenderScreenController implements ScreenController {
 
     public void setServerId(@Nullable String serverId) {
         this.serverId = serverId;
+
+        if (nifty != null) {
+            getNextScreenController().setServerId(serverId);
+        }
+    }
+
+    @NiftyEventSubscriber(pattern = "cancelBtn")
+    public void onCancelButtonClicked(@Nonnull String topic, @Nonnull ButtonClickedEvent event) {
+        assert nifty != null;
+
+        nifty.gotoScreen("charSelect");
+    }
+
+    @NiftyEventSubscriber(pattern = "maleBtn")
+    public void onMaleButtonClicked(@Nonnull String topic, @Nonnull ButtonClickedEvent event) {
+        gotoNextScreen(0);
+    }
+
+    @NiftyEventSubscriber(pattern = "femaleBtn")
+    public void onFemaleButtonClicked(@Nonnull String topic, @Nonnull ButtonClickedEvent event) {
+        gotoNextScreen(1);
+    }
+
+    @Nonnull
+    private RaceScreenController getNextScreenController() {
+        assert nifty != null;
+
+        Screen raceScreen = nifty.getScreen(NEXT_SCREEN_ID);
+        assert raceScreen != null;
+
+        return (RaceScreenController) raceScreen.getScreenController();
+    }
+
+    private void gotoNextScreen(int raceTypeId) {
+        assert nifty != null;
+
+        RaceScreenController controller = getNextScreenController();
+
+        controller.setRaceTypeId(raceTypeId);
+        nifty.gotoScreen(NEXT_SCREEN_ID);
     }
 
     private final class CreateEntityImagesFunction implements Function<CharacterCreateGetResponse, EntityRenderImage[]> {
@@ -173,37 +193,8 @@ public final class GenderScreenController implements ScreenController {
                     AvatarTemplate template = CharacterFactory.getInstance().getTemplate(id.getAvatarId());
                     AvatarEntity avatarEntity = new AvatarEntity(template, true);
 
-                    List<IdNameResponse> beards = raceType.getBeards();
-                    if (!beards.isEmpty()) {
-                        avatarEntity.setClothItem(AvatarClothGroup.Beard, getRandom(beards).getId());
-                    }
-                    List<IdNameResponse> hairs = raceType.getHairs();
-                    if (!hairs.isEmpty()) {
-                        avatarEntity.setClothItem(AvatarClothGroup.Hair, getRandom(hairs).getId());
-                    }
-                    List<ColourResponse> skinColours = raceType.getSkinColours();
-                    if (!skinColours.isEmpty()) {
-                        avatarEntity.changeBaseColor(getRandom(skinColours).getColour()) ;
-                    }
-                    List<ColourResponse> hairColours = raceType.getHairColours();
-                    if (!hairColours.isEmpty()) {
-                        Color hairColor = getRandom(hairColours).getColour();
-                        avatarEntity.changeClothColor(AvatarClothGroup.Hair, hairColor);
-                        avatarEntity.changeClothColor(AvatarClothGroup.Beard, hairColor);
-                    }
-
-                    List<StartPackResponse> startPacks = input.getStartPacks();
-                    StartPackResponse startPack = getRandom(startPacks);
-
-                    for (StartPackItemsResponse item : startPack.getItems()) {
-                        AvatarClothGroup group = AvatarClothGroup.getFromPositionNumber(item.getPosition());
-                        if (group == null) {
-                            continue;
-                        }
-                        if (item.getItemId() != 0) {
-                            avatarEntity.setClothItem(group, item.getItemId());
-                        }
-                    }
+                    Util.applyRandomFromRaceType(avatarEntity, raceType);
+                    Util.applyRandomStartPack(avatarEntity, input.getStartPacks());
 
                     int arrayIndex = (race.getId() * 2) + raceType.getId();
                     result[arrayIndex] = new EntityRenderImage(container, avatarEntity);
@@ -211,6 +202,31 @@ public final class GenderScreenController implements ScreenController {
             }
 
             return result;
+        }
+    }
+
+    private final class SendEntityImagesToNiftyCallback implements FutureCallback<EntityRenderImage[]> {
+        @Override
+        public void onSuccess(@Nullable EntityRenderImage[] result) {
+            assert nifty != null;
+
+            if (result == null) {
+                return;
+            }
+            assert raceImages != null;
+
+            for (int i = 0; i < raceImages.length; i++) {
+                EntityRenderImage image = result[i];
+                if (image == null) {
+                    continue;
+                }
+                Util.applyEntityImage(nifty, image, raceImages[i]);
+            }
+        }
+
+        @Override
+        public void onFailure(@Nonnull Throwable t) {
+
         }
     }
 }

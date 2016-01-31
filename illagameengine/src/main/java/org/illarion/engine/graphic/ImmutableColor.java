@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -91,7 +91,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -107,7 +107,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -117,7 +117,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -127,7 +127,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -137,7 +137,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -147,7 +147,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -157,7 +157,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -167,7 +167,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -177,7 +177,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -187,7 +187,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -197,7 +197,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
@@ -207,7 +207,7 @@ public class ImmutableColor extends Color {
     }
 
     /**
-     * {@inheritDoc}
+     *
      *
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */

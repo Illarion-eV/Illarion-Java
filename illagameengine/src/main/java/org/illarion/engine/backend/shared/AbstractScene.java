@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -121,53 +121,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
         }
     }
 
-    /**
-     * This function performs the actual calling of the update functions for all scene elements.
-     *
-     * @param container the game container that is forwarded to the scene elements
-     * @param delta the time since the last update that is reported to the elements
-     */
-    protected final void updateScene(@Nonnull GameContainer container, int delta) {
-        Arrays.fill(workingArray, null);
-        synchronized (sceneElements) {
-            workingArray = sceneElements.toArray(workingArray);
-            workingArraySize = sceneElements.size();
-        }
-
-        @Nullable SceneEvent event = eventQueue.poll();
-        while (event != null) {
-            boolean notProcessed = true;
-            for (int i = workingArraySize - 1; i >= 0; i--) {
-                SceneElement element = workingArray[i];
-                if (element.isEventProcessed(container, delta, event)) {
-                    notProcessed = false;
-                    break;
-                }
-            }
-            if (notProcessed) {
-                event.notHandled();
-            }
-            event = eventQueue.poll();
-        }
-
-        for (int i = 0; i < workingArraySize; i++) {
-            SceneElement element = workingArray[i];
-            element.update(container, delta);
-        }
-    }
-
-    /**
-     * This function performs the actual render operation for all elements of the scene.
-     *
-     * @param graphics the graphics instance that is used to render the game
-     */
-    protected final void renderScene(@Nonnull Graphics graphics) {
-        for (int i = 0; i < workingArraySize; i++) {
-            SceneElement element = workingArray[i];
-            element.render(graphics);
-        }
-    }
-
     @Override
     public final void publishEvent(@Nonnull SceneEvent event) {
         eventQueue.offer(event);
@@ -203,6 +156,51 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     @Override
     public int getElementCount() {
         return sceneElements.size();
+    }
+
+    /**
+     * This function performs the actual calling of the update functions for all scene elements.
+     *
+     * @param container the game container that is forwarded to the scene elements
+     * @param delta the time since the last update that is reported to the elements
+     */
+    protected final void updateScene(@Nonnull GameContainer container, int delta) {
+        synchronized (sceneElements) {
+            workingArray = sceneElements.toArray(workingArray);
+            workingArraySize = sceneElements.size();
+        }
+
+        @Nullable SceneEvent event;
+        while ((event = eventQueue.poll()) != null) {
+            boolean processed = false;
+            for (int i = workingArraySize - 1; i >= 0; i--) {
+                SceneElement element = workingArray[i];
+                if (element.isEventProcessed(container, delta, event)) {
+                    processed = true;
+                    break;
+                }
+            }
+            if (!processed) {
+                event.notHandled();
+            }
+        }
+
+        for (int i = 0; i < workingArraySize; i++) {
+            SceneElement element = workingArray[i];
+            element.update(container, delta);
+        }
+    }
+
+    /**
+     * This function performs the actual render operation for all elements of the scene.
+     *
+     * @param graphics the graphics instance that is used to render the game
+     */
+    protected final void renderScene(@Nonnull Graphics graphics) {
+        for (int i = 0; i < workingArraySize; i++) {
+            SceneElement element = workingArray[i];
+            element.render(graphics);
+        }
     }
 
     /**

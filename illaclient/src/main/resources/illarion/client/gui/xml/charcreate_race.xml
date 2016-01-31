@@ -27,76 +27,89 @@
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="300px" width="100%" align="center" valign="center" backgroundColor="#0000"
+            <panel height="420px" width="100%" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" marginBottom="25px">
-                <panel width="600px" childLayout="horizontal">
-                    <panel width="300px" childLayout="vertical">
-                        <panel width="300px" height="100px" childLayout="horizontal">
-                            <panel height="100px" width="50px" childLayout="center" marginRight="10px">
+                <panel width="500px" childLayout="horizontal" align="center">
+                    <panel width="45%" childLayout="vertical">
+                        <panel width="100%" height="100px" childLayout="center">
+                            <control id="humanBtn" name="button" label="${charCreateRace-bundle.human.title}"
+                                     width="80%" height="35px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint"
+                                             hintText="${charCreateRace-bundle.human.description}" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
                                 <image id="humanImage" align="center" valign="bottom" />
                             </panel>
-                            <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="humanBtn" name="button" label="${charCreateRace-bundle.human.title}"
-                                         width="170px" height="35px" align="center" marginBottom="10" />
-                                <control name="label" text="${charCreateRace-bundle.human.description}" width="170px"
-                                         wrap="true" />
-                            </panel>
                         </panel>
-                        <panel width="300px" height="100px" childLayout="horizontal">
-                            <panel height="100px" width="50px" childLayout="center" marginRight="10px">
+                        <panel width="100%" height="100px" childLayout="center">
+                            <control id="dwarfBtn" name="button" label="${charCreateRace-bundle.dwarf.title}"
+                                     width="80%" height="35px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint"
+                                             hintText="${charCreateRace-bundle.dwarf.description}" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
                                 <image id="dwarfImage" align="center" valign="bottom" />
                             </panel>
-                            <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="dwarfBtn" name="button" label="${charCreateRace-bundle.dwarf.title}"
-                                         width="170px" height="35px" align="center" marginBottom="10" />
-                                <control name="label" text="${charCreateRace-bundle.dwarf.description}" width="170px"
-                                         wrap="true" />
-                            </panel>
                         </panel>
-                        <panel width="300px" height="100px" childLayout="horizontal">
-                            <panel height="100px" width="50px" childLayout="center" marginRight="10px">
+                        <panel width="100%" height="100px" childLayout="center">
+                            <control id="elfBtn" name="button" label="${charCreateRace-bundle.elf.title}"
+                                     width="80%" height="35px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint"
+                                             hintText="${charCreateRace-bundle.elf.description}" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
                                 <image id="elfImage" align="center" valign="bottom" />
-                            </panel>
-                            <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="elfBtn" name="button" label="${charCreateRace-bundle.elf.title}"
-                                         width="170px" height="35px" align="center" marginBottom="10" />
-                                <control name="label" text="${charCreateRace-bundle.elf.description}" width="170px"
-                                         wrap="true" />
                             </panel>
                         </panel>
                     </panel>
-                    <panel width="300px" childLayout="vertical">
-                        <panel width="300px" height="100px" childLayout="horizontal">
-                            <panel height="100px" width="50px" childLayout="center" marginRight="10px">
+                    <panel width="10%" height="*" />
+                    <panel width="45%" childLayout="vertical">
+                        <panel width="100%" height="100px" childLayout="center">
+                            <control id="halflingBtn" name="button" label="${charCreateRace-bundle.halfling.title}"
+                                     width="80%" height="35px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint"
+                                             hintText="${charCreateRace-bundle.halfling.description}" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
                                 <image id="halflingImage" align="center" valign="bottom" />
                             </panel>
-                            <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="halflingBtn" name="button" label="${charCreateRace-bundle.halfling.title}"
-                                         width="170px" height="35px" align="center" marginBottom="10" />
-                                <control name="label" text="${charCreateRace-bundle.halfling.description}" width="170px"
-                                         wrap="true" />
-                            </panel>
                         </panel>
-                        <panel width="300px" height="100px" childLayout="horizontal">
-                            <panel height="100px" width="50px" childLayout="center" marginRight="10px">
+                        <panel width="100%" height="100px" childLayout="center">
+                            <control id="orcBtn" name="button" label="${charCreateRace-bundle.orc.title}"
+                                     width="80%" height="35px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint"
+                                             hintText="${charCreateRace-bundle.orc.description}" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
                                 <image id="orcImage" align="center" valign="bottom" />
                             </panel>
-                            <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="orcBtn" name="button" label="${charCreateRace-bundle.orc.title}"
-                                         width="170px" height="35px" align="center" marginBottom="10" />
-                                <control name="label" text="${charCreateRace-bundle.orc.description}" width="170px"
-                                         wrap="true" />
-                            </panel>
                         </panel>
-                        <panel width="300px" height="100px" childLayout="horizontal">
-                            <panel height="100px" width="50px" childLayout="center" marginRight="10px">
+                        <panel width="100%" height="100px" childLayout="center">
+                            <control id="lizardBtn" name="button" label="${charCreateRace-bundle.lizard.title}"
+                                     width="80%" height="35px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint"
+                                             hintText="${charCreateRace-bundle.lizard.description}" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
                                 <image id="lizardImage" align="center" valign="bottom" />
-                            </panel>
-                            <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="lizardBtn" name="button" label="${charCreateRace-bundle.lizard.title}"
-                                         width="170px" height="35px" align="center" marginBottom="10" />
-                                <control name="label" text="${charCreateRace-bundle.lizard.description}" width="170px"
-                                         wrap="true" />
                             </panel>
                         </panel>
                     </panel>

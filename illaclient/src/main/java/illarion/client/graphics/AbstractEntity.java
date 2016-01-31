@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,6 @@
  */
 package illarion.client.graphics;
 
-import com.google.common.math.IntMath;
-import com.google.common.primitives.Ints;
 import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.DisplayCoordinate;
@@ -150,13 +148,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     protected AbstractEntity(@Nonnull T template) {
         this.template = template;
         baseColor = template.getDefaultColor();
-        if (baseColor == null) {
-            alphaTarget = 255;
-            localLight = new Color(Color.WHITE);
-        } else {
-            localLight = new Color(baseColor);
-            alphaTarget = baseColor.getAlpha();
-        }
+        localLight = new Color(Color.WHITE);
+        alphaTarget = 255;
     }
 
     public boolean isAffectedByFC() {
