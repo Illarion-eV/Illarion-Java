@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2016 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
@@ -7,7 +22,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * This is the deserialization object for a response of account information.
@@ -31,10 +45,12 @@ public class AccountGetResponse {
 
     @Nullable
     @SerializedName("chars")
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private List<AccountGetCharsResponse> chars;
 
     @Nullable
     @SerializedName("create")
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private List<AccountGetCreateResponse> createRoutes;
 
     @Nonnull
@@ -59,15 +75,11 @@ public class AccountGetResponse {
 
     @Nonnull
     public List<AccountGetCharsResponse> getChars() {
-        assert chars != null;
-
-        return Collections.unmodifiableList(chars);
+        return (chars == null) ? Collections.emptyList() : Collections.unmodifiableList(chars);
     }
 
     @Nonnull
     public List<AccountGetCreateResponse> getCreateRoutes() {
-        assert createRoutes != null;
-
-        return Collections.unmodifiableList(createRoutes);
+        return (createRoutes == null) ? Collections.emptyList() : Collections.unmodifiableList(createRoutes);
     }
 }

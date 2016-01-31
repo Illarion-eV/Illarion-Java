@@ -47,33 +47,21 @@ public class RaceTypeResponse {
 
     @Nonnull
     public List<IdNameResponse> getHairs() {
-        if (hairs == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(hairs);
+        return (hairs == null) ? Collections.emptyList() : Collections.unmodifiableList(hairs);
     }
 
     @Nonnull
     public List<IdNameResponse> getBeards() {
-        if (beards == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(beards);
+        return (beards == null) ? Collections.emptyList() : Collections.unmodifiableList(beards);
     }
 
     @Nonnull
     public List<ColourResponse> getHairColours() {
-        if (hairColours == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(hairColours);
+        return (hairColours == null) ? Collections.emptyList() : Collections.unmodifiableList(hairColours);
     }
 
     @Nonnull
     public List<ColourResponse> getSkinColours() {
-        if (skinColours == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(skinColours);
+        return (skinColours == null) ? Collections.emptyList() : Collections.unmodifiableList(skinColours);
     }
 }

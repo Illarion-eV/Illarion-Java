@@ -35,6 +35,7 @@ public class RaceResponse {
     private AttributesCreationResponse attributes;
 
     @SerializedName("types")
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private List<RaceTypeResponse> types;
 
     public int getId() {

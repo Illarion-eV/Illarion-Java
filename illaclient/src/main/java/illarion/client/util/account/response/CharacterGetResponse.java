@@ -104,8 +104,7 @@ public class CharacterGetResponse {
 
     @Nonnull
     public List<CharacterItemResponse> getItems() {
-        assert items != null;
-        return Collections.unmodifiableList(items);
+        return (items == null) ? Collections.emptyList() : Collections.unmodifiableList(items);
     }
 
     public ErrorResponse getError() {

@@ -47,17 +47,11 @@ public class StartPackResponse {
 
     @Nonnull
     public List<IdNameResponse> getSkills() {
-        if (skills == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(skills);
+        return (skills == null) ? Collections.emptyList() : Collections.unmodifiableList(skills);
     }
 
     @Nonnull
     public List<StartPackItemsResponse> getItems() {
-        if (items == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(items);
+        return (items == null) ? Collections.emptyList() : Collections.unmodifiableList(items);
     }
 }
