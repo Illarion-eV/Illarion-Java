@@ -51,7 +51,7 @@
                                  height="35px" marginRight="20px">
                             <interact onRelease="play()"/>
                         </control>
-                        <control id="createBtn" name="button" label="${charselect-bundle.create}" width="100px"
+                        <control id="createBtn" name="button" label="${charselect-bundle.create}" width="170px"
                                  height="35px" marginRight="20px">
                             <interact onRelease="createChar()"/>
                         </control>
