@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,9 +53,9 @@ dependencies {
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.5.8'
     compile group: 'com.fifesoft', name: 'autocomplete', version: '2.5.8'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5.1-1'
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5.2-1'
 
-    antlr4 group: 'org.antlr', name: 'antlr4', version: '4.5.1-1'
+    antlr4 group: 'org.antlr', name: 'antlr4', version: '4.5.2-1'
 
     runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
 }
