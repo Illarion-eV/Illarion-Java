@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,12 +53,15 @@ class IgeRenderFont implements RenderFont {
 
     @Override
     public int getWidth(@Nonnull String text) {
+        if (text.isEmpty()) {
+            return 0;
+        }
         return font.getWidth(text);
     }
 
     @Override
     public int getWidth(@Nonnull String text, float size) {
-        return (int) Math.ceil(font.getWidth(text) * size);
+        return (int) Math.ceil(getWidth(text) * size);
     }
 
     @Override
