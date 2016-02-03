@@ -154,9 +154,10 @@ subprojects {
     }
     pmd {
         ignoreFailures = true
-        targetJdk = '1.7'
         ruleSetFiles = files(new File(rootDir, 'pmd.xml'))
         ruleSets = []
+        toolVersion = '5.4.1'
+        targetJdk = '1.7'
     }
     idea {
         module {
