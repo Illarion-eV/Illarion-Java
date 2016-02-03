@@ -1,7 +1,7 @@
 <?xml version="1.0"?><!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2015 - Illarion e.V.
+  ~ Copyright © 2016 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,6 @@
     <rule ref="rulesets/java/braces.xml" />
     <rule ref="rulesets/java/controversial.xml/DontImportSun" />
     <rule ref="rulesets/java/controversial.xml/SuspiciousOctalEscape" />
-    <rule ref="rulesets/java/controversial.xml/BooleanInversion" />
     <rule ref="rulesets/java/design.xml">
         <exclude name="SwitchStmtsShouldHaveDefault" />
         <exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
