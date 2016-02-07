@@ -34,10 +34,9 @@
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
             </effect>
 
-            <panel height="300px" width="400px" childLayout="vertical">
+            <panel width="400px" childLayout="vertical">
                 <image filename="gui/illarion_title.png" imageMode="normal" align="center" marginBottom="30px"/>
                 <panel childLayout="vertical">
-
                     <panel id="serverPanel" childLayout="horizontal" marginBottom="2px">
                         <control name="label" text="${login-bundle.server}" font="captionFont" textHAlign="left"
                                  width="130px"/>
