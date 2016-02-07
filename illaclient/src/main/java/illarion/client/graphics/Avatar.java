@@ -98,7 +98,7 @@ public final class Avatar extends AvatarEntity {
 
         this.parentChar = parentChar;
 
-        if (parentChar.isHuman()) {
+        if (parentChar.isHuman() || parentChar.isNPC()) {
             int interval = IllaClient.getCfg().getInteger("doubleClickInterval");
             delayedWalkingHandler = new AbstractMultiActionHelper(interval, 2) {
                 @Override
@@ -327,7 +327,7 @@ public final class Avatar extends AvatarEntity {
                 if (target != null) {
                     log.debug("Walking to and using the character {}", interactiveChar);
                     TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                    handler.walkTo(parentChar.getLocation(), 1);
+                    handler.walkTo(parentChar.getLocation(), interactiveChar.getUseRange());
                     handler.setTargetReachedAction(interactiveChar::use);
                     handler.assumeControl();
                 } else {
