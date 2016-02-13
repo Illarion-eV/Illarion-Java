@@ -52,6 +52,8 @@
 
 -keep class org.xmlpull.mxp1.MXParserFactory
 
+-keep class org.slf4j.impl.**
+
 -dontwarn com.sun.**
 -dontwarn javax.servlet.**
 -dontwarn javax.mail.**
@@ -67,3 +69,4 @@
 -dontwarn ch.qos.logback.core.joran.conditional.PropertyEvalScriptBuilder
 -dontwarn org.codehaus.janino.**
 -dontwarn org.apache.log4j.**
+-dontwarn org.slf4j.impl.**
