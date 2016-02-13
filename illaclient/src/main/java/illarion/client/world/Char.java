@@ -546,13 +546,16 @@ public final class Char implements AnimatedMove {
         if (avatar == null) {
             return;
         }
-        if (hasWearingItem(avatar, AvatarClothGroup.FirstHand, wearItems.get(AvatarClothGroup.FirstHand)) ||
-            hasWearingItem(avatar, AvatarClothGroup.SecondHand, wearItems.get(AvatarClothGroup.SecondHand))) {
-            applyPaperdollingItem(avatar, AvatarClothGroup.FirstHand, wearItems.get(AvatarClothGroup.FirstHand));
-            applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, wearItems.get(AvatarClothGroup.SecondHand));
+
+        Integer firstHandItem = wearItems.get(AvatarClothGroup.FirstHand);
+        Integer secondHandItem = wearItems.get(AvatarClothGroup.SecondHand);
+        if (hasWearingItem(avatar, AvatarClothGroup.FirstHand, firstHandItem) ||
+            hasWearingItem(avatar, AvatarClothGroup.SecondHand, secondHandItem)) {
+            applyPaperdollingItem(avatar, AvatarClothGroup.FirstHand, firstHandItem);
+            applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, secondHandItem);
         } else {
-            applyPaperdollingItem(avatar, AvatarClothGroup.FirstHand, wearItems.get(AvatarClothGroup.FirstHand));
-            applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, wearItems.get(AvatarClothGroup.SecondHand));
+            applyPaperdollingItem(avatar, AvatarClothGroup.FirstHand, secondHandItem);
+            applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, firstHandItem);
         }
 
         //noinspection ConstantConditions
