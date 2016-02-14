@@ -69,13 +69,6 @@ public final class GenderScreenController implements ScreenController {
         this.container = container;
     }
 
-    @Nonnull
-    private static <T> T getRandom(@Nonnull List<T> list) {
-        int index = new Random().nextInt(list.size());
-        //noinspection ConstantConditions
-        return list.get(index);
-    }
-
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
