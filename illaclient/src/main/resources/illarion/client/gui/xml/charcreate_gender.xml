@@ -27,7 +27,7 @@
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="300px" width="600px" align="center" valign="center" backgroundColor="#0000"
+            <panel width="600px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" marginBottom="25px">
                 <control name="label" text="${charCreateGender-bundle.title}" align="center"
                          width="600px" marginBottom="23px" font="captionFont" textHAlign="left" />

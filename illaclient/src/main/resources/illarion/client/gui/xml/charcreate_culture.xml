@@ -15,9 +15,9 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <resourceBundle id="charCreateRace-bundle" filename="charCreateRace"/>
+    <resourceBundle id="charCreateCulture-bundle" filename="charCreateCulture"/>
 
-    <screen id="characterCreateRace" controller="illarion.client.gui.controller.create.RaceScreenController">
+    <screen id="characterCreateCulture" controller="illarion.client.gui.controller.create.CultureScreenController">
         <layer childLayout="vertical">
             <panel height="422px" width="*" backgroundImage="gui/window_background.png"
                    imageMode="repeat:0,0,1024,422"/>
@@ -31,94 +31,82 @@
                    childLayout="vertical" marginBottom="25px">
                 <panel width="500px" childLayout="horizontal" align="center">
                     <panel width="45%" childLayout="vertical">
-                        <panel width="100%" height="100px" childLayout="center">
-                            <control id="humanBtn" name="button" label="${charCreateRace-bundle.human.title}"
-                                     width="80%" height="35px">
+                        <panel width="100%" height="100px" childLayout="center" id="culture1">
+                            <control id="#button" name="button" label="" width="80%" height="35px">
                                 <effect>
-                                    <onHover name="hint" hintStyle="illarion-hint"
-                                             hintText="${charCreateRace-bundle.human.description}" />
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
                                 </effect>
                             </control>
                             <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
                                    visibleToMouse="false">
-                                <image id="humanImage" align="center" valign="bottom" />
+                                <image id="#image" align="center" valign="bottom" />
                             </panel>
                         </panel>
-                        <panel width="100%" height="100px" childLayout="center">
-                            <control id="dwarfBtn" name="button" label="${charCreateRace-bundle.dwarf.title}"
-                                     width="80%" height="35px">
+                        <panel width="100%" height="100px" childLayout="center" id="culture3">
+                            <control id="#button" name="button" label="" width="80%" height="35px">
                                 <effect>
-                                    <onHover name="hint" hintStyle="illarion-hint"
-                                             hintText="${charCreateRace-bundle.dwarf.description}" />
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
                                 </effect>
                             </control>
                             <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
                                    visibleToMouse="false">
-                                <image id="dwarfImage" align="center" valign="bottom" />
+                                <image id="#image" align="center" valign="bottom" />
                             </panel>
                         </panel>
-                        <panel width="100%" height="100px" childLayout="center">
-                            <control id="elfBtn" name="button" label="${charCreateRace-bundle.elf.title}"
-                                     width="80%" height="35px">
+                        <panel width="100%" height="100px" childLayout="center" id="culture5">
+                            <control id="#button" name="button" label="" width="80%" height="35px">
                                 <effect>
-                                    <onHover name="hint" hintStyle="illarion-hint"
-                                             hintText="${charCreateRace-bundle.elf.description}" />
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
                                 </effect>
                             </control>
                             <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
                                    visibleToMouse="false">
-                                <image id="elfImage" align="center" valign="bottom" />
+                                <image id="#image" align="center" valign="bottom" />
                             </panel>
                         </panel>
                     </panel>
                     <panel width="10%" height="*" />
                     <panel width="45%" childLayout="vertical">
-                        <panel width="100%" height="100px" childLayout="center">
-                            <control id="halflingBtn" name="button" label="${charCreateRace-bundle.halfling.title}"
-                                     width="80%" height="35px">
+                        <panel width="100%" height="100px" childLayout="center" id="culture2">
+                            <control id="#button" name="button" label="" width="80%" height="35px">
                                 <effect>
-                                    <onHover name="hint" hintStyle="illarion-hint"
-                                             hintText="${charCreateRace-bundle.halfling.description}" />
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
                                 </effect>
                             </control>
                             <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
                                    visibleToMouse="false">
-                                <image id="halflingImage" align="center" valign="bottom" />
+                                <image id="#image" align="center" valign="bottom" />
                             </panel>
                         </panel>
-                        <panel width="100%" height="100px" childLayout="center">
-                            <control id="orcBtn" name="button" label="${charCreateRace-bundle.orc.title}"
-                                     width="80%" height="35px">
+                        <panel width="100%" height="100px" childLayout="center" id="culture4">
+                            <control id="#button" name="button" label="" width="80%" height="35px">
                                 <effect>
-                                    <onHover name="hint" hintStyle="illarion-hint"
-                                             hintText="${charCreateRace-bundle.orc.description}" />
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
                                 </effect>
                             </control>
                             <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
                                    visibleToMouse="false">
-                                <image id="orcImage" align="center" valign="bottom" />
+                                <image id="#image" align="center" valign="bottom" />
                             </panel>
                         </panel>
-                        <panel width="100%" height="100px" childLayout="center">
-                            <control id="lizardBtn" name="button" label="${charCreateRace-bundle.lizard.title}"
-                                     width="80%" height="35px">
+                        <panel width="100%" height="100px" childLayout="center" id="culture6">
+                            <control id="#button" name="button" label="" width="80%" height="35px">
                                 <effect>
-                                    <onHover name="hint" hintStyle="illarion-hint"
-                                             hintText="${charCreateRace-bundle.lizard.description}" />
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
                                 </effect>
                             </control>
                             <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
                                    visibleToMouse="false">
-                                <image id="lizardImage" align="center" valign="bottom" />
+                                <image id="#image" align="center" valign="bottom" />
                             </panel>
                         </panel>
                     </panel>
                 </panel>
 
                 <panel width="250px" height="35px" childLayout="center" align="center">
-                    <control id="backBtn" name="button" label="${charCreateRace-bundle.back}"
+                    <control id="backBtn" name="button" label="${charCreateCulture-bundle.back}"
                              width="100px" height="35px" align="left" />
-                    <control id="cancelBtn" name="button" label="${charCreateRace-bundle.cancel}"
+                    <control id="cancelBtn" name="button" label="${charCreateCulture-bundle.cancel}"
                              width="100px" height="35px" align="right" />
                 </panel>
             </panel>
