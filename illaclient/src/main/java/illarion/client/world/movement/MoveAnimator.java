@@ -260,6 +260,15 @@ class MoveAnimator implements AnimatedMove {
     }
 
     private boolean executeNext() {
+        @Nullable  MovingTask confirmedTask = confirmedMoveTask;
+        if ((confirmedTask != null) && confirmedTask.isExecuted()) {
+            log.debug("Confirmed task is already done. Removing the task from the queue.");
+            if (Objects.equals(taskQueue.peek(), confirmedTask)) {
+                taskQueue.poll();
+            }
+            uncomfirmedMoveTask = null;
+        }
+
         @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
         if ((unconfirmedTask != null) && unconfirmedTask.isExecuted()) {
             log.debug("Stopping move execution because a unconfirmed move finished executing.");
@@ -267,10 +276,10 @@ class MoveAnimator implements AnimatedMove {
             animationInProgress = false;
             return false;
         }
+
         MoveAnimatorTask task = taskQueue.poll();
         if (task != null) {
             if (Objects.equals(task, unconfirmedTask)) {
-                MoveAnimatorTask confirmedTask = confirmedMoveTask;
                 if (confirmedTask != null) {
                     log.debug("Current move is a unconfirmed move. Using the confirmed version.");
                     confirmedMoveTask = null;
