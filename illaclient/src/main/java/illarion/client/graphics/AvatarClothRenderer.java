@@ -339,7 +339,7 @@ final class AvatarClothRenderer {
     void update(@Nonnull GameContainer container, int delta) {
         clothLock.readLock().lock();
         try {
-            currentClothes.forEach((g, cloth) -> cloth.update(container, delta));
+            currentClothes.values().forEach((cloth) -> cloth.update(container, delta));
         } finally {
             clothLock.readLock().unlock();
         }

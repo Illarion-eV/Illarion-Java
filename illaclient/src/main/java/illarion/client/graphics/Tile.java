@@ -61,6 +61,23 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      */
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Tile.class);
+
+    @Nonnull
+    private static final EnumSet<Direction> TOP_COLOR_DIRECTIONS =
+            EnumSet.of(Direction.North, Direction.NorthEast, Direction.East);
+
+    @Nonnull
+    private static final EnumSet<Direction> LEFT_COLOR_DIRECTIONS =
+            EnumSet.of(Direction.North, Direction.NorthWest, Direction.West);
+
+    @Nonnull
+    private static final EnumSet<Direction> BOTTOM_COLOR_DIRECTIONS =
+            EnumSet.of(Direction.West, Direction.SouthWest, Direction.South);
+
+    @Nonnull
+    private static final EnumSet<Direction> RIGHT_COLOR_DIRECTIONS =
+            EnumSet.of(Direction.East, Direction.SouthEast, Direction.South);
+    
     /**
      * The animation that is applied to this tile or {@code null} in case there is none.
      */
@@ -176,10 +193,10 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         super.update(container, delta);
 
         if (parentTile.hasLightGradient()) {
-            topColor = getCornerColor(topColor, EnumSet.of(Direction.North, Direction.NorthEast, Direction.East));
-            leftColor = getCornerColor(leftColor, EnumSet.of(Direction.North, Direction.NorthWest, Direction.West));
-            bottomColor = getCornerColor(bottomColor, EnumSet.of(Direction.West, Direction.SouthWest, Direction.South));
-            rightColor = getCornerColor(rightColor, EnumSet.of(Direction.East, Direction.SouthEast, Direction.South));
+            topColor = getCornerColor(topColor, TOP_COLOR_DIRECTIONS);
+            leftColor = getCornerColor(leftColor, LEFT_COLOR_DIRECTIONS);
+            bottomColor = getCornerColor(bottomColor, BOTTOM_COLOR_DIRECTIONS);
+            rightColor = getCornerColor(rightColor, RIGHT_COLOR_DIRECTIONS);
         } else {
             topColor = null;
             leftColor = null;

@@ -260,13 +260,15 @@ class MoveAnimator implements AnimatedMove {
     }
 
     private boolean executeNext() {
-        @Nullable  MovingTask confirmedTask = confirmedMoveTask;
+        boolean reportReady = false; /* Report ready for next move if nothing is to do. */
+        @Nullable MovingTask confirmedTask = confirmedMoveTask;
         if ((confirmedTask != null) && confirmedTask.isExecuted()) {
             log.debug("Confirmed task is already done. Removing the task from the queue.");
             if (Objects.equals(taskQueue.peek(), confirmedTask)) {
                 taskQueue.poll();
             }
             uncomfirmedMoveTask = null;
+            reportReady = true;
         }
 
         @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
@@ -297,6 +299,9 @@ class MoveAnimator implements AnimatedMove {
             return true;
         } else {
             animationInProgress = false;
+            if (reportReady) {
+                movement.reportReadyForNextStep();
+            }
             return false;
         }
     }
