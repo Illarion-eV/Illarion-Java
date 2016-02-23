@@ -41,11 +41,14 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class RaceScreenController implements ScreenController {
+    @Nonnull
+    public static final String NEXT_SCREEN_ID = "characterCreateCulture";
     @Nonnull
     private final AccountSystem accountSystem;
     @Nonnull
@@ -61,6 +64,42 @@ public final class RaceScreenController implements ScreenController {
     public RaceScreenController(@Nonnull GameContainer container, @Nonnull AccountSystem accountSystem) {
         this.accountSystem = accountSystem;
         this.container = container;
+    }
+
+    @Nullable
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(@Nullable String serverId) {
+        this.serverId = serverId;
+    }
+
+    public int getRaceTypeId() {
+        return raceTypeId;
+    }
+
+    public void setRaceTypeId(int raceTypeId) {
+        this.raceTypeId = raceTypeId;
+    }
+
+    @Nonnull
+    public ListenableFuture<CharacterCreateGetResponse> getCharacterCreateData() {
+        return Objects.requireNonNull(characterCreateData);
+    }
+
+    public void setCharacterCreateData(@Nonnull ListenableFuture<CharacterCreateGetResponse> characterCreateData) {
+        this.characterCreateData = characterCreateData;
+    }
+
+    @Nonnull
+    private CultureScreenController getNextScreenController() {
+        assert nifty != null;
+
+        Screen raceScreen = nifty.getScreen(NEXT_SCREEN_ID);
+        assert raceScreen != null;
+
+        return (CultureScreenController) raceScreen.getScreenController();
     }
 
     @Override
@@ -95,43 +134,7 @@ public final class RaceScreenController implements ScreenController {
         nifty.unsubscribeAnnotations(this);
     }
 
-    public int getRaceTypeId() {
-        return raceTypeId;
-    }
-
-    public void setRaceTypeId(int raceTypeId) {
-        this.raceTypeId = raceTypeId;
-    }
-
-    @Nonnull
-    public ListenableFuture<CharacterCreateGetResponse> getCharacterCreateData() {
-        ListenableFuture<CharacterCreateGetResponse> data = characterCreateData;
-        if (data == null) {
-            if (serverId == null) {
-                throw new IllegalStateException("The server ID has to be set before entering the race selection screen.");
-            }
-
-            data = accountSystem.getCharacterCreateInformation(serverId);
-            characterCreateData = data;
-            return data;
-        }
-        return data;
-    }
-
-    public void setCharacterCreateData(ListenableFuture<CharacterCreateGetResponse> characterCreateData) {
-        this.characterCreateData = characterCreateData;
-    }
-
-    @Nullable
-    public String getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(@Nullable String serverId) {
-        this.serverId = serverId;
-    }
-
-    @NiftyEventSubscriber(pattern = "backBtn")
+    @NiftyEventSubscriber(pattern = "backToGenderBtn")
     public void onBackButtonClicked(@Nonnull String topic, @Nonnull ButtonClickedEvent event) {
         assert nifty != null;
 
@@ -176,7 +179,15 @@ public final class RaceScreenController implements ScreenController {
     }
 
     private void gotoNextScreen(int raceId) {
+        assert nifty != null;
+        assert characterCreateData != null;
 
+        CultureScreenController controller = getNextScreenController();
+        controller.setServerId(serverId);
+        controller.setCharacterCreateData(characterCreateData);
+        controller.setRaceId(raceId);
+        controller.setRaceTypeId(raceTypeId);
+        nifty.gotoScreen(NEXT_SCREEN_ID);
     }
 
     private final class CreateEntityImagesFunction implements Function<CharacterCreateGetResponse, EntityRenderImage[]> {

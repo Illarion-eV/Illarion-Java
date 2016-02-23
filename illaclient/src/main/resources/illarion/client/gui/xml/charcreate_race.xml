@@ -29,11 +29,11 @@
             </effect>
             <panel width="100%" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" marginBottom="25px">
-                <panel width="500px" childLayout="horizontal" align="center">
+                <panel width="500px" childLayout="horizontal" align="center" marginBottom="20px">
                     <panel width="45%" childLayout="vertical">
                         <panel width="100%" height="100px" childLayout="center">
                             <control id="humanBtn" name="button" label="${charCreateRace-bundle.human.title}"
-                                     width="80%" height="35px">
+                                     width="100%" height="55px">
                                 <effect>
                                     <onHover name="hint" hintStyle="illarion-hint"
                                              hintText="${charCreateRace-bundle.human.description}" />
@@ -46,7 +46,7 @@
                         </panel>
                         <panel width="100%" height="100px" childLayout="center">
                             <control id="dwarfBtn" name="button" label="${charCreateRace-bundle.dwarf.title}"
-                                     width="80%" height="35px">
+                                     width="100%" height="55px">
                                 <effect>
                                     <onHover name="hint" hintStyle="illarion-hint"
                                              hintText="${charCreateRace-bundle.dwarf.description}" />
@@ -59,7 +59,7 @@
                         </panel>
                         <panel width="100%" height="100px" childLayout="center">
                             <control id="elfBtn" name="button" label="${charCreateRace-bundle.elf.title}"
-                                     width="80%" height="35px">
+                                     width="100%" height="55px">
                                 <effect>
                                     <onHover name="hint" hintStyle="illarion-hint"
                                              hintText="${charCreateRace-bundle.elf.description}" />
@@ -71,11 +71,11 @@
                             </panel>
                         </panel>
                     </panel>
-                    <panel width="10%" height="*" />
+                    <panel width="10%" height="0px" />
                     <panel width="45%" childLayout="vertical">
                         <panel width="100%" height="100px" childLayout="center">
                             <control id="halflingBtn" name="button" label="${charCreateRace-bundle.halfling.title}"
-                                     width="80%" height="35px">
+                                     width="100%" height="55px">
                                 <effect>
                                     <onHover name="hint" hintStyle="illarion-hint"
                                              hintText="${charCreateRace-bundle.halfling.description}" />
@@ -88,7 +88,7 @@
                         </panel>
                         <panel width="100%" height="100px" childLayout="center">
                             <control id="orcBtn" name="button" label="${charCreateRace-bundle.orc.title}"
-                                     width="80%" height="35px">
+                                     width="100%" height="55px">
                                 <effect>
                                     <onHover name="hint" hintStyle="illarion-hint"
                                              hintText="${charCreateRace-bundle.orc.description}" />
@@ -101,7 +101,7 @@
                         </panel>
                         <panel width="100%" height="100px" childLayout="center">
                             <control id="lizardBtn" name="button" label="${charCreateRace-bundle.lizard.title}"
-                                     width="80%" height="35px">
+                                     width="100%" height="55px">
                                 <effect>
                                     <onHover name="hint" hintStyle="illarion-hint"
                                              hintText="${charCreateRace-bundle.lizard.description}" />
@@ -116,7 +116,7 @@
                 </panel>
 
                 <panel width="250px" height="35px" childLayout="center" align="center">
-                    <control id="backBtn" name="button" label="${charCreateRace-bundle.back}"
+                    <control id="backToGenderBtn" name="button" label="${charCreateRace-bundle.back}"
                              width="100px" height="35px" align="left" />
                     <control id="cancelBtn" name="button" label="${charCreateRace-bundle.cancel}"
                              width="100px" height="35px" align="right" />

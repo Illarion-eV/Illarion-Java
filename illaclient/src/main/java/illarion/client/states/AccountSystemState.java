@@ -19,6 +19,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import illarion.client.Game;
 import illarion.client.gui.controller.*;
+import illarion.client.gui.controller.create.CultureScreenController;
 import illarion.client.gui.controller.create.GenderScreenController;
 import illarion.client.gui.controller.create.RaceScreenController;
 import illarion.client.util.account.AccountSystem;
@@ -66,7 +67,8 @@ public class AccountSystemState implements GameState {
                 new CreditsStartScreenController(container.getEngine()),
                 new EnteringScreenController(game, container),
                 new GenderScreenController(container, accountSystem),
-                new RaceScreenController(container, accountSystem));
+                new RaceScreenController(container, accountSystem),
+                new CultureScreenController(container, accountSystem));
 
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/register.xml");
@@ -77,6 +79,7 @@ public class AccountSystemState implements GameState {
 
         Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_gender.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_race.xml");
+        Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_culture.xml");
     }
 
     @Override

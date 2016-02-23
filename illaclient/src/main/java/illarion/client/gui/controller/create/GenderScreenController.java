@@ -42,8 +42,6 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -86,10 +84,6 @@ public final class GenderScreenController implements ScreenController {
         raceImages[9] = screen.findElementById("orcFemale");
         raceImages[10] = screen.findElementById("lizardMale");
         raceImages[11] = screen.findElementById("lizardFemale");
-
-        if (serverId == null) {
-            getNextScreenController().setServerId(serverId);
-        }
     }
 
     @Override
@@ -123,10 +117,6 @@ public final class GenderScreenController implements ScreenController {
 
     public void setServerId(@Nullable String serverId) {
         this.serverId = serverId;
-
-        if (nifty != null) {
-            getNextScreenController().setServerId(serverId);
-        }
     }
 
     @NiftyEventSubscriber(pattern = "cancelBtn")
@@ -161,6 +151,7 @@ public final class GenderScreenController implements ScreenController {
 
         RaceScreenController controller = getNextScreenController();
 
+        controller.setServerId(serverId);
         controller.setRaceTypeId(raceTypeId);
         nifty.gotoScreen(NEXT_SCREEN_ID);
     }
