@@ -15,6 +15,8 @@
  */
 package illarion.client.gui.controller.create;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -27,18 +29,26 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.util.account.AccountSystem;
 import illarion.client.util.account.response.CharacterCreateGetResponse;
+import illarion.client.util.account.response.ColourResponse;
+import illarion.client.util.account.response.RaceResponse;
+import illarion.client.util.account.response.RaceTypeResponse;
 import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CultureScreenController implements ScreenController {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CultureScreenController.class);
     @Nonnull
     private final AccountSystem accountSystem;
     @Nonnull
@@ -52,10 +62,25 @@ public final class CultureScreenController implements ScreenController {
     private List<CultureOption> options;
     @Nullable
     private Nifty nifty;
+    @Nonnull
+    private final Properties cultureConfig;
+    @Nonnull
+    private final Random random;
 
     public CultureScreenController(@Nonnull GameContainer container, @Nonnull AccountSystem accountSystem) {
         this.accountSystem = accountSystem;
         this.container = container;
+
+        cultureConfig = new Properties();
+        try (InputStream in = CultureScreenController.class.getClassLoader().getResourceAsStream(
+                "illarion/client/gui/controller/create/culture.properties"
+        )) {
+            cultureConfig.load(in);
+        } catch (IOException e) {
+            log.error("Error while reading the configuration for the config screen.", e);
+        }
+
+        random = new Random();
     }
 
     @NiftyEventSubscriber(pattern = "backToRaceBtn")
@@ -120,14 +145,18 @@ public final class CultureScreenController implements ScreenController {
         assert nifty != null;
         nifty.subscribeAnnotations(this);
 
-        switch (raceId) {
-            case 0: setupForHumans(); break;
-            case 1: setupForDwarfs(); break;
-            case 2: setupForHalfling(); break;
-            case 3: setupForElf(); break;
-            case 4: setupForOrc(); break;
-            case 5: setupForLizard(); break;
-        }
+        Futures.addCallback(getCharacterCreateData(), new FutureCallback<CharacterCreateGetResponse>() {
+            @Override
+            public void onSuccess(@Nullable CharacterCreateGetResponse result) {
+                if (result == null) { return; }
+
+                setup(result);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+            }
+        });
     }
 
     @Override
@@ -136,70 +165,119 @@ public final class CultureScreenController implements ScreenController {
         nifty.unsubscribeAnnotations(this);
     }
 
-    private void setupForHumans() {
+    private void setup(@Nonnull CharacterCreateGetResponse createData) {
         assert options != null;
 
-        options.get(0).setup("human.norodaj");
-        options.get(1).setup("albar");
-        options.get(2).setup("salkamar");
-        options.get(3).setup("gynk");
-        options.get(4).setup("human.serinjah");
-        options.get(5).setup("cityborn");
+        RaceTypeResponse raceTypeResponse = getRaceTypeResponse(createData);
+
+        for (int i = 0; i < 6; i++) {
+            CultureOption option = Objects.requireNonNull(options.get(i));
+            String textKey = getConfigEntry(i, "textKey");
+            if (textKey == null) {
+                option.setup();
+            } else {
+                option.setup(textKey);
+
+                ColourResponse hairColour = selectColour(raceTypeResponse.getHairColours(), i, "hair.colour.value", "skin.colour.delta");
+                ColourResponse skinColour = selectColour(raceTypeResponse.getHairColours(), i, "skin.colour.value", "skin.colour.delta");
+
+            }
+        }
     }
 
-    private void setupForDwarfs() {
-        assert options != null;
+    private ColourResponse selectColour(@Nonnull List<ColourResponse> options, int option, @Nonnull String valueKey, @Nonnull String deltaKey) {
+        if (options.isEmpty()) return null;
+        if (options.size() == 1) return options.get(0);
 
-        options.get(0).setup("dwarf.kingdoms");
-        options.get(1).setup("gynk");
-        options.get(2).setup("cityborn");
-        options.get(3).setup("dwarf.clanborn");
-        options.get(4).setup();
-        options.get(5).setup();
+        int[] normalValue = getConfigEntryIntArray(option, valueKey);
+        double[] deltaValues = getConfigEntryDoubleArray(option, deltaKey);
+        float[] normalHsb = java.awt.Color.RGBtoHSB(normalValue[0], normalValue[1], normalValue[2], null);
+
+        List<ColourResponse> possibleColours = new ArrayList<>();
+        float[] testColour = new float[3];
+        for (@Nonnull ColourResponse colourOption : options) {
+            java.awt.Color.RGBtoHSB(colourOption.getRed(), colourOption.getGreen(), colourOption.getBlue(), testColour);
+            //double delta = getColourDiff(normalValue, testColour);
+
+            double hueDelta = Math.abs(Math.atan2(Math.sin(testColour[0] - normalHsb[0]), Math.cos(testColour[0] - normalHsb[0])));
+
+            float saturationDelta = Math.abs(normalHsb[1] - testColour[1]);
+            float brightnessDelta = Math.abs(normalHsb[2] - testColour[2]);
+
+            if (hueDelta < deltaValues[0] && saturationDelta < deltaValues[1] && brightnessDelta < deltaValues[2]) {
+                possibleColours.add(colourOption);
+            }
+        }
+
+        if (possibleColours.isEmpty()) {
+            possibleColours = options;
+        }
+
+        if (possibleColours.size() == 1) return possibleColours.get(0);
+        int selectedIndex = random.nextInt(possibleColours.size());
+        return possibleColours.get(selectedIndex);
     }
 
-    private void setupForHalfling() {
-        assert options != null;
+    private double getConfigEntryDouble(int option, @Nonnull String key) {
+        String entry = getConfigEntry(option, key);
+        if (entry == null) return 0.0;
 
-        options.get(0).setup("halfling.settlements");
-        options.get(1).setup("gynk");
-        options.get(2).setup("halfling.shireborn");
-        options.get(3).setup();
-        options.get(4).setup();
-        options.get(5).setup();
+        return Double.parseDouble(entry);
     }
 
-    private void setupForElf() {
-        assert options != null;
+    @Nonnull
+    private int[] getConfigEntryIntArray(int option, @Nonnull String key) {
+        String entry = getConfigEntry(option, key);
+        if (entry == null) return new int[] {0, 1};
 
-        options.get(0).setup("elf.settlements");
-        options.get(1).setup("elf.colonists");
-        options.get(2).setup("elf.clanborn");
-        options.get(3).setup();
-        options.get(4).setup();
-        options.get(5).setup();
+        String[] parts = entry.split(",");
+        return Arrays.asList(parts).stream().mapToInt(Integer::parseInt).toArray();
     }
 
-    private void setupForOrc() {
-        assert options != null;
+    @Nonnull
+    private double[] getConfigEntryDoubleArray(int option, @Nonnull String key) {
+        String entry = getConfigEntry(option, key);
+        if (entry == null) return new double[] {0.0, 1.0};
 
-        options.get(0).setup("orc.flame");
-        options.get(1).setup("orc.tribal");
-        options.get(2).setup("gynk");
-        options.get(3).setup("cityborn");
-        options.get(4).setup("elf.clanborn");
-        options.get(5).setup();
+        String[] parts = entry.split(",");
+        return Arrays.asList(parts).stream().mapToDouble(Double::parseDouble).toArray();
     }
 
-    private void setupForLizard() {
-        assert options != null;
+    @Nonnull
+    private float[] getConfigEntryFloatArray(int option, @Nonnull String key) {
+        double[] entry = getConfigEntryDoubleArray(option, key);
+        float[] result = new float[entry.length];
+        for (int i = 0; i < entry.length; i++) {
+            result[i] = (float) entry[i];
+        }
+        return result;
+    }
 
-        options.get(0).setup("lizard.original");
-        options.get(1).setup("gynk");
-        options.get(2).setup("lizard.riverhatched");
-        options.get(3).setup();
-        options.get(4).setup();
-        options.get(5).setup();
+    @Nullable
+    private String getConfigEntry(int option, @Nonnull String key) {
+        String raceTypeKey = "race." + raceId + ".type." + raceTypeId + ".option." + option + "." + key;
+        String raceTypeResult = cultureConfig.getProperty(raceTypeKey, null);
+        if (raceTypeResult != null) return raceTypeResult;
+
+        String raceKey = "race." + raceId + ".option." + option + "." + key;
+        String raceResult = cultureConfig.getProperty(raceKey, null);
+        if (raceResult != null) return raceResult;
+
+        String genericKey = "option." + option + "." + key;
+        String genericResult = cultureConfig.getProperty(genericKey, null);
+        if (genericResult != null) return genericResult;
+
+        return null;
+    }
+
+    @Nonnull
+    private RaceTypeResponse getRaceTypeResponse(@Nonnull CharacterCreateGetResponse data) {
+        return data.getRaces().stream()
+                   .filter(r -> r.getId() == raceId)
+                   .map(RaceResponse::getTypes)
+                   .flatMap(Collection::stream)
+                   .filter(t -> t.getId() == raceTypeId)
+                   .findAny().get();
     }
 
     private static final class CultureOption {
