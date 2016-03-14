@@ -25,13 +25,20 @@ import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.effects.impl.Hint;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.ImageRenderer;
+import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
+import illarion.client.graphics.AvatarEntity;
+import illarion.client.gui.EntityRenderImage;
+import illarion.client.resources.CharacterFactory;
+import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.account.AccountSystem;
-import illarion.client.util.account.response.CharacterCreateGetResponse;
-import illarion.client.util.account.response.ColourResponse;
-import illarion.client.util.account.response.RaceResponse;
-import illarion.client.util.account.response.RaceTypeResponse;
+import illarion.client.util.account.response.*;
+import illarion.common.graphics.CharAnimations;
+import illarion.common.types.AvatarId;
+import illarion.common.types.Direction;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.slf4j.Logger;
@@ -42,6 +49,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -53,6 +61,10 @@ public final class CultureScreenController implements ScreenController {
     private final AccountSystem accountSystem;
     @Nonnull
     private final GameContainer container;
+    @Nonnull
+    private final Properties cultureConfig;
+    @Nonnull
+    private final Random random;
     private ListenableFuture<CharacterCreateGetResponse> characterCreateData;
     private int raceTypeId;
     private int raceId;
@@ -62,10 +74,6 @@ public final class CultureScreenController implements ScreenController {
     private List<CultureOption> options;
     @Nullable
     private Nifty nifty;
-    @Nonnull
-    private final Properties cultureConfig;
-    @Nonnull
-    private final Random random;
 
     public CultureScreenController(@Nonnull GameContainer container, @Nonnull AccountSystem accountSystem) {
         this.accountSystem = accountSystem;
@@ -166,6 +174,7 @@ public final class CultureScreenController implements ScreenController {
     }
 
     private void setup(@Nonnull CharacterCreateGetResponse createData) {
+        assert nifty != null;
         assert options != null;
 
         RaceTypeResponse raceTypeResponse = getRaceTypeResponse(createData);
@@ -176,36 +185,97 @@ public final class CultureScreenController implements ScreenController {
             if (textKey == null) {
                 option.setup();
             } else {
-                option.setup(textKey);
+                ColourResponse hairColour = selectColour(raceTypeResponse.getHairColours(), i, "hair.colour.value",
+                                                         "skin.colour.delta");
+                ColourResponse skinColour = selectColour(raceTypeResponse.getSkinColours(), i, "skin.colour.value",
+                                                         "skin.colour.delta");
 
-                ColourResponse hairColour = selectColour(raceTypeResponse.getHairColours(), i, "hair.colour.value", "skin.colour.delta");
-                ColourResponse skinColour = selectColour(raceTypeResponse.getHairColours(), i, "skin.colour.value", "skin.colour.delta");
+                IdNameResponse beardValue = selectIndexValue(raceTypeResponse.getBeards(), i, "beard.id");
+                IdNameResponse hairValue = selectIndexValue(raceTypeResponse.getHairs(), i, "hair.id");
 
+                AvatarId id = new AvatarId(raceId, raceTypeId, Direction.South, CharAnimations.STAND);
+
+                AvatarTemplate template = CharacterFactory.getInstance().getTemplate(id.getAvatarId());
+                AvatarEntity avatarEntity = new AvatarEntity(template, true);
+
+                avatarEntity.setClothItem(AvatarClothGroup.Beard, (beardValue == null) ? 0 : beardValue.getId());
+                avatarEntity.setClothItem(AvatarClothGroup.Hair, (hairValue == null) ? 0 : hairValue.getId());
+
+                avatarEntity.changeBaseColor((skinColour != null) ? skinColour.getColour() : null);
+                Color hairColorValue = (hairColour != null) ? hairColour.getColour() : null;
+                avatarEntity.changeClothColor(AvatarClothGroup.Hair, hairColorValue);
+                avatarEntity.changeClothColor(AvatarClothGroup.Beard, hairColorValue);
+                Util.applyRandomStartPack(avatarEntity, createData.getStartPacks());
+
+                EntityRenderImage entityRenderImage = new EntityRenderImage(container, avatarEntity);
+                NiftyImage niftyImage = new NiftyImage(nifty.getRenderEngine(), entityRenderImage);
+
+                option.setup(textKey, niftyImage);
             }
         }
     }
 
-    private ColourResponse selectColour(@Nonnull List<ColourResponse> options, int option, @Nonnull String valueKey, @Nonnull String deltaKey) {
-        if (options.isEmpty()) return null;
-        if (options.size() == 1) return options.get(0);
+    @Nullable
+    private IdNameResponse selectIndexValue(@Nonnull List<IdNameResponse> options, int option, @Nonnull String idKey) {
+        if (options.isEmpty()) {
+            return null;
+        }
+        if (options.size() == 1) {
+            return options.get(0);
+        }
 
-        int[] normalValue = getConfigEntryIntArray(option, valueKey);
-        double[] deltaValues = getConfigEntryDoubleArray(option, deltaKey);
-        float[] normalHsb = java.awt.Color.RGBtoHSB(normalValue[0], normalValue[1], normalValue[2], null);
+        int[] validIndexValues = getConfigEntryIntArray(option, idKey);
+        if ((validIndexValues != null) && (validIndexValues.length != 0)) {
+            int[] possibilities = IntStream.concat(options.stream().mapToInt(IdNameResponse::getId), IntStream.of(0)).sorted().toArray();
+            validIndexValues = IntStream.of(validIndexValues).filter(v -> Arrays.binarySearch(possibilities, v) >= 0).toArray();
+        }
+
+        if ((validIndexValues == null) || (validIndexValues.length == 0)) {
+            validIndexValues = IntStream.concat(options.stream().mapToInt(IdNameResponse::getId), IntStream.of(0)).toArray();
+        }
+
+        int selectedValue = random.nextInt(validIndexValues.length);
+        int selectedIndex = validIndexValues[selectedValue];
+
+        if (selectedIndex == 0) {
+            return null;
+        }
+
+        return options.stream().filter(o -> o.getId() == selectedIndex).findFirst().get();
+    }
+
+    @Nullable
+    private ColourResponse selectColour(@Nonnull List<ColourResponse> options, int option, @Nonnull String valueKey, @Nonnull String deltaKey) {
+        if (options.isEmpty()) {
+            return null;
+        }
+        if (options.size() == 1) {
+            return options.get(0);
+        }
 
         List<ColourResponse> possibleColours = new ArrayList<>();
-        float[] testColour = new float[3];
-        for (@Nonnull ColourResponse colourOption : options) {
-            java.awt.Color.RGBtoHSB(colourOption.getRed(), colourOption.getGreen(), colourOption.getBlue(), testColour);
-            //double delta = getColourDiff(normalValue, testColour);
+        int[] normalValue = getConfigEntryIntArray(option, valueKey);
+        if (normalValue  != null) {
+            normalValue[0] *= 2.0 * Math.PI;
+            double[] deltaValues = getConfigEntryDoubleArray(option, deltaKey);
+            float[] normalHsb = java.awt.Color.RGBtoHSB(normalValue[0], normalValue[1], normalValue[2], null);
 
-            double hueDelta = Math.abs(Math.atan2(Math.sin(testColour[0] - normalHsb[0]), Math.cos(testColour[0] - normalHsb[0])));
+            float[] testColour = new float[3];
+            for (@Nonnull ColourResponse colourOption : options) {
+                java.awt.Color
+                        .RGBtoHSB(colourOption.getRed(), colourOption.getGreen(), colourOption.getBlue(), testColour);
+                testColour[0] *= 2.0 * Math.PI;
 
-            float saturationDelta = Math.abs(normalHsb[1] - testColour[1]);
-            float brightnessDelta = Math.abs(normalHsb[2] - testColour[2]);
+                double hueDelta = Math.abs(
+                        Math.atan2(Math.sin(testColour[0] - normalHsb[0]), Math.cos(testColour[0] - normalHsb[0])));
 
-            if (hueDelta < deltaValues[0] && saturationDelta < deltaValues[1] && brightnessDelta < deltaValues[2]) {
-                possibleColours.add(colourOption);
+                float saturationDelta = Math.abs(normalHsb[1] - testColour[1]);
+                float brightnessDelta = Math.abs(normalHsb[2] - testColour[2]);
+
+                if ((hueDelta < deltaValues[0]) && (saturationDelta < deltaValues[1]) &&
+                    (brightnessDelta < deltaValues[2])) {
+                    possibleColours.add(colourOption);
+                }
             }
         }
 
@@ -213,22 +283,28 @@ public final class CultureScreenController implements ScreenController {
             possibleColours = options;
         }
 
-        if (possibleColours.size() == 1) return possibleColours.get(0);
+        if (possibleColours.size() == 1) {
+            return possibleColours.get(0);
+        }
         int selectedIndex = random.nextInt(possibleColours.size());
         return possibleColours.get(selectedIndex);
     }
 
     private double getConfigEntryDouble(int option, @Nonnull String key) {
         String entry = getConfigEntry(option, key);
-        if (entry == null) return 0.0;
+        if (entry == null) {
+            return 0.0;
+        }
 
         return Double.parseDouble(entry);
     }
 
-    @Nonnull
+    @Nullable
     private int[] getConfigEntryIntArray(int option, @Nonnull String key) {
         String entry = getConfigEntry(option, key);
-        if (entry == null) return new int[] {0, 1};
+        if (entry == null) {
+            return null;
+        }
 
         String[] parts = entry.split(",");
         return Arrays.asList(parts).stream().mapToInt(Integer::parseInt).toArray();
@@ -237,7 +313,9 @@ public final class CultureScreenController implements ScreenController {
     @Nonnull
     private double[] getConfigEntryDoubleArray(int option, @Nonnull String key) {
         String entry = getConfigEntry(option, key);
-        if (entry == null) return new double[] {0.0, 1.0};
+        if (entry == null) {
+            return new double[]{0.0, 1.0};
+        }
 
         String[] parts = entry.split(",");
         return Arrays.asList(parts).stream().mapToDouble(Double::parseDouble).toArray();
@@ -255,17 +333,23 @@ public final class CultureScreenController implements ScreenController {
 
     @Nullable
     private String getConfigEntry(int option, @Nonnull String key) {
-        String raceTypeKey = "race." + raceId + ".type." + raceTypeId + ".option." + option + "." + key;
+        String raceTypeKey = "race." + raceId + ".type." + raceTypeId + ".option." + option + '.' + key;
         String raceTypeResult = cultureConfig.getProperty(raceTypeKey, null);
-        if (raceTypeResult != null) return raceTypeResult;
+        if (raceTypeResult != null) {
+            return raceTypeResult;
+        }
 
-        String raceKey = "race." + raceId + ".option." + option + "." + key;
+        String raceKey = "race." + raceId + ".option." + option + '.' + key;
         String raceResult = cultureConfig.getProperty(raceKey, null);
-        if (raceResult != null) return raceResult;
+        if (raceResult != null) {
+            return raceResult;
+        }
 
-        String genericKey = "option." + option + "." + key;
+        String genericKey = "option." + option + '.' + key;
         String genericResult = cultureConfig.getProperty(genericKey, null);
-        if (genericResult != null) return genericResult;
+        if (genericResult != null) {
+            return genericResult;
+        }
 
         return null;
     }
@@ -298,7 +382,7 @@ public final class CultureScreenController implements ScreenController {
             container.hide();
         }
 
-        public void setup(@Nonnull String key) {
+        public void setup(@Nonnull String key, @Nonnull NiftyImage niftyImage) {
             button.setText("${charCreateCulture-bundle." + key + ".title}");
             Objects.requireNonNull(button.getElement())
                   .getEffects(EffectEventId.onHover, Hint.class)
@@ -308,6 +392,8 @@ public final class CultureScreenController implements ScreenController {
             if (!container.isVisible()) {
                 container.show();
             }
+
+            image.getRenderer(ImageRenderer.class).setImage(niftyImage);
         }
     }
 }

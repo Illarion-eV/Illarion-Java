@@ -50,6 +50,7 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Nullable
     private final FrameAnimation animation;
+    private final boolean uiMode;
     @Nonnull
     private AvatarAttackMarkerState attackMarkerState;
     /**
@@ -57,17 +58,13 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
      * animated, such as the switch of levels and the sudden appearance of characters on the map. In such cases
      */
     private boolean animateLight;
-
     private int showHighlight;
-
     /**
      * The target light of this avatar. In case the light is set to be animated
      * the color this avatar is rendered with will approach this target light.
      */
     @Nonnull
     private Color targetLight;
-
-    private final boolean uiMode;
 
     public AvatarEntity(@Nonnull AvatarTemplate template, boolean uiMode) {
         super(template);
@@ -103,6 +100,11 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
     @Override
     public int getHighlight() {
         return showHighlight;
+    }
+
+    @Override
+    protected boolean performRendering() {
+        return uiMode || super.performRendering();
     }
 
     /**
@@ -197,16 +199,6 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
         stopAnimation();
     }
 
-    @Override
-    public boolean isShown() {
-        return uiMode || super.isShown();
-    }
-
-    @Override
-    protected boolean performRendering() {
-        return uiMode || super.performRendering();
-    }
-
     /**
      * Set the current frame of the avatar. This forwards the frame to the Entity super function but sends it also to
      * the cloth render.
@@ -232,6 +224,11 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
         attackMark.setScreenPos(coordinate);
     }
 
+    @Override
+    public boolean isShown() {
+        return uiMode || super.isShown();
+    }
+
     public void setHighlight(int value) {
         showHighlight = value;
     }
@@ -251,7 +248,7 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
      * @param group the group of the object that shall get a different color
      * @param color the new color that shall be used to color the graphic itself
      */
-    public void changeClothColor(@Nonnull AvatarClothGroup group, Color color) {
+    public void changeClothColor(@Nonnull AvatarClothGroup group, @Nullable Color color) {
         clothRender.changeBaseColor(group, color);
     }
 

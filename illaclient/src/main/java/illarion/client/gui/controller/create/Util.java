@@ -41,10 +41,14 @@ final class Util {
         List<IdNameResponse> beards = raceType.getBeards();
         if (!beards.isEmpty()) {
             avatarEntity.setClothItem(AvatarClothGroup.Beard, getRandom(beards).getId());
+        } else {
+            avatarEntity.setClothItem(AvatarClothGroup.Beard, 0);
         }
         List<IdNameResponse> hairs = raceType.getHairs();
         if (!hairs.isEmpty()) {
             avatarEntity.setClothItem(AvatarClothGroup.Hair, getRandom(hairs).getId());
+        } else {
+            avatarEntity.setClothItem(AvatarClothGroup.Hair, 0);
         }
         List<ColourResponse> skinColours = raceType.getSkinColours();
         if (!skinColours.isEmpty()) {
