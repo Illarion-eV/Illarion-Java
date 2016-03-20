@@ -91,7 +91,8 @@ public final class CultureScreenController implements ScreenController {
         }
 
         random = new Random();
-        colorRangePattern = Pattern.compile("\\[#([0-9A-F]{2}){3},#([0-9A-F]{2}){3}\\]", Pattern.CASE_INSENSITIVE);
+
+        colorRangePattern = Pattern.compile("\\[#([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})\\s*,\\s*#([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})\\]", Pattern.CASE_INSENSITIVE);
     }
 
     @NiftyEventSubscriber(pattern = "backToRaceBtn")
@@ -271,7 +272,7 @@ public final class CultureScreenController implements ScreenController {
             keyBuilder.setLength(valueKey.length());
             keyBuilder.append('.').append(rangeIndex);
 
-            String colorRangeDef = getConfigEntry(option, valueKey);
+            String colorRangeDef = getConfigEntry(option, keyBuilder);
             if (colorRangeDef == null) {
                 break;
             }
@@ -293,11 +294,8 @@ public final class CultureScreenController implements ScreenController {
             secondHsbColor = java.awt.Color.RGBtoHSB(secondColor[0], secondColor[1], secondColor[2], secondHsbColor);
 
             boolean hueOuterRange = false;
-            float hueRange[] = new float[] {Math.min(firstHsbColor[1], secondHsbColor[1]), Math.max(firstHsbColor[1], secondHsbColor[1])};
+            float hueRange[] = new float[] {Math.min(firstHsbColor[0], secondHsbColor[0]), Math.max(firstHsbColor[0], secondHsbColor[0])};
             if (hueRange[1] - hueRange[0] > 0.5f) {
-                float tmp = hueRange[0];
-                hueRange[0] = hueRange[1];
-                hueRange[1] = tmp;
                 hueOuterRange = true;
             }
             float saturationRange[] = new float[] {Math.min(firstHsbColor[1], secondHsbColor[1]), Math.max(firstHsbColor[1], secondHsbColor[1])};
@@ -381,7 +379,7 @@ public final class CultureScreenController implements ScreenController {
     }
 
     @Nullable
-    private String getConfigEntry(int option, @Nonnull String key) {
+    private String getConfigEntry(int option, @Nonnull CharSequence key) {
         String raceTypeKey = "race." + raceId + ".type." + raceTypeId + ".option." + option + '.' + key;
         String raceTypeResult = cultureConfig.getProperty(raceTypeKey, null);
         if (raceTypeResult != null) {
