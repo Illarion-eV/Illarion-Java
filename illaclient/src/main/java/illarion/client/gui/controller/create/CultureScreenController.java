@@ -49,6 +49,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 /**
@@ -89,6 +91,7 @@ public final class CultureScreenController implements ScreenController {
         }
 
         random = new Random();
+        colorRangePattern = Pattern.compile("\\[#([0-9A-F]{2}){3},#([0-9A-F]{2}){3}\\]", Pattern.CASE_INSENSITIVE);
     }
 
     @NiftyEventSubscriber(pattern = "backToRaceBtn")
@@ -185,10 +188,8 @@ public final class CultureScreenController implements ScreenController {
             if (textKey == null) {
                 option.setup();
             } else {
-                ColourResponse hairColour = selectColour(raceTypeResponse.getHairColours(), i, "hair.colour.value",
-                                                         "skin.colour.delta");
-                ColourResponse skinColour = selectColour(raceTypeResponse.getSkinColours(), i, "skin.colour.value",
-                                                         "skin.colour.delta");
+                ColourResponse hairColour = selectColour(raceTypeResponse.getHairColours(), i, "hair.colour");
+                ColourResponse skinColour = selectColour(raceTypeResponse.getSkinColours(), i, "skin.colour");
 
                 IdNameResponse beardValue = selectIndexValue(raceTypeResponse.getBeards(), i, "beard.id");
                 IdNameResponse hairValue = selectIndexValue(raceTypeResponse.getHairs(), i, "hair.id");
@@ -241,11 +242,14 @@ public final class CultureScreenController implements ScreenController {
             return null;
         }
 
-        return options.stream().filter(o -> o.getId() == selectedIndex).findFirst().get();
+        return options.stream().filter(o -> o.getId() == selectedIndex).findFirst().orElseGet(() -> options.get(0));
     }
 
+    @Nonnull
+    private final Pattern colorRangePattern;
+
     @Nullable
-    private ColourResponse selectColour(@Nonnull List<ColourResponse> options, int option, @Nonnull String valueKey, @Nonnull String deltaKey) {
+    private ColourResponse selectColour(@Nonnull List<ColourResponse> options, int option, @Nonnull String valueKey) {
         if (options.isEmpty()) {
             return null;
         }
@@ -254,28 +258,73 @@ public final class CultureScreenController implements ScreenController {
         }
 
         List<ColourResponse> possibleColours = new ArrayList<>();
-        int[] normalValue = getConfigEntryIntArray(option, valueKey);
-        if (normalValue  != null) {
-            normalValue[0] *= 2.0 * Math.PI;
-            double[] deltaValues = getConfigEntryDoubleArray(option, deltaKey);
-            float[] normalHsb = java.awt.Color.RGBtoHSB(normalValue[0], normalValue[1], normalValue[2], null);
 
-            float[] testColour = new float[3];
-            for (@Nonnull ColourResponse colourOption : options) {
-                java.awt.Color
-                        .RGBtoHSB(colourOption.getRed(), colourOption.getGreen(), colourOption.getBlue(), testColour);
-                testColour[0] *= 2.0 * Math.PI;
+        StringBuilder keyBuilder = new StringBuilder(valueKey);
+        int rangeIndex = -1;
 
-                double hueDelta = Math.abs(
-                        Math.atan2(Math.sin(testColour[0] - normalHsb[0]), Math.cos(testColour[0] - normalHsb[0])));
+        int firstColor[] = new int[3];
+        int secondColor[] = new int[3];
+        float firstHsbColor[] = null;
+        float secondHsbColor[] = null;
+        while (true) {
+            rangeIndex++;
+            keyBuilder.setLength(valueKey.length());
+            keyBuilder.append('.').append(rangeIndex);
 
-                float saturationDelta = Math.abs(normalHsb[1] - testColour[1]);
-                float brightnessDelta = Math.abs(normalHsb[2] - testColour[2]);
+            String colorRangeDef = getConfigEntry(option, valueKey);
+            if (colorRangeDef == null) {
+                break;
+            }
 
-                if ((hueDelta < deltaValues[0]) && (saturationDelta < deltaValues[1]) &&
-                    (brightnessDelta < deltaValues[2])) {
-                    possibleColours.add(colourOption);
+            Matcher matcher = colorRangePattern.matcher(colorRangeDef);
+            if (!matcher.matches()) {
+                continue;
+            }
+            if (matcher.groupCount() != 6) {
+                continue;
+            }
+
+            for (int i = 0; i < 3; i++) {
+                firstColor[i] = Integer.parseInt(matcher.group(i + 1), 16);
+                secondColor[i] = Integer.parseInt(matcher.group(i + 4), 16);
+            }
+
+            firstHsbColor = java.awt.Color.RGBtoHSB(firstColor[0], firstColor[1], firstColor[2], firstHsbColor);
+            secondHsbColor = java.awt.Color.RGBtoHSB(secondColor[0], secondColor[1], secondColor[2], secondHsbColor);
+
+            boolean hueOuterRange = false;
+            float hueRange[] = new float[] {Math.min(firstHsbColor[1], secondHsbColor[1]), Math.max(firstHsbColor[1], secondHsbColor[1])};
+            if (hueRange[1] - hueRange[0] > 0.5f) {
+                float tmp = hueRange[0];
+                hueRange[0] = hueRange[1];
+                hueRange[1] = tmp;
+                hueOuterRange = true;
+            }
+            float saturationRange[] = new float[] {Math.min(firstHsbColor[1], secondHsbColor[1]), Math.max(firstHsbColor[1], secondHsbColor[1])};
+            float brightnessRange[] = new float[] {Math.min(firstHsbColor[2], secondHsbColor[2]), Math.max(firstHsbColor[2], secondHsbColor[2])};
+
+            for (@Nonnull ColourResponse c : options) {
+                firstHsbColor = java.awt.Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), firstHsbColor);
+
+                if (hueOuterRange) {
+                    if (firstHsbColor[0] < hueRange[1] && firstHsbColor[0] > hueRange[0]) {
+                        continue;
+                    }
+                } else {
+                    if (firstHsbColor[0] < hueRange[0] || firstHsbColor[0] > hueRange[1]) {
+                        continue;
+                    }
                 }
+
+                if (firstHsbColor[1] < saturationRange[0] || firstHsbColor[1] > saturationRange[1]) {
+                    continue;
+                }
+
+                if (firstHsbColor[2] < brightnessRange[0] || firstHsbColor[2] > brightnessRange[1]) {
+                    continue;
+                }
+
+                possibleColours.add(c);
             }
         }
 
