@@ -17,7 +17,7 @@ ext {
     slf4jVersion = '1.7.18'
     logbackVersion = '1.1.6'
     janinoVersion = '2.7.8'
-    illarionResourcesVersion = '2.1.25.3-SNAPSHOT'
+    illarionResourcesVersion = '2.1.25.4-SNAPSHOT'
     niftyGuiVersion = '1.4.1'
     insubstantialVersion = '7.3'
 }
