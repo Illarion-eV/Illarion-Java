@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -143,7 +143,7 @@ public final class Lang implements MessageSource {
         try {
             return messages.getString(key);
         } catch (@Nonnull MissingResourceException e) {
-            LOGGER.warn("Failed searching translated version of: " + key);
+            LOGGER.warn("Failed searching translated version of: {}", key);
             return '<' + key + '>';
         }
     }
