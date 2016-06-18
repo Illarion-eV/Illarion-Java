@@ -19,9 +19,9 @@ apply plugin: 'maven-publish'
 archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
     compile project(':engine')
-    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.2'
-    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.2'
-    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.2', classifier: 'natives-desktop'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.3'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.3'
+    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.3', classifier: 'natives-desktop'
 }
 
 jar {
