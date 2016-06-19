@@ -29,7 +29,7 @@
             </effect>
             <panel width="100%" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" marginBottom="25px">
-                <panel width="500px" childLayout="horizontal" align="center">
+                <panel width="500px" childLayout="horizontal" align="center" marginBottom="20px">
                     <panel width="45%" childLayout="vertical">
                         <panel width="100%" height="100px" childLayout="center" id="culture1">
                             <control id="culture1#button" name="button" label="" width="100%" height="55px">
