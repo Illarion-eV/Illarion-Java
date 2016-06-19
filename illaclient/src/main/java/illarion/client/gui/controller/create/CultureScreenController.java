@@ -59,6 +59,8 @@ import java.util.stream.IntStream;
  */
 public final class CultureScreenController implements ScreenController {
     @Nonnull
+    public static final String NEXT_SCREEN_ID = "characterCreateJob";
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(CultureScreenController.class);
     @Nonnull
     private final AccountSystem accountSystem;
@@ -77,6 +79,8 @@ public final class CultureScreenController implements ScreenController {
     private List<CultureOption> options;
     @Nullable
     private Nifty nifty;
+    @Nonnull
+    private final Pattern colorRangePattern;
 
     public CultureScreenController(@Nonnull GameContainer container, @Nonnull AccountSystem accountSystem) {
         this.accountSystem = accountSystem;
@@ -110,6 +114,27 @@ public final class CultureScreenController implements ScreenController {
         nifty.gotoScreen("charSelect");
     }
 
+    @NiftyEventSubscriber(pattern = "culture[0-9]#button")
+    public void onCultureButtonClicked(@Nonnull String topic, @Nonnull ButtonClickedEvent event) {
+        assert nifty != null;
+
+        int cultureId = Integer.parseInt(Character.toString(topic.charAt(8)));
+        if (cultureId >= 0 && cultureId < 6) {
+            getNextScreenController().setCultureId(cultureId);
+            nifty.gotoScreen(NEXT_SCREEN_ID);
+        }
+    }
+
+    @Nonnull
+    private JobsScreenController getNextScreenController() {
+        assert nifty != null;
+
+        Screen jobScreen = nifty.getScreen(NEXT_SCREEN_ID);
+        assert jobScreen != null;
+
+        return (JobsScreenController) jobScreen.getScreenController();
+    }
+
     @Nullable
     public String getServerId() {
         return serverId;
@@ -117,6 +142,7 @@ public final class CultureScreenController implements ScreenController {
 
     public void setServerId(@Nullable String serverId) {
         this.serverId = serverId;
+        getNextScreenController().setServerId(serverId);
     }
 
     public int getRaceId() {
@@ -125,6 +151,7 @@ public final class CultureScreenController implements ScreenController {
 
     public void setRaceId(int raceId) {
         this.raceId = raceId;
+        getNextScreenController().setRaceId(raceId);
     }
 
     public int getRaceTypeId() {
@@ -133,6 +160,7 @@ public final class CultureScreenController implements ScreenController {
 
     public void setRaceTypeId(int raceTypeId) {
         this.raceTypeId = raceTypeId;
+        getNextScreenController().setRaceTypeId(raceTypeId);
     }
 
     @Nonnull
@@ -246,9 +274,6 @@ public final class CultureScreenController implements ScreenController {
 
         return options.stream().filter(o -> o.getId() == selectedIndex).findFirst().orElseGet(() -> options.get(0));
     }
-
-    @Nonnull
-    private final Pattern colorRangePattern;
 
     @Nullable
     private ColourResponse selectColour(@Nonnull List<ColourResponse> options, int option, @Nonnull String valueKey) {
@@ -420,7 +445,7 @@ public final class CultureScreenController implements ScreenController {
         @Nonnull
         private final Element image;
 
-        public CultureOption(@Nonnull Screen screen, @Nonnull String containerKey) {
+        CultureOption(@Nonnull Screen screen, @Nonnull String containerKey) {
             container = Objects.requireNonNull(screen.findElementById(containerKey));
             button = Objects.requireNonNull(container.findNiftyControl("#button", Button.class));
             image = Objects.requireNonNull(container.findElementById("#image"));

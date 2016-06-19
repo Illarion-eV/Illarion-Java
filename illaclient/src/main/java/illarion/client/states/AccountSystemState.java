@@ -80,6 +80,7 @@ public class AccountSystemState implements GameState {
         Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_gender.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_race.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_culture.xml");
+        Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_job.xml");
     }
 
     @Override
