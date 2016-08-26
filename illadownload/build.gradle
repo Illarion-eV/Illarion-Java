@@ -36,7 +36,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
+    compile group: 'org.ogce', name: 'xpp3', version: '1.1.6'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
     compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'

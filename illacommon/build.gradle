@@ -25,7 +25,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
+    compile group: 'org.ogce', name: 'xpp3', version: '1.1.6'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'biz.futureware.mantis', name: 'mantis-axis-soap-client', version: '1.2.19'
 }
