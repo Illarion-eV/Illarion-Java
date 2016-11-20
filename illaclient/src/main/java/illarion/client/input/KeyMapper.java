@@ -20,12 +20,16 @@ import illarion.client.gui.GameGui;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.util.Lang;
+import illarion.client.world.Char;
+import illarion.client.world.MapTile;
+import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.movement.KeyboardMovementHandler;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
+import illarion.common.types.ServerCoordinate;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
@@ -179,6 +183,16 @@ public final class KeyMapper {
                     World.getNet().sendCommand(new PickUpAllItemsCmd());
                 }
                 break;
+            case Space:
+                if (firstPressed) {
+                    Player player = World.getPlayer();
+                    Char character = player.getCharacter();
+                    ServerCoordinate front = new ServerCoordinate(player.getLocation(), character.getDirection());
+                    MapTile mapTile = World.getMap().getMapAt(front);
+                    if (mapTile != null) {
+                        mapTile.getInteractive().use();
+                    }
+                }
             case Enter:
                 if (firstPressed) {
                     World.getGameGui().getChatGui().activateChatBox();
