@@ -267,6 +267,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Key.Enter;
             case Keys.BACKSPACE:
                 return Key.Backspace;
+            case Keys.SPACE:
+                return Key.Space;
             case Keys.NUMPAD_0:
                 return Key.NumPad0;
             case Keys.NUMPAD_1:
@@ -419,6 +421,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Keys.ENTER;
             case Backspace:
                 return Keys.BACKSPACE;
+            case Space:
+                return Keys.SPACE;
             case NumPad0:
                 return Keys.NUMPAD_0;
             case NumPad1:
