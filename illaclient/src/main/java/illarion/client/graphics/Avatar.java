@@ -15,14 +15,18 @@
  */
 package illarion.client.graphics;
 
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
 import illarion.client.IllaClient;
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
+import illarion.client.net.client.LookAtCharCmd;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
+import illarion.client.util.LookAtTracker;
 import illarion.client.world.Char;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -88,6 +92,8 @@ public final class Avatar extends AvatarEntity {
      * update if this flag is valid or not.
      */
     private boolean renderName;
+
+    private Input input;
 
     private Avatar(@Nonnull AvatarTemplate template, @Nonnull Char parentChar) {
         super(template, false);
@@ -212,7 +218,7 @@ public final class Avatar extends AvatarEntity {
             return;
         }
 
-        Input input = container.getEngine().getInput();
+        input = container.getEngine().getInput();
 
         if (World.getPlayer().getCombatHandler().isAttacking(parentChar)) {
             setAttackMarkerState(AvatarAttackMarkerState.Attacking);
@@ -313,9 +319,8 @@ public final class Avatar extends AvatarEntity {
         }
 
         if (parentChar.isHuman()) {
-            Char charToName = parentChar;
-            World.getUpdateTaskManager().addTaskForLater(
-                    (container1, delta1) -> World.getGameGui().getDialogInputGui().showNamingDialog(charToName));
+            //Sending a LookAtCharCmd will open the character window on server response.
+            World.getNet().sendCommand(new LookAtCharCmd(parentChar.getCharId(), LookAtCharCmd.LOOKAT_STARE));
         } else {
             InteractiveChar interactiveChar = parentChar.getInteractive();
 

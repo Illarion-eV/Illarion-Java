@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ This file is part of the Illarion project.
+  ~
+  ~ Copyright © 2014 - Illarion e.V.
+  ~
+  ~ Illarion is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Illarion is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ @author Mike Kayn
+  -->
+<nifty-controls>
+    <controlDefinition name="dialog-character" style="illarion-dialog-character" visibleToMouse="true"
+                       controller="org.illarion.nifty.controls.dialog.input.DialogCharacterControl">
+        <control name="window" title="Nachricht" id="#window" visibleToMouse="true" width="422px">
+            <panel childLayout="vertical" visibleToMouse="true" width="380px">
+                <control name="label" id="#description" style="nifty-label" wrap="true" width="380px"/>
+                <panel height="5px" width="1px"/>
+                <control name="textfield" id="#input" maxlength="65536" width="380px"/>
+                <panel height="5px" width="1px"/>
+                <control name="label" id="#lookAt" style="nifty-label" wrap="true" width="380px"/>
+                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="380px">
+                    <panel childLayout="horizontal" align="center">
+                        <control name="button" id="#buttonLeft" label="OK" width="90px" marginRight="5px"/>
+                        <control name="button" id="#buttonRight" label="Cancel" width="90px" marginLeft="5px"/>
+                    </panel>
+                </panel>
+            </panel>
+        </control>
+    </controlDefinition>
+</nifty-controls>

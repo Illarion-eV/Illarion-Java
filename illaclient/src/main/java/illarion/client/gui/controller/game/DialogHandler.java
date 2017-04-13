@@ -52,6 +52,8 @@ import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.*;
 import org.illarion.nifty.controls.DialogInput.DialogButton;
+import org.illarion.nifty.controls.dialog.input.DialogCharacterControl;
+import org.illarion.nifty.controls.dialog.input.builder.DialogCharacterBuilder;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
@@ -589,27 +591,32 @@ public final class DialogHandler
     }
 
     @Override
-    public void showNamingDialog(@Nonnull Char chara) {
+    public void showCharacterDialog(@Nonnull CharacterId charId, String lookAt) {
         Element parentArea = screen.findElementById("windows");
-        CharacterId charId = chara.getCharId();
-        if ((charId == null) || !charId.isHuman() || World.getPlayer().isPlayer(charId)) {
+        Char chara = World.getPeople().getCharacter(charId);
+
+        if (chara == null || !chara.isHuman() || World.getPlayer().isPlayer(charId)) {
+            log.warn("Tried to open a character dialog on an invalid character.");
             return;
         }
         String currentCustomName = chara.getCustomName();
-        String dialogName = "namingDialog" + Long.toString(charId.getValue());
+        String dialogName = "characterDialog" + Long.toString(charId.getValue());
         if (parentArea.findElementById(dialogName) != null) {
             return;
         }
-        DialogInputBuilder builder = new DialogInputBuilder(dialogName, Lang.getMsg("gui.dialog.naming.title"));
-        builder.description(String.format(Lang.getMsg("gui.dialog.naming.description"), chara.getName()));
-        builder.buttonLeft(Lang.getMsg("gui.dialog.naming.ok"));
-        builder.buttonRight(Lang.getMsg("gui.dialog.naming.cancel"));
+        DialogCharacterBuilder builder = new DialogCharacterBuilder(dialogName, Lang.getMsg("gui.dialog.character.title"));
+        builder.description(String.format(Lang.getMsg("gui.dialog.character.description"), chara.getName()));
+        builder.buttonLeft(Lang.getMsg("gui.dialog.character.ok"));
+        builder.buttonRight(Lang.getMsg("gui.dialog.character.cancel"));
         builder.dialogId(charId.getAsInteger());
+        builder.lookAt(lookAt);
         builder.maxLength(255);
         builder.initalText((currentCustomName == null) ? "" : currentCustomName);
-        builder.style("illarion-dialog-input-single");
+
+        builder.style("illarion-dialog-character");
+        log.debug("Built Character dialog: " + builder.toString());
         builders.add(new BuildWrapper(builder, parentArea, createdElement -> {
-            DialogInput control = createdElement.getNiftyControl(DialogInput.class);
+            DialogCharacterControl control = createdElement.getNiftyControl(DialogCharacterControl.class);
             if (control != null) {
                 control.setFocus();
             }
@@ -824,6 +831,8 @@ public final class DialogHandler
         lastMerchantTooltipItem = null;
     }
 
+
+
     @NiftyEventSubscriber(pattern = "inputDialog[0-9]+")
     public void handleInputConfirmedEvent(String topic, @Nonnull DialogInputConfirmedEvent event) {
         if (event.getPressedButton() == DialogButton.LeftButton) {
@@ -833,7 +842,7 @@ public final class DialogHandler
         }
     }
 
-    @NiftyEventSubscriber(pattern = "namingDialog[-0-9]+")
+    @NiftyEventSubscriber(pattern = "characterDialog[-0-9]+")
     public void handleNamingConfirmedEvent(String topic, @Nonnull DialogInputConfirmedEvent event) {
         if (event.getPressedButton() == DialogButton.LeftButton) {
             CharacterId id = new CharacterId(event.getDialogId());

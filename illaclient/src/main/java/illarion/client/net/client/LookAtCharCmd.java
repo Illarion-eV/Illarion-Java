@@ -18,6 +18,8 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +29,9 @@ import javax.annotation.Nonnull;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class LookatCharCmd extends AbstractCommand {
+public final class LookAtCharCmd extends AbstractCommand {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(LookAtCharCmd.class);
     /**
      * FrameAnimationMode for looking in a polite way at a character. That leads to the point
      * that the character you are looking at gets no message but you get only
@@ -56,19 +60,12 @@ public final class LookatCharCmd extends AbstractCommand {
 
     /**
      * Default constructor for the look at character command.
-     */
-    public LookatCharCmd() {
-        super(CommandList.CMD_LOOKAT_CHAR);
-    }
-
-    /**
-     * Set the target of the look at and the way the look at is done.
-     *
      * @param lookAtCharId the ID of the char we want to look at
      * @param lookAtMode the mode of the look at so the method used to look at
      * the target character
      */
-    public void examine(CharacterId lookAtCharId, int lookAtMode) {
+    public LookAtCharCmd(CharacterId lookAtCharId, int lookAtMode) {
+        super(CommandList.CMD_LOOKAT_CHAR);
         charId = lookAtCharId;
         mode = (byte) lookAtMode;
     }
@@ -93,5 +90,6 @@ public final class LookatCharCmd extends AbstractCommand {
     public void encode(@Nonnull NetCommWriter writer) {
         charId.encode(writer);
         writer.writeByte(mode);
+        log.debug("Encoding a look at char message   for {} with the mode {}", charId, mode);
     }
 }
