@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion project.
+  ~
+  ~ Copyright © 2015 - Illarion e.V.
+  ~
+  ~ Illarion is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Illarion is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  -->
+<nifty-styles>
+    <style id="illarion-dialog-character">
+        <attributes/>
+    </style>
+
+    <style id="illarion-dialog-character#input" base="nifty-textfield">
+        <attributes wrap="false" height="100px" margin="3px"/>
+    </style>
+
+    <style id="illarion-dialog-character#input#panel" base="nifty-textfield#panel"/>
+    <style id="illarion-dialog-character#input#field" base="nifty-textfield#field"/>
+    <style id="illarion-dialog-character#input#text" base="nifty-textfield#text"/>
+    <style id="illarion-dialog-character#input#cursor-panel" base="nifty-textfield#cursor-panel"/>
+    <style id="illarion-dialog-character#input#cursor" base="nifty-textfield#cursor"/>
+
+    <style id="illarion-dialog-character#buttonLeft">
+        <attributes margin="3px"/>
+    </style>
+
+    <style id="illarion-dialog-character#buttonRight">
+        <attributes margin="3px"/>
+    </style>
+
+</nifty-styles>

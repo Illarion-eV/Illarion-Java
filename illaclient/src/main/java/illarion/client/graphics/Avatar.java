@@ -21,6 +21,7 @@ import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
+import illarion.client.net.client.LookAtCharCmd;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.Resource;
@@ -124,6 +125,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     private Color targetLight;
 
     private int showHighlight;
+
+    private Input input;
 
     private Avatar(@Nonnull AvatarTemplate template, @Nonnull Char parentChar) {
         super(template);
@@ -307,6 +310,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         return super.isEventProcessed(container, delta, event);
     }
 
+    @Override
+    public void update(@Nonnull GameContainer container, int delta) {
+        input = container.getEngine().getInput();
+        super.update(container, delta);
+    }
+
     /**
      * This function handles click events on the avatars.
      *
@@ -378,8 +387,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (parentChar.isHuman()) {
-            Char charToName = parentChar;
-            World.getUpdateTaskManager().addTaskForLater((container1, delta1) -> World.getGameGui().getDialogInputGui().showNamingDialog(charToName));
+            //Sending a LookAtCharCmd will open the character window on server response.
+            World.getNet().sendCommand(new LookAtCharCmd(parentChar.getCharId(), LookAtCharCmd.LOOKAT_STARE));
         } else {
             InteractiveChar interactiveChar = parentChar.getInteractive();
 
