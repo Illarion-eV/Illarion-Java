@@ -14,9 +14,9 @@
  * GNU General Public License for more details.
  */
 ext {
-    slf4jVersion = '1.7.21'
-    logbackVersion = '1.1.7'
-    janinoVersion = '3.0.6'
+    slf4jVersion = '1.7.25'
+    logbackVersion = '1.2.2'
+    janinoVersion = '3.0.7'
     illarionResourcesVersion = '2.1.25.10-SNAPSHOT'
     niftyGuiVersion = '1.4.2'
     insubstantialVersion = '7.3'
