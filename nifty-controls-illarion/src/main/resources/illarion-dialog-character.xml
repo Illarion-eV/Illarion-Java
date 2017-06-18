@@ -23,7 +23,7 @@
                 <panel height="5px" width="1px"/>
                 <control name="textfield" id="#input" maxlength="65536" width="380px"/>
                 <panel height="5px" width="1px"/>
-                <control name="label" id="#lookAt" style="nifty-label" wrap="true" width="380px"/>
+                <control name="label" id="#lookAt" style="nifty-label" wrap="true" width="380px" textHAlign="justify"/>
                 <panel id="#buttons" childLayout="center" visibleToMouse="true" width="380px">
                     <panel childLayout="horizontal" align="center">
                         <control name="button" id="#buttonLeft" label="OK" width="90px" marginRight="5px"/>
