@@ -126,8 +126,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     private int showHighlight;
 
-    private Input input;
-
     private Avatar(@Nonnull AvatarTemplate template, @Nonnull Char parentChar) {
         super(template);
         attackMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER, this);
@@ -308,12 +306,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         return super.isEventProcessed(container, delta, event);
-    }
-
-    @Override
-    public void update(@Nonnull GameContainer container, int delta) {
-        input = container.getEngine().getInput();
-        super.update(container, delta);
     }
 
     /**
