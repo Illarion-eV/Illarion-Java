@@ -32,8 +32,10 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
+import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.DisplayCoordinate;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -337,6 +339,16 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (event.getKey() == Button.Left) {
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                ServerCoordinate target = parentChar.getLocation();
+                log.debug("Single alt-click on character {} at {}", parentChar, target);
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(target);
+                handler.assumeControl();
+                return true;
+            }
+
             if (delayedWalkingHandler != null) {
                 delayedWalkingHandler.pulse();
             } else {
@@ -379,9 +391,20 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (parentChar.isHuman()) {
+            // Not checking for Alt pressed, because LookAtCharCmd makes sense in any case.
             //Sending a LookAtCharCmd will open the character window on server response.
             World.getNet().sendCommand(new LookAtCharCmd(parentChar.getCharId(), LookAtCharCmd.LOOKAT_STARE));
         } else {
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                ServerCoordinate target = parentChar.getLocation();
+                log.debug("Double alt-click on character {} at {}", parentChar, target);
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(target);
+                handler.assumeControl();
+                return true;
+            }
+
             InteractiveChar interactiveChar = parentChar.getInteractive();
 
             if (interactiveChar.isInUseRange()) {
