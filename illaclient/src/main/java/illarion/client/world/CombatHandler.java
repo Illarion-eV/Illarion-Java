@@ -18,6 +18,7 @@ package illarion.client.world;
 import illarion.client.net.client.AttackCmd;
 import illarion.client.net.client.StandDownCmd;
 import illarion.common.types.CharacterId;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -148,6 +150,33 @@ public final class CombatHandler {
     public void confirmAttack() {
         attackedChar = unconfirmedChars.poll();
         log.debug("Attack confirmed received from server. Now attacking: {}", attackedChar);
+    }
+
+
+    /**
+     * Attack the nearest monster, using euclidean distance on same Z level.
+     */
+    public void attackNearestMonster() {
+        log.debug("Looking for nearest monster to atttack");
+        List<Char> allKnownChars = World.getPeople().getAllCharacters();
+        Char candidateChar = null;
+        double candidateDistance = Double.POSITIVE_INFINITY;
+        for (Char character : allKnownChars) {
+            if (character.isMonster()) {
+                double distance = ServerCoordinate.getDistance(character.getLocation(), World.getPlayer().getLocation());
+                if ((character.getLocation().getZ() == World.getPlayer().getLocation().getZ()) && (distance < candidateDistance)) {
+                    // found a closer monster
+                    candidateChar = character;
+                    candidateDistance = distance;
+                    if (candidateDistance <= 1)
+                        // good enough
+                        break;
+                }
+            }
+        }
+        if (candidateChar != null) {
+            setAttackTarget(candidateChar);
+        }
     }
 
     /**
