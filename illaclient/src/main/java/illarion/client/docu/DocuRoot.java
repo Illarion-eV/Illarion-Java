@@ -45,6 +45,7 @@ public final class DocuRoot implements Iterable<DocuEntry> {
         DocuNode docu = new DocuNode("mouse");
         docu.addChild("clickLeft");
         docu.addChild("holdLeft");
+        docu.addChild("altClickLeft");
         docu.addChild("doubleLeft");
         docu.addChild("clickRight");
         docu.addChild("moveItem");
