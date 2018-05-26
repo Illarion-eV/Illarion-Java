@@ -36,9 +36,9 @@ processResources.dependsOn("downloadSkills")
 task downloadSkills(type: Download) {
     onlyIf { !gradle.startParameter.isOffline() }
     if (rootProject.hasProperty('releaseBuild')) {
-        src 'http://illarion.org/data/xml_skills.php?server=1'
+        src 'https://illarion.org/data/xml_skills.php?server=1'
     } else {
-        src 'http://illarion.org/data/xml_skills.php'
+        src 'https://illarion.org/data/xml_skills.php'
     }
     dest project.projectDir.path + '/src/main/resources/skills.xml'
     onlyIfNewer true
