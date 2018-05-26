@@ -125,7 +125,7 @@ javafx {
     width = 620
     height = 410
     embedJNLP = true
-    codebase = 'http://illarion.org/media/java/launcher'
+    codebase = 'https://illarion.org/media/java/launcher'
 }
 
 if (hasTargetDistDir) {
