@@ -25,7 +25,7 @@ class MantisConnector {
     static final String STANDARD_FILTER = "Automatic Error Reports";
 
     @Nonnull
-    private static final String SOAP_CONNECTOR = "http://illarion.org/mantis/api/soap/mantisconnect.php";
+    private static final String SOAP_CONNECTOR = "https://illarion.org/mantis/api/soap/mantisconnect.php";
 
     @Nonnull
     private final MantisConnectPortType connectPortType;
