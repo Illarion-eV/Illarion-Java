@@ -126,12 +126,12 @@ class RequestHandler implements AutoCloseable {
         }
         HttpURLConnection httpConnection = (HttpURLConnection) urlConnection;
 
-        if (httpConnection instanceof HttpsURLConnection) {
-            SSLSocketFactory factory = IllarionSSLSocketFactory.getFactory();
-            if (factory != null) {
-                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(factory);
-            }
-        }
+        //if (httpConnection instanceof HttpsURLConnection) {
+        //    SSLSocketFactory factory = IllarionSSLSocketFactory.getFactory();
+        //    if (factory != null) {
+        //        ((HttpsURLConnection) urlConnection).setSSLSocketFactory(factory);
+        //    }
+        //}
 
         Object payload = request.getData();
         if (payload != null) {
