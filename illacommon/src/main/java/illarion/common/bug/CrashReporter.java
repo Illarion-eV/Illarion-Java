@@ -91,7 +91,7 @@ public final class CrashReporter {
     static {
         URL result = null;
         try {
-            result = new URL("http://illarion.org/mantis/api/soap/mantisconnect.php"); //$NON-NLS-1$
+            result = new URL("https://illarion.org/mantis/api/soap/mantisconnect.php"); //$NON-NLS-1$
         } catch (@Nonnull MalformedURLException e) {
             log.warn("Preparing the crash report target URL failed. Crash reporter not functional."); //$NON-NLS-1$
         }
