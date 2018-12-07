@@ -19,6 +19,7 @@ import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
+import illarion.common.memory.MemoryPools;
 import illarion.common.types.DisplayCoordinate;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
@@ -148,7 +149,9 @@ public final class MapDisplayManager implements AnimatedMove {
         Camera.getInstance().setViewport(-offX, -offY, container.getWidth(), container.getHeight());
 
         Input engineInput = container.getEngine().getInput();
-        gameScene.publishEvent(new CurrentMouseLocationEvent(engineInput.getMouseX(), engineInput.getMouseY()));
+        CurrentMouseLocationEvent event = MemoryPools.get(CurrentMouseLocationEvent.class);
+        event.set(engineInput.getMouseX(), engineInput.getMouseY());
+        gameScene.publishEvent(event);
         gameScene.update(container, delta);
         updateFog(container);
         updateDeadView(container);
