@@ -18,6 +18,7 @@ package illarion.client.input;
 import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.gui.AbstractMultiActionHelper;
+import illarion.common.memory.MemoryPools;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.input.*;
 import org.slf4j.Logger;
@@ -273,7 +274,9 @@ public final class InputReceiver implements InputListener {
         if (enabled) {
             pointAtHelper.setInputData(mouseX, mouseY);
             pointAtHelper.pulse();
-            EventBus.publish(new MoveOnMapEvent(mouseX, mouseY));
+            MoveOnMapEvent event = MemoryPools.get(MoveOnMapEvent.class);
+            event.set(mouseX, mouseY);
+            EventBus.publish(event);
         }
     }
 
