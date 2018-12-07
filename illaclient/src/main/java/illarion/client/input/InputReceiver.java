@@ -132,7 +132,9 @@ public final class InputReceiver implements InputListener {
 
         @Override
         public void executeAction(int count) {
-            EventBus.publish(new PointOnMapEvent(x, y));
+            PointOnMapEvent event = MemoryPools.get(PointOnMapEvent.class);
+            event.set(x, y);
+            EventBus.publish(event);
         }
     }
 
