@@ -37,6 +37,24 @@ public final class ClickOnMapEvent extends AbstractMouseOnMapEvent {
         super(key, x, y);
     }
 
+    /**
+     * Create and initialize such an event.
+     */
+    public ClickOnMapEvent() {
+        super();
+    }
+
+    /**
+     * Initialize such an event.
+     *
+     * @param key the mouse key that was clicked
+     * @param x the x coordinate of the click
+     * @param y the y coordinate of the click
+     */
+    public void set (@Nonnull Button key, int x, int y) {
+        super.set(key, x, y);
+    }
+
     @Override
     public void notHandled() {
         if (getKey() == Button.Right) {

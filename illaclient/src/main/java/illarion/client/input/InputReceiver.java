@@ -86,7 +86,9 @@ public final class InputReceiver implements InputListener {
                     if (log.isDebugEnabled()) {
                         log.debug("Raising single click event for {} button at {} {}", key.name(), x, y);
                     }
-                    EventBus.publish(new ClickOnMapEvent(key, x, y));
+                    ClickOnMapEvent event = MemoryPools.get(ClickOnMapEvent.class);
+                    event.set(key, x, y);
+                    EventBus.publish(event);
                     break;
                 case 2:
                     if (log.isDebugEnabled()) {
@@ -258,7 +260,9 @@ public final class InputReceiver implements InputListener {
                 log.debug("Received {} mouse clicked {} times at {}, {}", button, count, mouseX, mouseY);
                 switch (count) {
                     case 1:
-                        World.getMapDisplay().getGameScene().publishEvent(new ClickOnMapEvent(button, mouseX, mouseY));
+                        ClickOnMapEvent event = MemoryPools.get(ClickOnMapEvent.class);
+                        event.set(button, mouseX, mouseY);
+                        World.getMapDisplay().getGameScene().publishEvent(event);
                         break;
                     case 2:
                         World.getMapDisplay().getGameScene()
