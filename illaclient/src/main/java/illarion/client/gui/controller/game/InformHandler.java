@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,161 +48,45 @@ import java.util.Arrays;
  */
 public final class InformHandler implements InformGui, ScreenController {
     /**
-     * This task is created as storage for the creation on the information display.
-     */
-    private final class InformBuildTask implements UpdateTask {
-        /**
-         * The element builder that is executed to create the inform message.
-         */
-        @Nonnull
-        private final ElementBuilder builder;
-
-        /**
-         * The element that will be parent to the elements created by the builder.
-         */
-        @Nonnull
-        private final Element parent;
-
-        /**
-         * The element that needs to get a new layout once the inform is displayed.
-         */
-        @Nonnull
-        private final Element layoutParent;
-
-        /**
-         * The optional action that is executed before the inform is build.
-         */
-        @Nullable
-        private final Runnable prepareAction;
-
-        /**
-         * Create a new instance of this build task that stores all the information needed to create the inform
-         * message.
-         *
-         * @param informBuilder the element builder that creates the message
-         * @param parentElement the parent element that will store the elements created by the element builder
-         * @param layoutParent the element that needs to get a new layout once the inform is displayed
-         * @param prepareAction the action executed directly before the task is build
-         */
-        InformBuildTask(@Nonnull ElementBuilder informBuilder,
-                        @Nonnull Element parentElement,
-                        @Nonnull Element layoutParent,
-                        @Nullable Runnable prepareAction) {
-            builder = informBuilder;
-            parent = parentElement;
-            this.layoutParent = layoutParent;
-            this.prepareAction = prepareAction;
-        }
-
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            if (!parent.isVisible()) {
-                parent.showWithoutEffects();
-            }
-
-            if (prepareAction != null) {
-                prepareAction.run();
-            }
-
-            Element msg = builder.build(parentNifty, parentScreen, parent);
-            msg.showWithoutEffects();
-            layoutParent.layoutElements();
-            msg.hide(new RemoveEndNotify(msg));
-        }
-    }
-
-    /**
-     * This utility class is a end notification that will trigger the removal of a target element. This is needed to
-     * remove the server messages again from the screen.
-     */
-    private static final class RemoveEndNotify implements EndNotify {
-        /**
-         * The target element.
-         */
-        private final Element target;
-
-        /**
-         * The constructor of this class.
-         *
-         * @param element the element to remove
-         */
-        RemoveEndNotify(Element element) {
-            target = element;
-        }
-
-        @Override
-        public void perform() {
-            target.markForRemoval(new LayoutElementsEndNotify(target.getParent()));
-        }
-    }
-
-    /**
-     * This utility class is a end notification that will trigger the calculation of the layout of a target element.
-     * This is needed to put the parent container of the server informs back into shape.
-     */
-    private static final class LayoutElementsEndNotify implements EndNotify {
-        /**
-         * The target element.
-         */
-        private final Element target;
-
-        /**
-         * The constructor of this class.
-         *
-         * @param element the element to layout
-         */
-        LayoutElementsEndNotify(Element element) {
-            target = element;
-        }
-
-        @Override
-        public void perform() {
-            target.layoutElements();
-
-            if (target.getChildren().isEmpty()) {
-                target.hide();
-            }
-        }
-    }
-
-    /**
      * The logger that is used for the logging output of this class.
      */
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(InformHandler.class);
-
     /**
      * The instance of the Nifty-GUI this handler is bound to.
      */
     private Nifty parentNifty;
-
     /**
      * The instance of the screen this handler is operating on.
      */
     private Screen parentScreen;
-
     /**
      * This is the panel that will be parent to all broadcast messages.
      */
     @Nullable
     private Element broadcastParentPanel;
-
     /**
      * This is the panel that will be parent to all server messages.
      */
     @Nullable
     private Element serverParentPanel;
-
     /**
      * This is the panel that will be parent to all text to messages.
      */
     @Nullable
     private Element textToParentPanel;
-
     /**
      * This is the panel that will be parent to all text-to messages.
      */
+    @Nullable
     private Element scriptParentPanel;
+
+    private static int getScriptInformDisplayTime(@Nonnull CharSequence text, int priority) {
+        if (priority == 0) {
+            return 5000;// + (text.length() * 50);
+        }
+        return 8000;// + (text.length() * 50);
+    }
 
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
@@ -216,14 +100,14 @@ public final class InformHandler implements InformGui, ScreenController {
     }
 
     @Override
-    public void onEndScreen() {
-        Arrays.asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel).stream()
-                .filter(panel -> panel != null).forEach(panel -> panel.getChildren().forEach(Element::markForRemoval));
+    public void onStartScreen() {
+        // nothing to do
     }
 
     @Override
-    public void onStartScreen() {
-        // nothing to do
+    public void onEndScreen() {
+        Arrays.asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel).stream()
+                .filter(panel -> panel != null).forEach(panel -> panel.getChildren().forEach(Element::markForRemoval));
     }
 
     @Override
@@ -243,34 +127,6 @@ public final class InformHandler implements InformGui, ScreenController {
         labelBuilder.onHideEffect(effectBuilder);
 
         showInform(labelBuilder, broadcastParentPanel, broadcastParentPanel.getParent());
-    }
-
-    /**
-     * Show a inform on the screen.
-     *
-     * @param informBuilder the builder that is meant to create the inform message
-     * @param parent the parent element that stores the inform message
-     * @param layoutParent the element that needs to get its layout recalculated
-     */
-    public void showInform(@Nonnull ElementBuilder informBuilder,
-                           @Nonnull Element parent,
-                           @Nonnull Element layoutParent) {
-        showInform(informBuilder, parent, layoutParent, null);
-    }
-
-    /**
-     * Show a inform on the screen.
-     *
-     * @param informBuilder the builder that is meant to create the inform message
-     * @param parent        the parent element that stores the inform message
-     * @param layoutParent  the element that needs to get its layout recalculated
-     * @param prepareAction the action executed right before the element is build
-     */
-    public void showInform(@Nonnull ElementBuilder informBuilder,
-                           @Nonnull Element parent,
-                           @Nonnull Element layoutParent,
-                           @Nullable Runnable prepareAction) {
-        World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent, prepareAction));
     }
 
     /**
@@ -336,13 +192,6 @@ public final class InformHandler implements InformGui, ScreenController {
         showInform(panelBuilder, scriptParentPanel, scriptParentPanel.getParent());
     }
 
-    private static int getScriptInformDisplayTime(@Nonnull CharSequence text, int priority) {
-        if (priority == 0) {
-            return 5000;// + (text.length() * 50);
-        }
-        return 8000;// + (text.length() * 50);
-    }
-
     @Override
     public void showServerInform(@Nonnull String message) {
         if (serverParentPanel == null) {
@@ -395,5 +244,151 @@ public final class InformHandler implements InformGui, ScreenController {
         labelBuilder.onHideEffect(effectBuilder);
 
         showInform(labelBuilder, textToParentPanel, textToParentPanel.getParent());
+    }
+
+    /**
+     * Show a inform on the screen.
+     *
+     * @param informBuilder the builder that is meant to create the inform message
+     * @param parent the parent element that stores the inform message
+     * @param layoutParent the element that needs to get its layout recalculated
+     */
+    public void showInform(@Nonnull ElementBuilder informBuilder,
+                           @Nonnull Element parent,
+                           @Nonnull Element layoutParent) {
+        showInform(informBuilder, parent, layoutParent, null);
+    }
+
+    /**
+     * Show a inform on the screen.
+     *
+     * @param informBuilder the builder that is meant to create the inform message
+     * @param parent        the parent element that stores the inform message
+     * @param layoutParent  the element that needs to get its layout recalculated
+     * @param prepareAction the action executed right before the element is build
+     */
+    public void showInform(@Nonnull ElementBuilder informBuilder,
+                           @Nonnull Element parent,
+                           @Nonnull Element layoutParent,
+                           @Nullable Runnable prepareAction) {
+        World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent, prepareAction));
+    }
+
+    /**
+     * This utility class is a end notification that will trigger the removal of a target element. This is needed to
+     * remove the server messages again from the screen.
+     */
+    private static final class RemoveEndNotify implements EndNotify {
+        /**
+         * The target element.
+         */
+        private final Element target;
+
+        /**
+         * The constructor of this class.
+         *
+         * @param element the element to remove
+         */
+        RemoveEndNotify(Element element) {
+            target = element;
+        }
+
+        @Override
+        public void perform() {
+            target.markForRemoval(new LayoutElementsEndNotify(target.getParent()));
+        }
+    }
+
+    /**
+     * This utility class is a end notification that will trigger the calculation of the layout of a target element.
+     * This is needed to put the parent container of the server informs back into shape.
+     */
+    private static final class LayoutElementsEndNotify implements EndNotify {
+        /**
+         * The target element.
+         */
+        private final Element target;
+
+        /**
+         * The constructor of this class.
+         *
+         * @param element the element to layout
+         */
+        LayoutElementsEndNotify(Element element) {
+            target = element;
+        }
+
+        @Override
+        public void perform() {
+            target.layoutElements();
+
+            if (target.getChildren().isEmpty()) {
+                target.hide();
+            }
+        }
+    }
+
+    /**
+     * This task is created as storage for the creation on the information display.
+     */
+    private final class InformBuildTask implements UpdateTask {
+        /**
+         * The element builder that is executed to create the inform message.
+         */
+        @Nonnull
+        private final ElementBuilder builder;
+
+        /**
+         * The element that will be parent to the elements created by the builder.
+         */
+        @Nonnull
+        private final Element parent;
+
+        /**
+         * The element that needs to get a new layout once the inform is displayed.
+         */
+        @Nonnull
+        private final Element layoutParent;
+
+        /**
+         * The optional action that is executed before the inform is build.
+         */
+        @Nullable
+        private final Runnable prepareAction;
+
+        /**
+         * Create a new instance of this build task that stores all the information needed to create the inform
+         * message.
+         *
+         * @param informBuilder the element builder that creates the message
+         * @param parentElement the parent element that will store the elements created by the element builder
+         * @param layoutParent the element that needs to get a new layout once the inform is displayed
+         * @param prepareAction the action executed directly before the task is build
+         */
+        InformBuildTask(@Nonnull ElementBuilder informBuilder,
+                        @Nonnull Element parentElement,
+                        @Nonnull Element layoutParent,
+                        @Nullable Runnable prepareAction) {
+            builder = informBuilder;
+            parent = parentElement;
+            this.layoutParent = layoutParent;
+            this.prepareAction = prepareAction;
+        }
+
+        @Override
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            if (!parent.isVisible()) {
+                parent.showWithoutEffects();
+            }
+
+            if (prepareAction != null) {
+                prepareAction.run();
+            }
+
+            Element msg = builder.build(parentNifty, parentScreen, parent);
+            msg.showWithoutEffects();
+            layoutParent.layoutElements();
+            msg.hide(new RemoveEndNotify(msg));
+        }
     }
 }

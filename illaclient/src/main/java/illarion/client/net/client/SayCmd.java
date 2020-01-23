@@ -68,14 +68,14 @@ public final class SayCmd extends AbstractCommand {
         }
     }
 
-    @Override
-    public void encode(@Nonnull NetCommWriter writer) throws IOException {
-        writer.writeString(text);
-    }
-
     @Nonnull
     @Override
     public String toString() {
-        return toString("Text: " + text + " Mode: " + getId());
+        return toString("Text: " + text + " FrameAnimationMode: " + getId());
+    }
+
+    @Override
+    public void encode(@Nonnull NetCommWriter writer) throws IOException {
+        writer.writeString(text);
     }
 }

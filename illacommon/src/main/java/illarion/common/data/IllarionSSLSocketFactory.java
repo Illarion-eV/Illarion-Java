@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,43 +37,21 @@ import java.security.cert.CertificateException;
  */
 public class IllarionSSLSocketFactory {
     /**
+     * The logger used to show the error output of this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(IllarionSSLSocketFactory.class);
+    /**
      * The singleton instance of this factory.
      */
     @Nullable
     @SuppressWarnings("RedundantFieldInitialization")
     private static volatile IllarionSSLSocketFactory instance = null;
-
-    /**
-     * Get the factory itself.
-     *
-     * @return the factory itself
-     */
-    @Nullable
-    public static SSLSocketFactory getFactory() {
-        IllarionSSLSocketFactory ref = instance;
-        if (ref == null) {
-            synchronized (IllarionSSLSocketFactory.class) {
-                if (instance == null) {
-                    ref = new IllarionSSLSocketFactory();
-                    instance = ref;
-                }
-            }
-        }
-        assert ref != null;
-        return ref.sslFactory;
-    }
-
     /**
      * The factory instance.
      */
     @Nullable
     private SSLSocketFactory sslFactory;
-
-    /**
-     * The logger used to show the error output of this class.
-     */
-    @Nonnull
-    private static final Logger log = LoggerFactory.getLogger(IllarionSSLSocketFactory.class);
 
     public IllarionSSLSocketFactory() {
         try {
@@ -103,5 +81,25 @@ public class IllarionSSLSocketFactory {
         } catch (UnrecoverableKeyException e) {
             log.error("Failed to open keystore.", e);
         }
+    }
+
+    /**
+     * Get the factory itself.
+     *
+     * @return the factory itself
+     */
+    @Nullable
+    public static SSLSocketFactory getFactory() {
+        IllarionSSLSocketFactory ref = instance;
+        if (ref == null) {
+            synchronized (IllarionSSLSocketFactory.class) {
+                ref = instance;
+                if (ref == null) {
+                    ref = new IllarionSSLSocketFactory();
+                    instance = ref;
+                }
+            }
+        }
+        return ref.sslFactory;
     }
 }

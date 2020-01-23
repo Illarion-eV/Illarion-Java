@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ public class IntegerParameter extends JFormattedTextField implements Parameter {
         DefaultFormatterFactory factory = new DefaultFormatterFactory(formatter);
         setFormatterFactory(factory);
         setHorizontalAlignment(JFormattedTextField.RIGHT);
-        setParameter(Long.valueOf(0));
+        setParameter(0L);
     }
 
     @Override

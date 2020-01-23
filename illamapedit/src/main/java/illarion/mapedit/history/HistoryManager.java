@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,6 @@ package illarion.mapedit.history;
 import illarion.mapedit.events.HistoryEvent;
 import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
-import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -27,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * The HistoryManager class stores the chain of all history entries that are connected
@@ -52,8 +52,8 @@ public class HistoryManager {
 
     public HistoryManager() {
         AnnotationProcessor.process(this);
-        undoList = new FastTable<>();
-        redoList = new FastTable<>();
+        undoList = new LinkedList<>();
+        redoList = new LinkedList<>();
     }
 
     /**
@@ -74,7 +74,7 @@ public class HistoryManager {
     /**
      * Check if this history contains events that can be done again.
      *
-     * @return <code>true</code> in case there are events that can be done again
+     * @return {@code true} in case there are events that can be done again
      */
     public boolean canRedo() {
         return !redoList.isEmpty();
@@ -83,7 +83,7 @@ public class HistoryManager {
     /**
      * Check if this history contains events that can be undone.
      *
-     * @return <code>true</code> in case there are events that can be undone
+     * @return {@code true} in case there are events that can be undone
      */
     public boolean canUndo() {
         return !undoList.isEmpty();

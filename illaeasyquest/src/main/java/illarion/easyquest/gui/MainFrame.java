@@ -19,6 +19,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.easyquest.Lang;
@@ -29,6 +30,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.OfficeSilver2007Skin;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -38,13 +40,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JRibbonFrame {
+    /**
+     * The identification of this application.
+     */
+    @Nonnull
+    public static final AppIdent APPLICATION = new AppIdent("Illarion easyQuest Editor"); //$NON-NLS-1$
+
     public static final int CREATE_NOTHING = 0;
     public static final int CREATE_STATUS = 1;
     public static final int CREATE_TRIGGER = 2;
+
+    /**
+     * The error and debug logger of the client.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(MainFrame.class);
 
     private int createType;
 
@@ -178,7 +195,12 @@ public class MainFrame extends JRibbonFrame {
     }
 
     public static void main(String... args) {
-        initLogging();
+        try {
+            initLogging();
+        } catch (IOException e) {
+            System.err.println("Failed to setup logging system!");
+            e.printStackTrace(System.err);
+        }
         Config.getInstance().init();
 
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
@@ -197,27 +219,42 @@ public class MainFrame extends JRibbonFrame {
         });
     }
 
-    private static void initLogging() {
-        System.out.println("Startup done.");
+    /**
+     * Prepare the proper output of the log files.
+     */
+    @SuppressWarnings("Duplicates")
+    private static void initLogging() throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
         Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
-        if (userDir == null) {
-            return;
+        if (!Files.isDirectory(userDir)) {
+            if (Files.exists(userDir)) {
+                Files.delete(userDir);
+            }
+            Files.createDirectories(userDir);
         }
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         ContextInitializer ci = new ContextInitializer(lc);
-        lc.reset();
         try {
-            ci.autoConfig();
-        } catch (JoranException e) {
-            e.printStackTrace();
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            URL resource = cl.getResource("logback-to-file.xml");
+            if (resource != null) {
+                ci.configureByResource(resource);
+            }
+        } catch (JoranException ignored) {
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+
+        //noinspection UseOfSystemOutOrSystemErr
+        System.out.println("Startup done.");
+        log.info("{} started.", APPLICATION.getApplicationIdentifier());
+        log.info("VM: {}", System.getProperty("java.version"));
+        log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
+                System.getProperty("os.arch"));
     }
 
     public static MainFrame getInstance() {

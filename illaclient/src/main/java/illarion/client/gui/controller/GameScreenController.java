@@ -21,7 +21,6 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.gui.*;
 import illarion.client.gui.controller.game.*;
-import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
@@ -119,7 +118,6 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(dialogHandler);
         addHandler(containerHandler);
         addHandler(closeGameHandler);
-        addHandler(new DisconnectHandler());
         addHandler(charStatusHandler);
         addHandler(skillsHandler);
         addHandler(questHandler);
@@ -289,7 +287,6 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Override
     public void onEndScreen() {
         childControllers.forEach(ScreenController::onEndScreen);
-        World.cleanEnvironment();
         IllaClient.getCfg().save();
     }
 

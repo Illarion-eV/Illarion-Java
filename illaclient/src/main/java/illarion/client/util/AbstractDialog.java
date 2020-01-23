@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -172,7 +172,7 @@ public abstract class AbstractDialog extends JDialog {
      *
      * @param button Select the button that shall be checked. Possible values
      * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
-     * @return <code>true</code> in case the button is enabled
+     * @return {@code true} in case the button is enabled
      */
     protected final boolean isButtonEnabled(int button) {
         if (button == BUTTON_OK) {

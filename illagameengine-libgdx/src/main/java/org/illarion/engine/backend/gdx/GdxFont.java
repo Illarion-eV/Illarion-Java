@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,6 +62,7 @@ class GdxFont implements Font {
 
     @Override
     public int getWidth(@Nonnull CharSequence text) {
+        if (text.length() == 0) { return 0; }
         GlyphLayout layout = Pools.obtain(GlyphLayout.class);
         layout.setText(bitmapFont, text);
         float width = layout.width;

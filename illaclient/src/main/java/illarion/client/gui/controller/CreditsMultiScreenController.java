@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,6 +44,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     private Element displayParent;
     @Nullable
     private Label titleLabel;
+    @Nullable
     private Element namesPanel;
 
     @Override
@@ -60,6 +61,11 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     public void onStartScreen() {
         Iterator<CreditsList> creditsIterator = Credits.getInstance().getMultiLists();
         showNextEntry(creditsIterator);
+    }
+
+    @Override
+    public void onEndScreen() {
+        // nothing
     }
 
     private void showNextEntry(@Nonnull Iterator<CreditsList> iterator) {
@@ -94,11 +100,6 @@ public final class CreditsMultiScreenController implements ScreenController, Key
 
     private void gotoNextScreen() {
         nifty.gotoScreen("creditsEnd");
-    }
-
-    @Override
-    public void onEndScreen() {
-        // nothing
     }
 
     @Override

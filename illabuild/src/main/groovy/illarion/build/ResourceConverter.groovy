@@ -18,6 +18,7 @@ package illarion.build
 import groovy.xml.MarkupBuilder
 import illarion.build.imagepacker.ImagePacker
 import illarion.common.data.Book
+import illarion.common.data.BookLanguage
 import illarion.common.util.Crypto
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
@@ -29,6 +30,8 @@ import javax.annotation.Nonnull
 import javax.imageio.ImageIO
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+import javax.xml.transform.dom.DOMSource
+import javax.xml.validation.SchemaFactory
 
 /**
  * This converter mainly converts the PNG image files into a format optimized for OpenGL, in order to improve the speed
@@ -174,20 +177,41 @@ public class ResourceConverter extends DefaultTask {
             return
         }
 
-        final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance()
+        final def docBuilderFactory = DocumentBuilderFactory.newInstance()
+        final def schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema")
+        final def bookSchema = schemaFactory.newSchema(ResourceConverter.class.classLoader.getResource("book.xsd"))
+        final def validator = bookSchema.newValidator();
+
+        final def exceptions = new ArrayList<Throwable>()
 
         bookFiles.each { file ->
             final Document document = docBuilderFactory.newDocumentBuilder().parse(file)
-            final Book book = new Book(document)
+            try {
+                validator.validate(new DOMSource(document))
+                final Book book = new Book(document)
 
-            logger.info("Book ${file.name} read with ${book.englishBook.pageCount} pages")
+                logger.info("Book ${file.name} read with ${book.englishBook.pageCount} pages")
 
-            file.withInputStream { is ->
-                getTargetFile(targetDirectory, file).withOutputStream { os ->
-                    os << is
+                file.withInputStream { is ->
+                    getTargetFile(targetDirectory, file).withOutputStream { os ->
+                        os << is
+                    }
                 }
+            } catch (Throwable t) {
+                exceptions.add(new Exception("Parsing book ${file.name} failed.", t))
             }
         }
+
+        if (!exceptions.empty) {
+            if (exceptions.size() == 1) {
+                throw exceptions.get(0);
+            } else {
+                final def ex = new Exception("Multiple errors while parsing books.")
+                exceptions.forEach({e -> ex.addSuppressed(e)})
+                throw ex;
+            }
+        }
+
         bookFiles.clear()
     }
 

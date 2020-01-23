@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2016 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@
         <attributes align="left" valign="center" textHAlign="left" color="#111f"/>
     </style>
 
-    <style id="illarion-hint" base="illarion-panel-hint">
+    <style id="illarion-hint" base="nifty-panel-hint">
         <attributes childLayout="center"/>
         <effect>
             <onShow name="fade" length="150" start="#0" end="#d" inherit="true" neverStopRendering="true"/>
@@ -39,7 +39,7 @@
     </style>
 
     <style id="illarion-hint#hint-text" base="base-font">
-        <attributes align="left" valign="center" textHAlign="left" color="#ffff"/>
+        <attributes align="left" valign="center" textHAlign="left" color="#ffff" width="400px" wrap="true" />
     </style>
 
 </nifty-styles>

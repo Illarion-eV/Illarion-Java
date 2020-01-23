@@ -61,6 +61,8 @@ public final class Parser implements DocuEntry {
      * The singleton instance of this class.
      */
     private static final Parser INSTANCE = new Parser();
+    private static boolean verbose;
+    private static boolean quiet;
 
     /**
      * The private constructor to avoid any instances but the singleton instance. This also prepares the list that
@@ -81,9 +83,6 @@ public final class Parser implements DocuEntry {
     public static Parser getInstance() {
         return INSTANCE;
     }
-
-    private static boolean verbose;
-    private static boolean quiet;
 
     /**
      * This function starts the parser without GUI and is used to parse some
@@ -196,40 +195,6 @@ public final class Parser implements DocuEntry {
         }
     }
 
-    @Nonnull
-    @Override
-    public DocuEntry getChild(int index) {
-        throw new IndexOutOfBoundsException("No child available to display.");
-    }
-
-    @Override
-    public int getChildCount() {
-        return 0;
-    }
-
-    @Nonnull
-    @Override
-    public String getDescription() {
-        return Lang.getMsg(getClass(), "Docu.description");
-    }
-
-    @Nullable
-    @Override
-    public String getExample() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public String getSyntax() {
-        return null;
-    }
-
-    @Override
-    public String getTitle() {
-        return Lang.getMsg(getClass(), "Docu.title");
-    }
-
     /**
      * Parse the NPC and return the parsed version of the NPC.
      *
@@ -267,11 +232,51 @@ public final class Parser implements DocuEntry {
 
     public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         Pattern tokenPattern = Pattern.compile("'([a-zA-Z]+)'");
-        for (String token : EasyNpcLexer.tokenNames) {
+
+        int i = 0;
+        String token;
+        while ((token = EasyNpcLexer.VOCABULARY.getLiteralName(i++)) != null) {
             Matcher matcher = tokenPattern.matcher(token);
             if (matcher.matches()) {
-                map.put(matcher.group(1), Token.RESERVED_WORD);
+                String group = matcher.group(1);
+                if (group != null) {
+                    map.put(group, Token.RESERVED_WORD);
+                }
             }
         }
+    }
+
+    @Nonnull
+    @Override
+    public DocuEntry getChild(int index) {
+        throw new IndexOutOfBoundsException("No child available to display.");
+    }
+
+    @Override
+    public int getChildCount() {
+        return 0;
+    }
+
+    @Nonnull
+    @Override
+    public String getDescription() {
+        return Lang.getMsg(getClass(), "Docu.description");
+    }
+
+    @Nullable
+    @Override
+    public String getExample() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getSyntax() {
+        return null;
+    }
+
+    @Override
+    public String getTitle() {
+        return Lang.getMsg(getClass(), "Docu.title");
     }
 }

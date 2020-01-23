@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>> {
     private final DropDown<DropDownItem<T>> control;
     private final String key;
 
-    public DropDownOption(String name, Element parent, Nifty nifty, @Nonnull Screen screen) {
+    public DropDownOption(String name, @Nonnull Element parent, @Nonnull Nifty nifty, @Nonnull Screen screen) {
         key = name;
 
         DropDownBuilder dropDownBuilder = new DropDownBuilder(name + "GUI");
@@ -59,6 +59,7 @@ public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>> {
         return key;
     }
 
+    @Nullable
     @Override
     public DropDown<DropDownItem<T>> getControl() {
         return control;

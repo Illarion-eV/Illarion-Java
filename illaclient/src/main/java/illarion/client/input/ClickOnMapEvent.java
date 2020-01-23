@@ -15,6 +15,7 @@
  */
 package illarion.client.input;
 
+import illarion.client.world.World;
 import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,14 @@ public final class ClickOnMapEvent extends AbstractMouseOnMapEvent {
      * @param x the x coordinate of the click
      * @param y the y coordinate of the click
      */
-    public ClickOnMapEvent(@Nonnull Button key, int x, int y) {
+    ClickOnMapEvent(@Nonnull Button key, int x, int y) {
         super(key, x, y);
+    }
+
+    @Override
+    public void notHandled() {
+        if (getKey() == Button.Right) {
+            World.getPlayer().getCombatHandler().standDown();
+        }
     }
 }

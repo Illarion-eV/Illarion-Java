@@ -32,11 +32,13 @@ public final class FadingCorridor {
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final FadingCorridor INSTANCE = new FadingCorridor();
 
     /**
      * The rectangle that is used for some temporary calculation actions.
      */
+    @Nonnull
     private static final Rectangle TEMP_RECT = new Rectangle();
 
     /**
@@ -44,18 +46,17 @@ public final class FadingCorridor {
      * is increased by.
      */
     private static final int TOLERANCE = -2;
-
+    /**
+     * The rectangle that marks the area where object need to fade out.
+     */
+    @Nonnull
+    private final Rectangle fading = new Rectangle();
     /**
      * The Z layer position of the fading rectangle. Object behind this area do
      * not need to fade out, since the object that shall be be hidden is in
      * front of them anyway.
      */
     private int back;
-
-    /**
-     * The rectangle that marks the area where object need to fade out.
-     */
-    private final Rectangle fading = new Rectangle();
 
     /**
      * The private constructor is used to ensure that no instances but the
