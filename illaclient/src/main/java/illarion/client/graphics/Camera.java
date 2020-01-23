@@ -16,6 +16,7 @@
 package illarion.client.graphics;
 
 import illarion.common.types.Rectangle;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -28,6 +29,7 @@ public final class Camera {
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final Camera INSTANCE = new Camera();
 
     /**
@@ -58,6 +60,7 @@ public final class Camera {
      *
      * @return the height of the viewport
      */
+    @Contract(pure = true)
     public int getViewportHeight() {
         return viewport.getHeight();
     }
@@ -67,6 +70,7 @@ public final class Camera {
      *
      * @return the x offset
      */
+    @Contract(pure = true)
     public int getViewportOffsetX() {
         return viewport.getX();
     }
@@ -76,6 +80,7 @@ public final class Camera {
      *
      * @return the y offset
      */
+    @Contract(pure = true)
     public int getViewportOffsetY() {
         return viewport.getY();
     }
@@ -85,6 +90,7 @@ public final class Camera {
      *
      * @return the width of the viewport
      */
+    @Contract(pure = true)
     public int getViewportWidth() {
         return viewport.getWidth();
     }

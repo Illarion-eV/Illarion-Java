@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion project.
+  ~
+  ~ Copyright © 2016 - Illarion e.V.
+  ~
+  ~ Illarion is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Illarion is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  -->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <resourceBundle id="charCreateJobs-bundle" filename="charCreateJobs"/>
+
+    <screen id="characterCreateJobs" controller="illarion.client.gui.controller.create.JobsScreenController">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
+        <layer childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+            </effect>
+            <panel width="100%" align="center" valign="center" backgroundColor="#0000"
+                   childLayout="vertical" marginBottom="25px">
+                <control name="label" text="${charCreateJobs-bundle.title}" align="center"
+                         width="600px" marginBottom="23px" font="captionFont" textHAlign="left" />
+                <control name="label" id="description" text="${charCreateJobs-bundle.description}" align="center"
+                         wrap="true" width="600px" marginBottom="30px" textHAlign="left" />
+
+                <panel width="500px" childLayout="horizontal" align="center" marginBottom="20px">
+                    <panel width="45%" childLayout="vertical">
+                        <panel width="100%" height="100px" childLayout="center" id="job1">
+                            <control id="job1#button" name="button" label="" width="100%" height="55px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
+                                <image id="job1#image" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                        <panel width="100%" height="100px" childLayout="center" id="job3">
+                            <control id="job3#button" name="button" label="" width="100%" height="55px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
+                                <image id="job3#image" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                        <panel width="100%" height="100px" childLayout="center" id="job5">
+                            <control id="job5#button" name="button" label="" width="100%" height="55px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
+                                <image id="job5#image" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                    </panel>
+                    <panel width="10%" height="0px" />
+                    <panel width="45%" childLayout="vertical">
+                        <panel width="100%" height="100px" childLayout="center" id="job2">
+                            <control id="job2#button" name="button" label="" width="100%" height="55px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
+                                <image id="job2#image" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                        <panel width="100%" height="100px" childLayout="center" id="job4">
+                            <control id="job4#button" name="button" label="" width="100%" height="55px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
+                                <image id="job4#image" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                        <panel width="100%" height="100px" childLayout="center" id="job6">
+                            <control id="job6#button" name="button" label="" width="100%" height="55px">
+                                <effect>
+                                    <onHover name="hint" hintStyle="illarion-hint" hintText="" />
+                                </effect>
+                            </control>
+                            <panel height="100px" width="70px" childLayout="center" marginLeft="10px" align="left"
+                                   visibleToMouse="false">
+                                <image id="job6#image" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+
+                <panel width="250px" height="35px" childLayout="center" align="center">
+                    <control id="backBtn" name="button" label="${charCreateJobs-bundle.back}"
+                             width="100px" height="35px" align="left" />
+                    <control id="cancelBtn" name="button" label="${charCreateJobs-bundle.cancel}"
+                             width="100px" height="35px" align="right" />
+                </panel>
+            </panel>
+        </layer>
+    </screen>
+</nifty>

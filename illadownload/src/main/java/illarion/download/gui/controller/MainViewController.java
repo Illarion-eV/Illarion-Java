@@ -151,7 +151,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         parserFactory.setNamespaceAware(false);
 
         XmlPullParser parser = parserFactory.newPullParser();
-        URL src = new URL("http://illarion.org/data/xml_launcher.php");
+        URL src = new URL("https://illarion.org/data/xml_launcher.php");
         parser.setInput(new BufferedInputStream(src.openStream()), "UTF-8");
 
         List<NewsQuestEntry> newsList = new ArrayList<>();
@@ -319,7 +319,7 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @FXML
     public void goToAccount(@Nonnull ActionEvent actionEvent) {
-        getModel().getHostServices().showDocument("http://illarion.org/community/account/index.php");
+        getModel().getHostServices().showDocument("https://illarion.org/community/account/index.php");
     }
 
     @FXML

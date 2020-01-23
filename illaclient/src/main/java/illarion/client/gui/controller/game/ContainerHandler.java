@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ContainerGui;
-import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.gui.TextureRenderImage;
 import illarion.client.gui.Tooltip;
 import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.net.client.CloseShowcaseCmd;
@@ -75,116 +75,59 @@ import java.util.regex.Pattern;
  */
 public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
-     * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
-     * so the server can send the commands to clean everything up.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static class EndOfDragOperation implements Runnable {
-        /**
-         * The inventory slot that requires the reset.
-         */
-        @Nonnull
-        private final InventorySlot invSlot;
-
-        /**
-         * Create a new instance of this class and set the effected elements.
-         *
-         * @param slot the inventory slot to reset
-         */
-        EndOfDragOperation(@Nonnull InventorySlot slot) {
-            invSlot = slot;
-        }
-
-        /**
-         * Execute this operation.
-         */
-        @Override
-        public void run() {
-            invSlot.retrieveDraggable();
-        }
-    }
-
-    private final class UpdateContainerTask implements UpdateTask {
-        @Nonnull
-        private final ItemContainer itemContainer;
-
-        UpdateContainerTask(@Nonnull ItemContainer container) {
-            itemContainer = container;
-        }
-
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            if (!isContainerCreated(itemContainer.getContainerId())) {
-                createNewContainer(itemContainer);
-            }
-            updateContainer(itemContainer);
-        }
-    }
-
-    /**
      * The pattern to fetch the ID of a slot name.
      */
     @Nonnull
     private static final Pattern slotPattern = Pattern.compile("slot([0-9]+)");
-
     /**
      * The pattern to fetch the ID of a container name.
      */
     @Nonnull
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
-
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(ContainerHandler.class);
-
-    /**
-     * The Nifty-GUI instance that is handling the GUI display currently.
-     */
-    @Nullable
-    private Nifty activeNifty;
-
-    /**
-     * The screen that takes care for the display currently.
-     */
-    @Nullable
-    private Screen activeScreen;
-
     /**
      * The select popup handler that is used to receive money input from the user.
      */
     @Nonnull
     private final NumberSelectPopupHandler numberSelect;
-
     /**
      * The tooltip handler that is used to show the tooltips of this container.
      */
     @Nonnull
     private final TooltipHandler tooltipHandler;
-
     /**
      * The list of item containers that are currently displayed.
      */
     @Nonnull
     private final Map<Integer, org.illarion.nifty.controls.ItemContainer> itemContainerMap;
-
     /**
      * Creating new item containers in a extremely expensive operation. It is in all cases better to reuse existing
      * instances of the containers if possible.
      */
     @Nonnull
     private final Collection<org.illarion.nifty.controls.ItemContainer> itemContainerCache;
-
     /**
      * The task that is executed to update the merchant overlays.
      */
     @Nonnull
     private final UpdateTask updateMerchantOverlays = (container, delta) -> updateAllMerchantOverlays();
-
     /**
      * The input system that is used to query the state of the keyboard.
      */
     @Nonnull
     private final Input input;
+    /**
+     * The Nifty-GUI instance that is handling the GUI display currently.
+     */
+    @Nullable
+    private Nifty activeNifty;
+    /**
+     * The screen that takes care for the display currently.
+     */
+    @Nullable
+    private Screen activeScreen;
+    private int lastContainerId = -1;
 
     /**
      * Constructor of this handler.
@@ -199,6 +142,102 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
         this.input = input;
+    }
+
+    /**
+     * Get the slot ID that is stored in the ID a element.
+     *
+     * @param key the key of the element
+     * @return the extracted ID
+     */
+    private static int getSlotId(@Nonnull CharSequence key) {
+        Matcher matcher = slotPattern.matcher(key);
+        if (!matcher.find()) {
+            return -1;
+        }
+
+        if (matcher.groupCount() == 0) {
+            return -1;
+        }
+
+        return Integer.parseInt(matcher.group(1));
+    }
+
+    @Nonnull
+    private static SizeValue getSizeValueFromConfig(@Nonnull String key) {
+        String configEntry = IllaClient.getCfg().getString(key);
+        if (configEntry == null) {
+            return SizeValue.def();
+        }
+        try {
+            return new SizeValue(configEntry);
+        } catch (IllegalArgumentException e) {
+            if (configEntry.endsWith("px")) {
+                try {
+                    float value = Float.parseFloat(configEntry.substring(0, configEntry.length() - 2));
+                    return SizeValue.px((int) value);
+                } catch (NumberFormatException e1) {
+                    // failed!
+                }
+            }
+            return SizeValue.def();
+        }
+    }
+
+    @Nonnull
+    @Contract(pure = true)
+    private static String getPrefix(int containerId) {
+        String prefix = "bag";
+        if (containerId == 0) {
+            prefix = "backpack";
+        } else if (containerId < 10) {
+            prefix = "depot";
+        }
+        return prefix;
+    }
+
+    @Nonnull
+    private static String buildTitle(@Nonnull ItemContainer container) {
+        String title = container.getTitle();
+
+        String description = container.getDescription();
+        if (description.isEmpty()) {
+            return title;
+        } else {
+            int slotsInRow = (int) Math.sqrt(container.getSlotCount());
+            Font calculationFont = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+            int spaceToUse = (slotsInRow * 35) - 25;
+            spaceToUse -= calculationFont.getWidth(title);
+
+            String shortDescription = getShortenedDescription(description, "...", calculationFont, spaceToUse);
+            if (shortDescription.isEmpty()) {
+                return title;
+            }
+            return title + " (" + shortDescription + ')';
+        }
+    }
+
+    @Nonnull
+    @Contract(pure = true)
+    private static String getShortenedDescription(
+            @Nonnull String description, @Nonnull String expansion, @Nonnull Font usedFont, int maxWidth) {
+        if (maxWidth <= 0) {
+            return "";
+        }
+        if (usedFont.getWidth(description) <= maxWidth) {
+            return description;
+        }
+
+        StringBuilder sb = new StringBuilder(description);
+        while (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+            sb.append(expansion);
+            if (usedFont.getWidth(sb) <= maxWidth) {
+                return sb.toString();
+            }
+            sb.setLength(sb.length() - 3);
+        }
+        return "";
     }
 
     /**
@@ -285,25 +324,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                 }
             }
         }
-    }
-
-    /**
-     * Get the slot ID that is stored in the ID a element.
-     *
-     * @param key the key of the element
-     * @return the extracted ID
-     */
-    private static int getSlotId(@Nonnull CharSequence key) {
-        Matcher matcher = slotPattern.matcher(key);
-        if (!matcher.find()) {
-            return -1;
-        }
-
-        if (matcher.groupCount() == 0) {
-            return -1;
-        }
-
-        return Integer.parseInt(matcher.group(1));
     }
 
     /**
@@ -404,7 +424,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     }
 
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void onMouseMoveOverSlot(String topic, @Nonnull NiftyMouseMovedEvent event) {
+    public void onMouseMoveOverSlot(@Nonnull String topic, @Nonnull NiftyMouseMovedEvent event) {
         int slotId = getSlotId(topic);
         int containerId = getContainerId(topic);
 
@@ -439,6 +459,27 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
     }
 
+    @Override
+    public void onStartScreen() {
+        if (activeNifty != null) {
+            activeNifty.subscribeAnnotations(this);
+        } else {
+            log.error("Initialization of ContainerHandler failed. No nifty instance. Container will not work.");
+        }
+    }
+
+    @Override
+    public void onEndScreen() {
+        if (activeNifty != null) {
+            activeNifty.unsubscribeAnnotations(this);
+        }
+
+        Iterable<Integer> containerIds = new HashSet<>(itemContainerMap.keySet());
+        for (int id : containerIds) {
+            removeItemContainer(id);
+        }
+    }
+
     /**
      * Closes the given container
      * Hides the current ToolTip
@@ -458,27 +499,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     @Override
     public boolean isVisible(int containerId) {
         return isContainerCreated(containerId);
-    }
-
-    @Override
-    public void onEndScreen() {
-        if (activeNifty != null) {
-            activeNifty.unsubscribeAnnotations(this);
-        }
-
-        Iterable<Integer> containerIds = new HashSet<>(itemContainerMap.keySet());
-        for (int id : containerIds) {
-            removeItemContainer(id);
-        }
-    }
-
-    @Override
-    public void onStartScreen() {
-        if (activeNifty != null) {
-            activeNifty.subscribeAnnotations(this);
-        } else {
-            log.error("Initialization of ContainerHandler failed. No nifty instance. Container will not work.");
-        }
     }
 
     @Override
@@ -507,8 +527,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     public void updateMerchantOverlay() {
         World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
-
-    private int lastContainerId = -1;
 
     /**
      * Create a new container.
@@ -557,83 +575,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
         Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
         return container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
-    }
-
-    @Nonnull
-    private static SizeValue getSizeValueFromConfig(@Nonnull String key) {
-        String configEntry = IllaClient.getCfg().getString(key);
-        if (configEntry == null) {
-            return SizeValue.def();
-        }
-        try {
-            return new SizeValue(configEntry);
-        } catch (IllegalArgumentException e) {
-            if (configEntry.endsWith("px")) {
-                try {
-                    float value = Float.parseFloat(configEntry.substring(0, configEntry.length() - 2));
-                    return SizeValue.px((int) value);
-                } catch (NumberFormatException e1) {
-                    // failed!
-                }
-            }
-            return SizeValue.def();
-        }
-    }
-
-    @Nonnull
-    @Contract(pure = true)
-    private static String getPrefix(int containerId) {
-        String prefix = "bag";
-        if (containerId == 0) {
-            prefix = "backpack";
-        } else if (containerId < 10) {
-            prefix = "depot";
-        }
-        return prefix;
-    }
-
-    @Nonnull
-    private static String buildTitle(@Nonnull ItemContainer container) {
-        String title = container.getTitle();
-
-        String description = container.getDescription();
-        if (description.isEmpty()) {
-            return title;
-        } else {
-            int slotsInRow = (int) Math.sqrt(container.getSlotCount());
-            Font calculationFont = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
-            int spaceToUse = (slotsInRow * 35) - 25;
-            spaceToUse -= calculationFont.getWidth(title);
-
-            String shortDescription = getShortenedDescription(description, "...", calculationFont, spaceToUse);
-            if (shortDescription.isEmpty()) {
-                return title;
-            }
-            return title + " (" + shortDescription + ')';
-        }
-    }
-
-    @Nonnull
-    @Contract(pure = true)
-    private static String getShortenedDescription(
-            @Nonnull String description, @Nonnull String expansion, @Nonnull Font usedFont, int maxWidth) {
-        if (maxWidth <= 0) {
-            return "";
-        }
-        if (usedFont.getWidth(description) <= maxWidth) {
-            return description;
-        }
-
-        StringBuilder sb = new StringBuilder(description);
-        while (sb.length() > 0) {
-            sb.setLength(sb.length() - 1);
-            sb.append(expansion);
-            if (usedFont.getWidth(sb) <= maxWidth) {
-                return sb.toString();
-            }
-            sb.setLength(sb.length() - 3);
-        }
-        return "";
     }
 
     /**
@@ -718,7 +659,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                 ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
                 NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
-                                                       new EntitySlickRenderImage(displayedItem));
+                                                       new TextureRenderImage(displayedItem));
 
                 conSlot.setImage(niftyImage);
                 conSlot.setLabelText(count.getShortText(Lang.getInstance().getLocale()));
@@ -735,5 +676,53 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         }
 
         conControl.getElement().getParent().layoutElements();
+    }
+
+    /**
+     * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
+     * so the server can send the commands to clean everything up.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static class EndOfDragOperation implements Runnable {
+        /**
+         * The inventory slot that requires the reset.
+         */
+        @Nonnull
+        private final InventorySlot invSlot;
+
+        /**
+         * Create a new instance of this class and set the effected elements.
+         *
+         * @param slot the inventory slot to reset
+         */
+        EndOfDragOperation(@Nonnull InventorySlot slot) {
+            invSlot = slot;
+        }
+
+        /**
+         * Execute this operation.
+         */
+        @Override
+        public void run() {
+            invSlot.retrieveDraggable();
+        }
+    }
+
+    private final class UpdateContainerTask implements UpdateTask {
+        @Nonnull
+        private final ItemContainer itemContainer;
+
+        UpdateContainerTask(@Nonnull ItemContainer container) {
+            itemContainer = container;
+        }
+
+        @Override
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            if (!isContainerCreated(itemContainer.getContainerId())) {
+                createNewContainer(itemContainer);
+            }
+            updateContainer(itemContainer);
+        }
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,12 +18,9 @@ package illarion.client.world;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Avatar;
 import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ServerCoordinate;
-import javolution.util.FastTable;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.jetbrains.annotations.Contract;
@@ -35,8 +32,9 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -76,7 +74,7 @@ public final class People {
      * A list of characters that are going to be removed.
      */
     @Nonnull
-    private final List<Char> removalList;
+    private final Queue<Char> removalList;
 
     private int permanentAvatarTagState;
 
@@ -84,7 +82,7 @@ public final class People {
      * Default constructor. Sets up all needed base variables to init the class.
      */
     public People() {
-        removalList = new FastTable<>();
+        removalList = new LinkedList<>();
         chars = new HashMap<>();
         charsLock = new ReentrantReadWriteLock();
 
@@ -195,7 +193,7 @@ public final class People {
         if (World.getPlayer().isPlayer(removeChar.getCharId())) {
             throw new IllegalArgumentException("Removing player character from the chars list is not allowed.");
         }
-        removalList.add(removeChar);
+        removalList.offer(removeChar);
     }
 
     /**
@@ -203,19 +201,21 @@ public final class People {
      * is cleared after calling this function.
      */
     public void cleanRemovalList() {
+        if (removalList.isEmpty()) {
+            return;
+        }
+
         charsLock.writeLock().lock();
         try {
-            if (!removalList.isEmpty()) {
-                for (Char removeChar : removalList) {
-                    CharacterId removeId = removeChar.getCharId();
-                    if (removeId == null) {
-                        log.error("Character without ID located in remove list.");
-                        continue;
-                    }
+            removalList.removeIf(removedChar -> {
+                CharacterId removeId = removedChar.getCharId();
+                if (removeId == null) {
+                    log.error("Character without ID located in remove list.");
+                } else {
                     removeCharacter(removeId);
                 }
-                removalList.clear();
-            }
+                return true;
+            });
         } finally {
             charsLock.writeLock().unlock();
         }
@@ -342,7 +342,6 @@ public final class People {
         try {
             Char chara = chars.get(id);
             if (chara != null) {
-                EventBus.publish(new CharRemovedEvent(id));
                 // cancel attack when character is removed
                 if (World.getPlayer().getCombatHandler().isAttacking(chara)) {
                     World.getPlayer().getCombatHandler().standDown();

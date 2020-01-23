@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -31,7 +32,7 @@ public final class Path {
      * List if the path nodes that create this path.
      */
     @Nonnull
-    private final LinkedList<PathNode> path = new LinkedList<>();
+    private final LinkedList<PathNode> path;
 
     @Nullable
     private final ServerCoordinate destination;
@@ -39,14 +40,14 @@ public final class Path {
     /**
      * Default constructor for a new path.
      */
-    public Path(@Nonnull Iterable<PathNode> nodes) {
-        for (PathNode node : nodes) {
-            path.addLast(node);
-        }
+    public Path(@Nonnull Collection<PathNode> nodes) {
+        path = new LinkedList<>(nodes);
         if (path.isEmpty()) {
             destination = null;
         } else {
-            destination = path.getLast().getLocation();
+            PathNode lastNode = path.getLast();
+            assert lastNode != null;
+            destination = lastNode.getLocation();
         }
     }
 
@@ -99,6 +100,10 @@ public final class Path {
         if (path.isEmpty()) {
             return "Empty path.";
         }
+
+        assert path.getFirst() != null;
+        assert path.getLast() != null;
+
         return "Path from " + path.getFirst().getLocation() + " to " + path.getLast().getLocation() +
                 " with " + path.size() + " steps";
     }

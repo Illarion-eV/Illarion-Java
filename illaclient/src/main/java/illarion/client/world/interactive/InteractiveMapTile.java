@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,10 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      * tile on the map.
      */
     private static final byte REFERENCE_ID = 1;
-
+    /**
+     * The logging instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractiveMapTile.class);
     /**
      * The tile this interactive tile refers to.
      */
@@ -70,17 +73,12 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      * Check if it is possible to drag this tile to another location. This
      * implies that there is something on this tile that can be dragged.
      *
-     * @return <code>true</code> in case a dragging operation is valid for this
+     * @return {@code true} in case a dragging operation is valid for this
      * tile
      */
     public boolean canDrag() {
         return isInUseRange() && parentTile.canMoveItem();
     }
-
-    /**
-     * The logging instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractiveMapTile.class);
 
     /**
      * Drag something from a map tile to
@@ -171,6 +169,25 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     }
 
     /**
+     * Check if the tile is inside the valid using range of the player character.
+     *
+     * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
+     */
+    @Override
+    public boolean isInUseRange() {
+        @Nonnull ServerCoordinate playerLocation = World.getPlayer().getMovementHandler().getServerLocation();
+        if (playerLocation.getZ() == getLocation().getZ()) {
+            return playerLocation.getStepDistance(getLocation()) <= getUseRange();
+        }
+        return false;
+    }
+
+    @Override
+    public int getUseRange() {
+        return 1;
+    }
+
+    /**
      * Request a look at on this tile.
      */
     public void lookAt(@Nonnull Item lookAtItem) {
@@ -189,25 +206,6 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     @Nonnull
     public ServerCoordinate getLocation() {
         return parentTile.getCoordinates();
-    }
-
-    /**
-     * Check if the tile is inside the valid using range of the player character.
-     *
-     * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
-     */
-    @Override
-    public boolean isInUseRange() {
-        @Nonnull ServerCoordinate playerLocation = World.getPlayer().getMovementHandler().getServerLocation();
-        if (playerLocation.getZ() == getLocation().getZ()) {
-            return playerLocation.getStepDistance(getLocation()) <= getUseRange();
-        }
-        return false;
-    }
-
-    @Override
-    public int getUseRange() {
-        return 1;
     }
 
     /**

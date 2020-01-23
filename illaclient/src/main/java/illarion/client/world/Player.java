@@ -15,8 +15,6 @@
  */
 package illarion.client.world;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-import illarion.client.Login;
 import illarion.client.gui.DialogType;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.util.ChatLog;
@@ -40,9 +38,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -117,7 +113,7 @@ public final class Player {
      */
     @Nonnull
     @GuardedBy("containerLock")
-    private final TIntObjectHashMap<ItemContainer> containers;
+    private final Map<Integer, ItemContainer> containers;
     /**
      * This lock is used to synchronize the access on the containers.
      */
@@ -151,13 +147,6 @@ public final class Player {
     private MerchantList merchantDialog;
 
     /**
-     * Constructor for the player that receives the character name from the login data automatically.
-     */
-    public Player(@Nonnull Engine engine) {
-        this(engine, Login.getInstance().getLoginCharacter());
-    }
-
-    /**
      * Default constructor for the player.
      *
      * @param charName the character name of the player playing this game
@@ -184,7 +173,7 @@ public final class Player {
         combatHandler = new CombatHandler();
         movementHandler = new Movement(this, engine.getInput(), World.getMapDisplay());
         inventory = new Inventory();
-        containers = new TIntObjectHashMap<>();
+        containers = new HashMap<>();
         containerLock = new ReentrantReadWriteLock();
     }
 

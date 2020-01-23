@@ -20,16 +20,12 @@ import illarion.easynpc.EasyNpcScript.Line;
 import illarion.easynpc.data.*;
 import illarion.easynpc.parsed.ParsedData;
 import illarion.easynpc.writer.LuaWritable;
-import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class contains a parsed NPC structure. A detailed and analyzed version of a easyNPC script that is easily
@@ -38,6 +34,659 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedNpc implements Iterable<ParsedData> {
+
+    /**
+     * The town affiliation of this NPC.
+     */
+    private Towns affiliation;
+    /**
+     * The list of authors who wrote this script.
+     */
+    private List<String> authors;
+    /**
+     * The auto introduce flag of the NPC. If this is set to false, the NPC will not introduce automatically.
+     */
+    private boolean autoIntroduce = true;
+    /**
+     * The language the NPC is talking by default.
+     */
+    @Nullable
+    private CharacterLanguage defaultLanguage;
+    /**
+     * A list of errors occurred while parsing this NPC.
+     */
+    private List<Error> errors;
+    /**
+     * Flag that stores if the error messages are sorted correctly or not.
+     */
+    private boolean errorOrderDirty;
+    /**
+     * The job of the NPC.
+     */
+    private String job;
+    /**
+     * The list of languages the NPC is able to speak.
+     */
+    private Collection<CharacterLanguage> languages;
+    /**
+     * The German version of the message displayed in case a character looks at
+     * the NPC.
+     */
+    private String lookAtDe;
+    /**
+     * The English version of the message displayed in case a character looks at the NPC.
+     */
+    private String lookAtUs;
+    /**
+     * The additional data the NPC contains.
+     */
+    private List<ParsedData> npcData;
+    /**
+     * The direction the NPC is looking at.
+     */
+    private CharacterDirection npcDir;
+    /**
+     * The name of this NPC.
+     */
+    private String npcName;
+    /**
+     * The name of the module of the NPC and in the same consequence the name of the file the NPC needs to be stored
+     * in.
+     */
+    @Nullable
+    private String moduleName;
+    /**
+     * The position of this NPC.
+     */
+    private ServerCoordinate npcPos;
+    /**
+     * The race of the NPC.
+     */
+    private CharacterRace npcRace;
+    /**
+     * The sex of this NPC.
+     */
+    private CharacterSex npcSex;
+    /**
+     * The German version of the message displayed in case the player uses the NPC.
+     */
+    private String useMsgDe;
+    /**
+     * The English version of the message displayed in case the player uses the NPC.
+     */
+    private String useMsgUs;
+    /**
+     * The German version of the message the NPC speaks in case a character talks to him in a invalid language.
+     */
+    private String wrongLanguageDe;
+    /**
+     * The English version of the message the NPC speaks in case a character talks to him in a invalid language.
+     */
+    private String wrongLanguageUs;
+
+    /**
+     * Constructor for the class that creates the required object to store all
+     * data for this NPC.
+     */
+    public ParsedNpc() {
+        affiliation = Towns.None;
+        job = "none"; //$NON-NLS-1$
+        errorOrderDirty = false;
+        defaultLanguage = null;
+    }
+
+    @Nonnull
+    public static String convertToModuleName(@Nonnull CharSequence string) {
+        return Normalizer.normalize(string, Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
+    }
+
+    /**
+     * Add one name to the list of authors.
+     *
+     * @param author the name of the author to add
+     */
+    public void addAuthor(String author) {
+        if (authors == null) {
+            authors = new ArrayList<>();
+        }
+        authors.add(author);
+    }
+
+    /**
+     * Add a error to the list of errors that occurred while this NPC was
+     * parsed.
+     *
+     * @param line the line the error occurred at
+     * @param message the message describing the error
+     */
+    @Deprecated
+    public void addError(@Nonnull Line line, String message) {
+        addError(line.getLineNumber(), message);
+    }
+
+    /**
+     * Add a error to the list of errors that occurred while this NPC was
+     * parsed.
+     *
+     * @param line the line the error occurred at
+     * @param message the message describing the error
+     */
+    void addError(int line, String message) {
+        addError(line, 0, message);
+    }
+
+    /**
+     * Add a error to the list of errors that occurred while this NPC was
+     * parsed.
+     *
+     * @param line the line the error occurred at
+     * @param message the message describing the error
+     */
+    public void addError(int line, int charNr, String message) {
+        if (errors == null) {
+            errors = new ArrayList<>();
+        }
+        errors.add(new Error(line, charNr, message));
+        errorOrderDirty = true;
+    }
+
+    /**
+     * Add a language to the list of languages the NPC is able to speak.
+     *
+     * @param lang the language to add
+     */
+    public void addLanguage(CharacterLanguage lang) {
+        if (languages == null) {
+            languages = new ArrayList<>();
+        }
+        if (!languages.contains(lang)) {
+            languages.add(lang);
+        }
+    }
+
+    /**
+     * Add some complex parsed data to this NPC.
+     *
+     * @param data the data to add
+     */
+    public void addNpcData(ParsedData data) {
+        if (npcData == null) {
+            npcData = new ArrayList<>();
+        }
+        npcData.add(data);
+    }
+
+    /**
+     * Get the affiliation of this NPC.
+     *
+     * @return the affiliation of this NPC
+     */
+    public Towns getAffiliation() {
+        if (affiliation == null) {
+            return Towns.None;
+        }
+        return affiliation;
+    }
+
+    /**
+     * Set the affiliation of this NPC.
+     *
+     * @param aff the affiliation of this NPC
+     */
+    public void setAffiliation(Towns aff) {
+        affiliation = aff;
+    }
+
+    /**
+     * Get the list of the names of the authors of this script.
+     *
+     * @return a array of the author names
+     */
+    @Nonnull
+    public Collection<String> getAuthors() {
+        if (authors == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableCollection(authors);
+    }
+
+    /**
+     * Get the current value of the auto introduce flag.
+     *
+     * @return the auto introduce flag
+     */
+    public boolean getAutoIntroduce() {
+        return autoIntroduce;
+    }
+
+    /**
+     * Set the value for the auto introduce flag.
+     *
+     * @param newValue the new value for the auto introduce flag
+     */
+    public void setAutoIntroduce(boolean newValue) {
+        autoIntroduce = newValue;
+    }
+
+    /**
+     * Get the amount of data entries that are written in this NPC.
+     *
+     * @return the amount of data entries
+     */
+    public int getDataCount() {
+        if (npcData == null) {
+            return 0;
+        }
+        return npcData.size();
+    }
+
+    /**
+     * Get the language this character is speaking by default.
+     *
+     * @return the language this character is speaking by default
+     */
+    @Nullable
+    public CharacterLanguage getDefaultLanguage() {
+        if (defaultLanguage == null) {
+            return CharacterLanguage.common;
+        }
+        return defaultLanguage;
+    }
+
+    /**
+     * Set the language this character is speaking by default.
+     *
+     * @param lang the language this character is speaking by default
+     */
+    public void setDefaultLanguage(@Nullable CharacterLanguage lang) {
+        defaultLanguage = lang;
+    }
+
+    /**
+     * Get the English version of the text that is displayed in case the player
+     * looks at the NPC.
+     *
+     * @return the message
+     */
+    public String getEnglishLookat() {
+        if (lookAtUs == null) {
+            return "This is a NPC who's developer was too lazy to type in a description.";
+        }
+        return lookAtUs;
+    }
+
+    /**
+     * Get the English version of the text displayed in case the player uses the
+     * NPC.
+     *
+     * @return the message
+     */
+    public String getEnglishUse() {
+        if (useMsgUs == null) {
+            return "Do not touch me!";
+        }
+        return useMsgUs;
+    }
+
+    /**
+     * Set the English version of the text displayed in case the player uses the
+     * NPC.
+     *
+     * @param msg the message
+     */
+    public void setEnglishUse(String msg) {
+        useMsgUs = msg;
+    }
+
+    /**
+     * Get the English version of the message that is displayed in case the
+     * player talks to the NPC in the wrong language.
+     *
+     * @return the message
+     */
+    public String getEnglishWrongLang() {
+        if (wrongLanguageDe == null) {
+            return "#me looks at you confused.";
+        }
+        return wrongLanguageUs;
+    }
+
+    /**
+     * Set the English version of the message that is displayed in case the
+     * player talks to the NPC in the wrong language.
+     *
+     * @param msg the message
+     */
+
+    public void setEnglishWrongLang(String msg) {
+        wrongLanguageUs = msg;
+    }
+
+    /**
+     * Get the error stored at a index.
+     *
+     * @param index the index of the error that is requested
+     * @return the error stored with this index
+     */
+    public Error getError(int index) {
+        if (errors == null) {
+            throw new IndexOutOfBoundsException("No errors stored.");
+        }
+        if (errorOrderDirty) {
+            Collections.sort(errors);
+            errorOrderDirty = false;
+        }
+        return errors.get(index);
+    }
+
+    /**
+     * Get the amount of errors found in this script.
+     *
+     * @return the amount of errors in this script.
+     */
+    public int getErrorCount() {
+        if (errors == null) {
+            return 0;
+        }
+        return errors.size();
+    }
+
+    /**
+     * Get the German version of the text that is displayed in case the player
+     * looks at the NPC.
+     *
+     * @return the message
+     */
+    public String getGermanLookat() {
+        if (lookAtDe == null) {
+            return "Das ist ein NPC dessen Entwickler zu faul war eine Beschreibung einzutragen.";
+        }
+        return lookAtDe;
+    }
+
+    /**
+     * Get the German version of the text displayed in case the player uses the
+     * NPC.
+     *
+     * @return the message
+     */
+    public String getGermanUse() {
+        if (useMsgDe == null) {
+            return "Fass mich nicht an!";
+        }
+        return useMsgDe;
+    }
+
+    /**
+     * Set the German version of the text displayed in case the player uses the
+     * NPC.
+     *
+     * @param msg the message
+     */
+    public void setGermanUse(String msg) {
+        useMsgDe = msg;
+    }
+
+    /**
+     * Get the German version of the message that is displayed in case the
+     * player talks to the NPC in the wrong language.
+     *
+     * @return the message
+     */
+    public String getGermanWrongLang() {
+        if (wrongLanguageDe == null) {
+            return "#me schaut dich verwirrt an.";
+        }
+        return wrongLanguageDe;
+    }
+
+    /**
+     * Set the German version of the message that is displayed in case the
+     * player talks to the NPC in the wrong language.
+     *
+     * @param msg the message
+     */
+    public void setGermanWrongLang(String msg) {
+        wrongLanguageDe = msg;
+    }
+
+    /**
+     * Get the Job of this NPC.
+     *
+     * @return the job of this NPC
+     */
+    public String getJob() {
+        if (job == null) {
+            return "unspecified"; //$NON-NLS-1$
+        }
+        return job;
+    }
+
+    /**
+     * Set the job of this NPC.
+     *
+     * @param newJob the job of this NPC
+     */
+    public void setJob(String newJob) {
+        job = newJob;
+    }
+
+    /**
+     * Get the languages this NPC is able to speak.
+     *
+     * @return the array of languages this NPC is able to speak
+     */
+    @Nonnull
+    public CharacterLanguage[] getLanguages() {
+        if (languages == null) {
+            languages = new ArrayList<>();
+        }
+        if (languages.isEmpty()) {
+            languages.add(CharacterLanguage.common);
+            switch (getNpcRace()) {
+                case human:
+                    languages.add(CharacterLanguage.human);
+                    break;
+                case dwarf:
+                    languages.add(CharacterLanguage.dwarf);
+                    break;
+                case elf:
+                    languages.add(CharacterLanguage.elf);
+                    break;
+                case orc:
+                    languages.add(CharacterLanguage.orc);
+                    break;
+                case halfling:
+                    languages.add(CharacterLanguage.halfling);
+                    break;
+                case lizardman:
+                    languages.add(CharacterLanguage.lizard);
+                    break;
+            }
+
+            CharacterLanguage[] result = languages.toArray(new CharacterLanguage[languages.size()]);
+            languages.clear();
+            return result;
+        }
+
+        return languages.toArray(new CharacterLanguage[languages.size()]);
+    }
+
+    /**
+     * Get the LUA data sources for the writer.
+     *
+     * @param index the index of the data
+     * @return the data at the selected index
+     */
+    public LuaWritable getLuaData(int index) {
+        return npcData.get(index);
+    }
+
+    /**
+     * Get the correct name for the LUA script file according to the data saved
+     * in this script.
+     *
+     * @return the correct lua script file
+     */
+    @Nonnull
+    public String getLuaFilename() {
+        return getModuleName() + ".lua";
+    }
+
+    @Nonnull
+    public String getModuleName() {
+        if (moduleName == null) {
+            return convertToModuleName(getNpcName()).toLowerCase();
+        }
+        return moduleName;
+    }
+
+    public void setModuleName(@Nullable String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    /**
+     * Get the looking direction of this NPC.
+     *
+     * @return the looking direction of this NPC
+     */
+    public CharacterDirection getNpcDir() {
+        if (npcDir == null) {
+            return CharacterDirection.north;
+        }
+        return npcDir;
+    }
+
+    /**
+     * Set the new direction of this NPC.
+     *
+     * @param newNpcDir the new looking direction of this NPC
+     */
+    public void setNpcDir(CharacterDirection newNpcDir) {
+        npcDir = newNpcDir;
+    }
+
+    /**
+     * Get the name of this NPC.
+     *
+     * @return the name of this NPC
+     */
+    public String getNpcName() {
+        if (npcName == null) {
+            if (getNpcSex() == CharacterSex.male) {
+                return "John Doe"; //$NON-NLS-1$
+            }
+            return "Jane Doe"; //$NON-NLS-1$
+        }
+        return npcName;
+    }
+
+    /**
+     * Set the name of this NPC.
+     *
+     * @param newNpcName the new name of this NPC.
+     */
+    public void setNpcName(String newNpcName) {
+        npcName = newNpcName;
+    }
+
+    /**
+     * Get the location of this NPC.
+     *
+     * @return the current location of this NPC.
+     */
+    public ServerCoordinate getNpcPos() {
+        if (npcPos == null) {
+            return new ServerCoordinate(0, 0, 0);
+        }
+        return npcPos;
+    }
+
+    /**
+     * Set the position of this NPC.
+     *
+     * @param newNpcPos the new position of this NPC
+     */
+    public void setNpcPos(@Nonnull ServerCoordinate newNpcPos) {
+        npcPos = newNpcPos;
+    }
+
+    /**
+     * Get the race of this NPC.
+     *
+     * @return The current set race of this NPC
+     */
+    public CharacterRace getNpcRace() {
+        if (npcRace == null) {
+            return CharacterRace.human;
+        }
+        return npcRace;
+    }
+
+    /**
+     * Set the race of this NPC to a new value.
+     *
+     * @param newNpcRace the race of this NPC
+     */
+    public void setNpcRace(CharacterRace newNpcRace) {
+        npcRace = newNpcRace;
+    }
+
+    /**
+     * Get the sex value of this NPC.
+     *
+     * @return the sex value of this NPC
+     */
+    public CharacterSex getNpcSex() {
+        if (npcSex == null) {
+            return CharacterSex.male;
+        }
+        return npcSex;
+    }
+
+    /**
+     * Set the sex of this NPC to a new value.
+     *
+     * @param newNpcSex the new sex value of the NPC
+     */
+    public void setNpcSex(CharacterSex newNpcSex) {
+        npcSex = newNpcSex;
+    }
+
+    /**
+     * Check if the script contains any errors.
+     *
+     * @return {@code true} if there are any errors stored in this parseNPC
+     */
+    public boolean hasErrors() {
+        return (errors != null) && !errors.isEmpty();
+    }
+
+    /**
+     * Set the English version of the text that is displayed in case the player
+     * looks at the NPC.
+     *
+     * @param msg the message
+     */
+    public void setEnglishLookAt(String msg) {
+        lookAtUs = msg;
+    }
+
+    /**
+     * Set the German version of the text that is displayed in case the player
+     * looks at the NPC.
+     *
+     * @param msg the message
+     */
+    public void setGermanLookAt(String msg) {
+        lookAtDe = msg;
+    }
+
+    @Nonnull
+    @Override
+    public Iterator<ParsedData> iterator() {
+        return npcData.iterator();
+    }
 
     /**
      * This support class is used to store all information regarding a error that was found in the script. It stores
@@ -119,678 +768,5 @@ public final class ParsedNpc implements Iterable<ParsedData> {
         public String getMessage() {
             return message;
         }
-    }
-
-    /**
-     * The town affiliation of this NPC.
-     */
-    private Towns affiliation;
-
-    /**
-     * The list of authors who wrote this script.
-     */
-    private FastTable<String> authors;
-
-    /**
-     * The auto introduce flag of the NPC. If this is set to false, the NPC will not introduce automatically.
-     */
-    private boolean autoIntroduce = true;
-
-    /**
-     * The language the NPC is talking by default.
-     */
-    @Nullable
-    private CharacterLanguage defaultLanguage;
-
-    /**
-     * A list of errors occurred while parsing this NPC.
-     */
-    private List<Error> errors;
-
-    /**
-     * Flag that stores if the error messages are sorted correctly or not.
-     */
-    private boolean errorOrderDirty;
-
-    /**
-     * The job of the NPC.
-     */
-    private String job;
-
-    /**
-     * The list of languages the NPC is able to speak.
-     */
-    private Collection<CharacterLanguage> languages;
-
-    /**
-     * The German version of the message displayed in case a character looks at
-     * the NPC.
-     */
-    private String lookAtDe;
-
-    /**
-     * The English version of the message displayed in case a character looks at the NPC.
-     */
-    private String lookAtUs;
-
-    /**
-     * The additional data the NPC contains.
-     */
-    private List<ParsedData> npcData;
-
-    /**
-     * The direction the NPC is looking at.
-     */
-    private CharacterDirection npcDir;
-
-    /**
-     * The name of this NPC.
-     */
-    private String npcName;
-
-    /**
-     * The name of the module of the NPC and in the same consequence the name of the file the NPC needs to be stored
-     * in.
-     */
-    @Nullable
-    private String moduleName;
-
-    /**
-     * The position of this NPC.
-     */
-    private ServerCoordinate npcPos;
-
-    /**
-     * The race of the NPC.
-     */
-    private CharacterRace npcRace;
-
-    /**
-     * The sex of this NPC.
-     */
-    private CharacterSex npcSex;
-
-    /**
-     * The German version of the message displayed in case the player uses the NPC.
-     */
-    private String useMsgDe;
-
-    /**
-     * The English version of the message displayed in case the player uses the NPC.
-     */
-    private String useMsgUs;
-
-    /**
-     * The German version of the message the NPC speaks in case a character talks to him in a invalid language.
-     */
-    private String wrongLanguageDe;
-
-    /**
-     * The English version of the message the NPC speaks in case a character talks to him in a invalid language.
-     */
-    private String wrongLanguageUs;
-
-    /**
-     * Constructor for the class that creates the required object to store all
-     * data for this NPC.
-     */
-    public ParsedNpc() {
-        affiliation = Towns.None;
-        job = "none"; //$NON-NLS-1$
-        errorOrderDirty = false;
-        defaultLanguage = null;
-    }
-
-    /**
-     * Add one name to the list of authors.
-     *
-     * @param author the name of the author to add
-     */
-    public void addAuthor(String author) {
-        if (authors == null) {
-            authors = new FastTable<>();
-        }
-        authors.add(author);
-    }
-
-    /**
-     * Add a error to the list of errors that occurred while this NPC was
-     * parsed.
-     *
-     * @param line the line the error occurred at
-     * @param message the message describing the error
-     */
-    @Deprecated
-    public void addError(@Nonnull Line line, String message) {
-        addError(line.getLineNumber(), message);
-    }
-
-    /**
-     * Add a error to the list of errors that occurred while this NPC was
-     * parsed.
-     *
-     * @param line the line the error occurred at
-     * @param message the message describing the error
-     */
-    void addError(int line, String message) {
-        addError(line, 0, message);
-    }
-
-    /**
-     * Add a error to the list of errors that occurred while this NPC was
-     * parsed.
-     *
-     * @param line the line the error occurred at
-     * @param message the message describing the error
-     */
-    public void addError(int line, int charNr, String message) {
-        if (errors == null) {
-            errors = new FastTable<>();
-        }
-        errors.add(new Error(line, charNr, message));
-        errorOrderDirty = true;
-    }
-
-    /**
-     * Add a language to the list of languages the NPC is able to speak.
-     *
-     * @param lang the language to add
-     */
-    public void addLanguage(CharacterLanguage lang) {
-        if (languages == null) {
-            languages = new FastTable<>();
-        }
-        if (!languages.contains(lang)) {
-            languages.add(lang);
-        }
-    }
-
-    /**
-     * Add some complex parsed data to this NPC.
-     *
-     * @param data the data to add
-     */
-    public void addNpcData(ParsedData data) {
-        if (npcData == null) {
-            npcData = new FastTable<>();
-        }
-        npcData.add(data);
-    }
-
-    /**
-     * Get the affiliation of this NPC.
-     *
-     * @return the affiliation of this NPC
-     */
-    public Towns getAffiliation() {
-        if (affiliation == null) {
-            return Towns.None;
-        }
-        return affiliation;
-    }
-
-    /**
-     * Get the list of the names of the authors of this script.
-     *
-     * @return a array of the author names
-     */
-    @Nonnull
-    public Collection<String> getAuthors() {
-        if (authors == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableCollection(authors);
-    }
-
-    /**
-     * Get the current value of the auto introduce flag.
-     *
-     * @return the auto introduce flag
-     */
-    public boolean getAutoIntroduce() {
-        return autoIntroduce;
-    }
-
-    /**
-     * Get the amount of data entries that are written in this NPC.
-     *
-     * @return the amount of data entries
-     */
-    public int getDataCount() {
-        if (npcData == null) {
-            return 0;
-        }
-        return npcData.size();
-    }
-
-    /**
-     * Get the language this character is speaking by default.
-     *
-     * @return the language this character is speaking by default
-     */
-    @Nullable
-    public CharacterLanguage getDefaultLanguage() {
-        if (defaultLanguage == null) {
-            return CharacterLanguage.common;
-        }
-        return defaultLanguage;
-    }
-
-    /**
-     * Get the English version of the text that is displayed in case the player
-     * looks at the NPC.
-     *
-     * @return the message
-     */
-    public String getEnglishLookat() {
-        if (lookAtUs == null) {
-            return "This is a NPC who's developer was too lazy to type in a description.";
-        }
-        return lookAtUs;
-    }
-
-    /**
-     * Get the English version of the text displayed in case the player uses the
-     * NPC.
-     *
-     * @return the message
-     */
-    public String getEnglishUse() {
-        if (useMsgUs == null) {
-            return "Do not touch me!";
-        }
-        return useMsgUs;
-    }
-
-    /**
-     * Get the English version of the message that is displayed in case the
-     * player talks to the NPC in the wrong language.
-     *
-     * @return the message
-     */
-    public String getEnglishWrongLang() {
-        if (wrongLanguageDe == null) {
-            return "#me looks at you confused.";
-        }
-        return wrongLanguageUs;
-    }
-
-    /**
-     * Get the error stored at a index.
-     *
-     * @param index the index of the error that is requested
-     * @return the error stored with this index
-     */
-    public Error getError(int index) {
-        if (errors == null) {
-            throw new IndexOutOfBoundsException("No errors stored.");
-        }
-        if (errorOrderDirty) {
-            Collections.sort(errors);
-            errorOrderDirty = false;
-        }
-        return errors.get(index);
-    }
-
-    /**
-     * Get the amount of errors found in this script.
-     *
-     * @return the amount of errors in this script.
-     */
-    public int getErrorCount() {
-        if (errors == null) {
-            return 0;
-        }
-        return errors.size();
-    }
-
-    /**
-     * Get the German version of the text that is displayed in case the player
-     * looks at the NPC.
-     *
-     * @return the message
-     */
-    public String getGermanLookat() {
-        if (lookAtDe == null) {
-            return "Das ist ein NPC dessen Entwickler zu faul war eine Beschreibung einzutragen.";
-        }
-        return lookAtDe;
-    }
-
-    /**
-     * Get the German version of the text displayed in case the player uses the
-     * NPC.
-     *
-     * @return the message
-     */
-    public String getGermanUse() {
-        if (useMsgDe == null) {
-            return "Fass mich nicht an!";
-        }
-        return useMsgDe;
-    }
-
-    /**
-     * Get the German version of the message that is displayed in case the
-     * player talks to the NPC in the wrong language.
-     *
-     * @return the message
-     */
-    public String getGermanWrongLang() {
-        if (wrongLanguageDe == null) {
-            return "#me schaut dich verwirrt an.";
-        }
-        return wrongLanguageDe;
-    }
-
-    /**
-     * Get the Job of this NPC.
-     *
-     * @return the job of this NPC
-     */
-    public String getJob() {
-        if (job == null) {
-            return "unspecified"; //$NON-NLS-1$
-        }
-        return job;
-    }
-
-    /**
-     * Get the languages this NPC is able to speak.
-     *
-     * @return the array of languages this NPC is able to speak
-     */
-    @Nonnull
-    public CharacterLanguage[] getLanguages() {
-        if (languages == null) {
-            languages = new FastTable<>();
-        }
-        if (languages.isEmpty()) {
-            languages.add(CharacterLanguage.common);
-            switch (getNpcRace()) {
-                case human:
-                    languages.add(CharacterLanguage.human);
-                    break;
-                case dwarf:
-                    languages.add(CharacterLanguage.dwarf);
-                    break;
-                case elf:
-                    languages.add(CharacterLanguage.elf);
-                    break;
-                case orc:
-                    languages.add(CharacterLanguage.orc);
-                    break;
-                case halfling:
-                    languages.add(CharacterLanguage.halfling);
-                    break;
-                case lizardman:
-                    languages.add(CharacterLanguage.lizard);
-                    break;
-            }
-
-            CharacterLanguage[] result = languages.toArray(new CharacterLanguage[languages.size()]);
-            languages.clear();
-            return result;
-        }
-
-        return languages.toArray(new CharacterLanguage[languages.size()]);
-    }
-
-    /**
-     * Get the LUA data sources for the writer.
-     *
-     * @param index the index of the data
-     * @return the data at the selected index
-     */
-    public LuaWritable getLuaData(int index) {
-        return npcData.get(index);
-    }
-
-    /**
-     * Get the correct name for the LUA script file according to the data saved
-     * in this script.
-     *
-     * @return the correct lua script file
-     */
-    @Nonnull
-    public String getLuaFilename() {
-        return getModuleName() + ".lua";
-    }
-
-    @Nonnull
-    public String getModuleName() {
-        if (moduleName == null) {
-            return convertToModuleName(getNpcName()).toLowerCase();
-        }
-        return moduleName;
-    }
-
-    @Nonnull
-    public static String convertToModuleName(@Nonnull CharSequence string) {
-        return Normalizer.normalize(string, Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
-    }
-
-    public void setModuleName(@Nullable String moduleName) {
-        this.moduleName = moduleName;
-    }
-
-    /**
-     * Get the looking direction of this NPC.
-     *
-     * @return the looking direction of this NPC
-     */
-    public CharacterDirection getNpcDir() {
-        if (npcDir == null) {
-            return CharacterDirection.north;
-        }
-        return npcDir;
-    }
-
-    /**
-     * Get the name of this NPC.
-     *
-     * @return the name of this NPC
-     */
-    public String getNpcName() {
-        if (npcName == null) {
-            if (getNpcSex() == CharacterSex.male) {
-                return "John Doe"; //$NON-NLS-1$
-            }
-            return "Jane Doe"; //$NON-NLS-1$
-        }
-        return npcName;
-    }
-
-    /**
-     * Get the location of this NPC.
-     *
-     * @return the current location of this NPC.
-     */
-    public ServerCoordinate getNpcPos() {
-        if (npcPos == null) {
-            return new ServerCoordinate(0, 0, 0);
-        }
-        return npcPos;
-    }
-
-    /**
-     * Get the race of this NPC.
-     *
-     * @return The current set race of this NPC
-     */
-    public CharacterRace getNpcRace() {
-        if (npcRace == null) {
-            return CharacterRace.human;
-        }
-        return npcRace;
-    }
-
-    /**
-     * Get the sex value of this NPC.
-     *
-     * @return the sex value of this NPC
-     */
-    public CharacterSex getNpcSex() {
-        if (npcSex == null) {
-            return CharacterSex.male;
-        }
-        return npcSex;
-    }
-
-    /**
-     * Check if the script contains any errors.
-     *
-     * @return {@code true} if there are any errors stored in this parseNPC
-     */
-    public boolean hasErrors() {
-        return (errors != null) && !errors.isEmpty();
-    }
-
-    /**
-     * Set the affiliation of this NPC.
-     *
-     * @param aff the affiliation of this NPC
-     */
-    public void setAffiliation(Towns aff) {
-        affiliation = aff;
-    }
-
-    /**
-     * Set the value for the auto introduce flag.
-     *
-     * @param newValue the new value for the auto introduce flag
-     */
-    public void setAutoIntroduce(boolean newValue) {
-        autoIntroduce = newValue;
-    }
-
-    /**
-     * Set the language this character is speaking by default.
-     *
-     * @param lang the language this character is speaking by default
-     */
-    public void setDefaultLanguage(@Nullable CharacterLanguage lang) {
-        defaultLanguage = lang;
-    }
-
-    /**
-     * Set the English version of the text that is displayed in case the player
-     * looks at the NPC.
-     *
-     * @param msg the message
-     */
-    public void setEnglishLookAt(String msg) {
-        lookAtUs = msg;
-    }
-
-    /**
-     * Set the English version of the text displayed in case the player uses the
-     * NPC.
-     *
-     * @param msg the message
-     */
-    public void setEnglishUse(String msg) {
-        useMsgUs = msg;
-    }
-
-    /**
-     * Set the English version of the message that is displayed in case the
-     * player talks to the NPC in the wrong language.
-     *
-     * @param msg the message
-     */
-
-    public void setEnglishWrongLang(String msg) {
-        wrongLanguageUs = msg;
-    }
-
-    /**
-     * Set the German version of the text that is displayed in case the player
-     * looks at the NPC.
-     *
-     * @param msg the message
-     */
-    public void setGermanLookAt(String msg) {
-        lookAtDe = msg;
-    }
-
-    /**
-     * Set the German version of the text displayed in case the player uses the
-     * NPC.
-     *
-     * @param msg the message
-     */
-    public void setGermanUse(String msg) {
-        useMsgDe = msg;
-    }
-
-    /**
-     * Set the German version of the message that is displayed in case the
-     * player talks to the NPC in the wrong language.
-     *
-     * @param msg the message
-     */
-    public void setGermanWrongLang(String msg) {
-        wrongLanguageDe = msg;
-    }
-
-    /**
-     * Set the job of this NPC.
-     *
-     * @param newJob the job of this NPC
-     */
-    public void setJob(String newJob) {
-        job = newJob;
-    }
-
-    /**
-     * Set the new direction of this NPC.
-     *
-     * @param newNpcDir the new looking direction of this NPC
-     */
-    public void setNpcDir(CharacterDirection newNpcDir) {
-        npcDir = newNpcDir;
-    }
-
-    /**
-     * Set the name of this NPC.
-     *
-     * @param newNpcName the new name of this NPC.
-     */
-    public void setNpcName(String newNpcName) {
-        npcName = newNpcName;
-    }
-
-    /**
-     * Set the position of this NPC.
-     *
-     * @param newNpcPos the new position of this NPC
-     */
-    public void setNpcPos(@Nonnull ServerCoordinate newNpcPos) {
-        npcPos = newNpcPos;
-    }
-
-    /**
-     * Set the race of this NPC to a new value.
-     *
-     * @param newNpcRace the race of this NPC
-     */
-    public void setNpcRace(CharacterRace newNpcRace) {
-        npcRace = newNpcRace;
-    }
-
-    /**
-     * Set the sex of this NPC to a new value.
-     *
-     * @param newNpcSex the new sex value of the NPC
-     */
-    public void setNpcSex(CharacterSex newNpcSex) {
-        npcSex = newNpcSex;
-    }
-
-    @Nonnull
-    @Override
-    public Iterator<ParsedData> iterator() {
-        return npcData.iterator();
     }
 }

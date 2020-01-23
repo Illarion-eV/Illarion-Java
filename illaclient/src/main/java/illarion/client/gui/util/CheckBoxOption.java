@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ public class CheckBoxOption implements Option<Boolean, CheckBox> {
     private final CheckBox control;
     private final String key;
 
-    public CheckBoxOption(String name, @Nonnull Element parent, Nifty nifty, Screen screen) {
+    public CheckBoxOption(String name, @Nonnull Element parent, @Nonnull Nifty nifty, @Nonnull Screen screen) {
         key = name;
 
         CheckboxBuilder checkBoxBuilder = new CheckboxBuilder(name + "GUI");

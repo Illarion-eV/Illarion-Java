@@ -226,17 +226,6 @@
         </panel>
     </popup>
 
-    <popup id="noServerFound" childLayout="center">
-        <panel style="nifty-panel-small" childLayout="vertical">
-            <control name="label" id="#closeMsg" text="${gamescreen-bundle.noServer}" width="300px" style="nifty-label"
-                     wrap="true"/>
-            <panel height="10px" width="1px"/>
-            <panel childLayout="center" width="300px">
-                <control name="button" id="#closeOkButton" label="${gamescreen-bundle.ok}" width="95px"/>
-            </panel>
-        </panel>
-    </popup>
-
     <popup id="closeApplication" childLayout="center">
         <panel style="nifty-panel-small" childLayout="vertical">
             <control name="label" text="${gamescreen-bundle.reallyClose}" width="300px" style="nifty-label"
