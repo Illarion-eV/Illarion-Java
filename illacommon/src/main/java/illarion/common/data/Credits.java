@@ -109,7 +109,7 @@ public final class Credits {
 
         CreditsPerson.create("Andreas", "Vilarion", "Grob",
                 projectManager, chiefServer, gameplay, client, website, easyNPC, easyQuest, server, qualityAssurance);
-        CreditsPerson.create("Lennart", "Estralis", "Stutz", chiefContent, gameplay, content, website,
+        CreditsPerson.create("Lennart", "Estralis", "Lacroix", chiefContent, gameplay, content, website,
                 qualityAssurance);
         CreditsPerson.create("Martin", "Nitram", "Karing",
                 chiefClient, gameplay, client, website, easyNPC, easyQuest, mapEditor, server, qualityAssurance);
@@ -119,11 +119,8 @@ public final class Credits {
         CreditsPerson.create("Marvin", "Kopp", chiefMusic);
         CreditsPerson.create("Zot", content, graphics, maps, qualityAssurance);
 
-        CreditsPerson.create("Teflon", gameMaster);
         CreditsPerson.create("Silverwing", qualityAssurance, gameMaster);
         CreditsPerson.create("Slightly", gameMaster);
-        CreditsPerson.create("Ruben", "Zephyrius", "Garza", gameMaster);
-        CreditsPerson.create("Kristen", "Obsydien", "Stewart", gameMaster);
 
         CreditsPerson.create("Djironnyma", communityManager);
         CreditsPerson.create("Achae Eanstray", communityManager, graphics);
@@ -136,6 +133,7 @@ public final class Credits {
         CreditsPerson.create("Wolfgang", "Müller", content);
         CreditsPerson.create("Thomas", "Messerschmidt", content);
         CreditsPerson.create("Faladron", content);
+        CreditsPerson.create("Allison", "Dantagon", "Geraci", content, qualityAssurance);
         CreditsPerson.create("Henry", "Mill", content, maps);
         CreditsPerson.create("Lisa", "Maletzki", gameplay, content, qualityAssurance);
         CreditsPerson.create("Marion", "Miriam", "Herstell", content, client, qualityAssurance);
@@ -170,6 +168,7 @@ public final class Credits {
         CreditsPerson.create("Oliver", "Herzog", maps);
         CreditsPerson.create("Evie", chiefMap, content, maps);
         CreditsPerson.create("Quirkily", content, maps);
+        CreditsPerson.create("Banduk", content);
         CreditsPerson.create("Arien Edhel", specialThanks);
         CreditsPerson.create("Jan", "Alatar", "Falke", specialThanks);
         CreditsPerson.create("Aragon ben Galwan", specialThanks);
