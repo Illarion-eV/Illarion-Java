@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion project.
+  ~
+  ~ Copyright © 2015 - Illarion e.V.
+  ~
+  ~ Illarion is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Illarion is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  -->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <resourceBundle id="entering-bundle" filename="entering"/>
+
+    <screen id="entering" controller="illarion.client.gui.controller.EnteringScreenController">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
+        <layer childLayout="center">
+            <panel childLayout="center">
+                <effect>
+                    <onStartScreen name="fade" startDelay="0" length="500" start="#0" end="#F"/>
+                </effect>
+                <panel childLayout="vertical">
+                    <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
+                    <control name="label" text="${entering-bundle.entering}" font="menuFont" align="center"
+                             marginTop="20px" />
+                </panel>
+            </panel>
+        </layer>
+    </screen>
+</nifty>

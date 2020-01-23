@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,7 +53,9 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     private Window bookDisplay;
     @Nullable
     private Element bookTextContent;
+    @Nullable
     private ScrollPanel bookScrollArea;
+    @Nullable
     private Label pageNumberLabel;
 
     private Nifty nifty;

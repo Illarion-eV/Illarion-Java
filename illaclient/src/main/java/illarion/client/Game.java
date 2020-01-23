@@ -15,6 +15,7 @@
  */
 package illarion.client;
 
+import com.google.common.collect.ImmutableMap;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.spi.time.impl.AccurateTimeProvider;
 import illarion.client.graphics.FontLoader;
@@ -43,7 +44,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This is the game Illarion. This class takes care for actually building up Illarion. It will maintain the different
@@ -52,48 +56,21 @@ import java.util.Properties;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Game implements GameListener {
-    /**
-     * The ID of no state. In case this "state" is chosen the game will not display anything.
-     */
-    public static final int STATE_NONE = -1;
-    /**
-     * The ID of the login state. This is one of the constants to use in order to switch the current state of the game.
-     */
-    public static final int STATE_LOGIN = 0;
-
-    /**
-     * The ID of the loading state. This state can be used in order to display the current loading progress.
-     */
-    public static final int STATE_LOADING = 1;
-
-    /**
-     * The ID of the playing state. This can be used in order to display the current game.
-     */
-    public static final int STATE_PLAYING = 2;
-
-    /**
-     * The ID of the ending state. This displays the last screen before the shutdown.
-     */
-    public static final int STATE_ENDING = 3;
-
-    /**
-     * The ID of the ending state. This displays the last screen before the shutdown.
-     */
-    public static final int STATE_LOGOUT = 4;
-
-    /**
-     * The ID of the disconnected state. This state is displayed in case the client lost the connection to the server.
-     * This may happen due to the server shutting down the connection or by the connection being interrupted.
-     */
-    public static final int STATE_DISCONNECT = 5;
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(Game.class);
 
     @Nullable
     private Nifty nifty;
 
-    @Nonnull
-    private final GameState[] gameStates;
-    private int activeListener = STATE_NONE;
-    private int targetListener = STATE_NONE;
+    @Nullable
+    private Map<Class<? extends GameState>, GameState> gameStates;
+
+    @Nullable
+    private GameState currentState;
+
+    @Nullable
+    private GameState targetState;
+
     private boolean showFPS;
     private boolean showPing;
 
@@ -101,34 +78,35 @@ public final class Game implements GameListener {
      * Create the game with the fitting title, showing the name of the application and its version.
      */
     public Game() {
-        gameStates = new GameState[6];
-        AnnotationProcessor.process(this);
+        gameStates = new HashMap<>();
         showFPS = IllaClient.getCfg().getBoolean("showFps");
         showPing = IllaClient.getCfg().getBoolean("showPing");
+
+        AnnotationProcessor.process(this);
     }
 
     /**
-     * Sets the next game state to the given state, if between -1 and 5
-     * Game will advance to the given state upon the next call of update()
-     * @param stateId   the state to enter. Using a class constant is recommended for readability.
+     * Change the state of the game. This will not take effect right away, but once update is called the next time.
+     *
+     * @param targetStateClass The class of the state that is supposed to be entered
+     * @throws IllegalStateException in case the initialization of the states is not done yet
+     * @throws IllegalArgumentException in case the class is not registered as valid state
      */
-    public void enterState(int stateId) {
-        if ((stateId >= -1) && (stateId < gameStates.length)) {
-            targetListener = stateId;
-        } else {
-            throw new IllegalArgumentException("Illegal stateId: " + stateId);
+    public void enterState(@Nonnull Class<? extends GameState> targetStateClass) {
+        if (gameStates == null) {
+            throw new IllegalStateException("The states are not initialized yet.");
         }
+        if (!gameStates.containsKey(targetStateClass)) {
+            throw new IllegalArgumentException("Illegal state: " + targetStateClass.getName());
+        }
+
+        targetState = gameStates.get(targetStateClass);
     }
 
     @Nullable
-    private GameState getCurrentState() {
-        if ((activeListener >= 0) && (activeListener < gameStates.length)) {
-            return gameStates[activeListener];
-        }
-        return null;
+    GameState getCurrentState() {
+        return currentState;
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
     /**
      * Initializes fields and prepares the Game for launch
@@ -147,7 +125,7 @@ public final class Game implements GameListener {
         try {
             FontLoader.getInstance().prepareAllFonts(container.getEngine().getAssets());
         } catch (@Nonnull IOException e) {
-            LOGGER.error("Error while loading fonts!", e);
+            log.error("Error while loading fonts!", e);
         }
 
         InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
@@ -178,12 +156,15 @@ public final class Game implements GameListener {
             }
         });
 
-        gameStates[STATE_LOGIN] = new LoginState();
-        gameStates[STATE_LOADING] = new LoadingState();
-        gameStates[STATE_PLAYING] = new PlayingState(inputReceiver);
-        gameStates[STATE_ENDING] = new EndState();
-        gameStates[STATE_LOGOUT] = new LogoutState();
-        gameStates[STATE_DISCONNECT] = new DisconnectedState();
+        /* Populate the game states. */
+        gameStates = ImmutableMap.<Class<? extends GameState>, GameState>builder()
+                .put(AccountSystemState.class, new AccountSystemState())
+                .put(LoadingState.class, new LoadingState())
+                .put(PlayingState.class, new PlayingState(inputReceiver))
+                .put(EndState.class, new EndState())
+                .put(LogoutState.class, new LogoutState())
+                .build();
+
         // Prepare the sounds and music for use, set volume based on the current configuration settings
         Sounds sounds = container.getEngine().getSounds();
         if (IllaClient.getCfg().getBoolean("musicOn")) {
@@ -197,51 +178,30 @@ public final class Game implements GameListener {
             sounds.setSoundVolume(0.f);
         }
 
-        for (@Nonnull GameState listener : gameStates) {
+        /* Loading general style and control files. */
+        nifty.loadStyleFile("nifty-illarion-style.xml");
+        nifty.loadControlFile("nifty-default-controls.xml");
+        nifty.loadControlFile("illarion-gamecontrols.xml");
+
+        for (@Nonnull GameState listener : gameStates.values()) {
             listener.create(this, container, nifty);
         }
 
-        enterState(STATE_LOGIN);
-    }
-
-    /**
-     * Returns the state associated with the given index
-     * @param index the ID of the state to use, between 0 and {@code gameStates.length - 1}
-     * @return  the state associated with the given index, if a valid index
-     */
-    @Nonnull
-    public GameState getState(int index) {
-        if ((index < 0) || (index >= gameStates.length)) {
-            throw new IndexOutOfBoundsException(String.format("Index is expected between 0 and %d, got: %d",
-                    gameStates.length - 1, index));
-        }
-        return gameStates[index];
-    }
-
-    @Nonnull
-    public <T extends GameState> T getState(@Nonnull Class<T> clazz, int index) {
-        GameState state = getState(index);
-        if (clazz.isAssignableFrom(state.getClass())) {
-            //noinspection unchecked
-            return (T) state;
-        }
-        throw new IllegalArgumentException(
-                String.format("Requested state contains the class %s but the expected class was: %s",
-                        state.getClass().getName(), clazz.getName()));
+        enterState(LoadingState.class);
     }
 
     @Nonnull
     public <T extends GameState> T getState(@Nonnull Class<T> clazz) {
-        for (int i = 0; i < gameStates.length; i++) {
-            GameState state = getState(i);
-            if (clazz.isAssignableFrom(state.getClass())) {
-                //noinspection unchecked
-                return (T) state;
-            }
+        if (gameStates == null) {
+            throw new IllegalStateException("The game states are not initialized yet.");
+        }
+
+        if (gameStates.containsKey(clazz)) {
+            //noinspection unchecked
+            return (T) gameStates.get(clazz);
         }
         throw new IllegalArgumentException(
-                String.format("Failed to locate any state with the requested class: %s",
-                        clazz.getName()));
+                String.format("Failed to locate any state with the requested class: %s", clazz.getName()));
     }
 
     /**
@@ -251,8 +211,9 @@ public final class Game implements GameListener {
     public void dispose() {
         nifty = null;
 
-        for (@Nonnull GameState listener : gameStates) {
-            listener.dispose();
+        if (gameStates != null) {
+            gameStates.values().forEach(GameState::dispose);
+            gameStates = null;
         }
     }
 
@@ -291,13 +252,13 @@ public final class Game implements GameListener {
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
         assert nifty != null;
-        if (targetListener != activeListener) {
-            GameState activeState = getCurrentState();
+        if (targetState != currentState) {
+            GameState activeState = currentState;
             if (activeState != null) {
                 activeState.leaveState(container);
             }
-            activeListener = targetListener;
-            GameState newState = getCurrentState();
+            currentState = targetState;
+            GameState newState = targetState;
             if (newState != null) {
                 newState.enterState(container, nifty);
             }
@@ -331,14 +292,13 @@ public final class Game implements GameListener {
             Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             if (fpsFont != null) {
                 // Only show render data unless on devserver, testerver, or a custom server
-                boolean showRenderDiagnostic = IllaClient.DEFAULT_SERVER != Servers.Illarionserver;
                 int renderLine = 10;
                 if (showFPS) {
                     container.getEngine().getGraphics()
                             .drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
 
-                    if (showRenderDiagnostic) {
+                    if (IllaClient.IS_DEVELOP) {
                         for (CharSequence line : container.getDiagnosticLines()) {
                             container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
                             renderLine += fpsFont.getLineHeight();
@@ -346,7 +306,7 @@ public final class Game implements GameListener {
                     }
                 }
 
-                if (showRenderDiagnostic && World.isInitDone()) {
+                if (IllaClient.IS_DEVELOP && World.isInitDone()) {
                     String tileLine = "Tile count: " + World.getMap().getTileCount();
                     container.getEngine().getGraphics().drawText(fpsFont, tileLine, Color.WHITE, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
@@ -362,7 +322,6 @@ public final class Game implements GameListener {
                     if (serverPing > -1) {
                         container.getEngine().getGraphics().drawText(fpsFont, "Ping: " + serverPing + '+' +
                                 Math.max(0, netCommPing - serverPing) + " ms", Color.WHITE, 10, renderLine);
-                        renderLine += fpsFont.getLineHeight();
                     }
                 }
                 // If more diagnostics are wanted, add them here
@@ -390,9 +349,6 @@ public final class Game implements GameListener {
     @Override
     public boolean isClosingGame() {
         GameState activeListener = getCurrentState();
-        if (activeListener != null) {
-            return activeListener.isClosingGame();
-        }
-        return true; // According to the interface, default reply is false. Consider rewriting docs there or this method.
+        return activeListener == null || activeListener.isClosingGame();
     }
 }

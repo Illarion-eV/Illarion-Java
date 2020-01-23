@@ -22,13 +22,13 @@ import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.gui.entries.SavableEntry;
 import illarion.common.config.gui.entries.swing.*;
 import illarion.common.util.MessageSource;
-import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -136,7 +136,7 @@ public final class ConfigDialogSwing extends JDialog {
 
         MessageSource msgs = dialog.getMessageSource();
 
-        FastTable<SavableEntry> contentList = new FastTable<>();
+        List<SavableEntry> contentList = new ArrayList<>();
 
         JPanel content = new JPanel(new BorderLayout(5, 5));
         add(content);
@@ -145,7 +145,7 @@ public final class ConfigDialogSwing extends JDialog {
         content.add(buttonPanel, BorderLayout.SOUTH);
 
         JButton saveButton = new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
-        saveButton.addActionListener(new SaveButtonListener(contentList.unmodifiable(), this));
+        saveButton.addActionListener(new SaveButtonListener(contentList, this));
         saveButton.setPreferredSize(new Dimension(100, 25));
         buttonPanel.add(saveButton);
 

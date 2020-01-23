@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,11 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class InteractiveInventorySlot implements Draggable, DropTarget {
     /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(InteractiveInventorySlot.class);
+    /**
      * The inventory item this interactive class refers to.
      */
     @Nonnull
@@ -60,12 +65,6 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     }
 
     /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    @Nonnull
-    private static final Logger log = LoggerFactory.getLogger(InteractiveInventorySlot.class);
-
-    /**
      * Drag the item in this inventory slot to another inventory slot.
      */
     @Override
@@ -82,6 +81,31 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
         }
 
         World.getNet().sendCommand(new DragInvInvCmd(getSlotId(), targetSlot.getSlotId(), count));
+    }
+
+    /**
+     * Drag the item in the inventory to a location on the map.
+     *
+     * @param targetTile the target location on the map
+     * @param count the amount of items to drag to the new location
+     */
+    @Override
+    public void dragTo(@Nonnull InteractiveMapTile targetTile, @Nonnull ItemCount count) {
+        if (!isValidItem()) {
+            return;
+        }
+
+        World.getNet().sendCommand(new DragInvMapCmd(getSlotId(), targetTile.getLocation(), count));
+    }
+
+    @Override
+    public void dragTo(@Nonnull InteractiveContainerSlot targetSlot, @Nonnull ItemCount count) {
+        if (!isValidItem()) {
+            return;
+        }
+
+        ContainerSlot slot = targetSlot.getSlot();
+        World.getNet().sendCommand(new DragInvScCmd(getSlotId(), slot.getContainerId(), slot.getLocation(), count));
     }
 
     /**
@@ -148,31 +172,6 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     }
 
     /**
-     * Drag the item in the inventory to a location on the map.
-     *
-     * @param targetTile the target location on the map
-     * @param count the amount of items to drag to the new location
-     */
-    @Override
-    public void dragTo(@Nonnull InteractiveMapTile targetTile, @Nonnull ItemCount count) {
-        if (!isValidItem()) {
-            return;
-        }
-
-        World.getNet().sendCommand(new DragInvMapCmd(getSlotId(), targetTile.getLocation(), count));
-    }
-
-    @Override
-    public void dragTo(@Nonnull InteractiveContainerSlot targetSlot, @Nonnull ItemCount count) {
-        if (!isValidItem()) {
-            return;
-        }
-
-        ContainerSlot slot = targetSlot.getSlot();
-        World.getNet().sendCommand(new DragInvScCmd(getSlotId(), slot.getContainerId(), slot.getLocation(), count));
-    }
-
-    /**
      * Get the ID of the slot.
      *
      * @return the location ID
@@ -184,7 +183,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     /**
      * Check if this interactive slot refers to a valid item.
      *
-     * @return <code>true</code> in case this interactive item refers to a valid
+     * @return {@code true} in case this interactive item refers to a valid
      * item
      */
     public boolean isValidItem() {

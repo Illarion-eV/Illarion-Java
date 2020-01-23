@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.gui;
 
-import illarion.common.util.Base64;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
@@ -39,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 
 /**
  * A small set of static utility functions that help at some points.
@@ -262,10 +262,11 @@ final class Utils {
             writer.setWritingTarget(stringWriter);
             writer.write();
             String script = stringWriter.toString();
-            String base64Script = Base64.encode(script, "UTF-8");
-            String fixedScript = base64Script.replace('\\', '_').replace('+', '-').replace('=', '*');
 
-            String query = "script=" + URLEncoder.encode(fixedScript, "UTF-8");
+            Base64.Encoder b64Encoder = Base64.getUrlEncoder();
+            String base64Script = b64Encoder.encodeToString(script.getBytes("UTF-8"));
+
+            String query = "script=" + URLEncoder.encode(base64Script, "UTF-8");
 
             try (Writer output = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"))) {
                 output.write(query);

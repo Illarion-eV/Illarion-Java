@@ -118,6 +118,12 @@ public final class CombatHandler {
         if (localAttackedChat != null) {
             ignoreNextTargetLost.set(true);
             World.getNet().sendCommand(new StandDownCmd());
+        } else {
+            Char localUnconfirmed = unconfirmedChars.poll();
+            if (localUnconfirmed != null) {
+                ignoreNextTargetLost.set(true);
+                World.getNet().sendCommand(new StandDownCmd());
+            }
         }
     }
 
@@ -130,8 +136,11 @@ public final class CombatHandler {
             log.debug("Expected target lost received from server. No action taken.");
         } else {
             log.debug("Target lost received from server. Stopping attack.");
-            attackedChar = null;
-            unconfirmedChars.poll();
+            if (attackedChar == null) {
+                unconfirmedChars.poll();
+            } else {
+                attackedChar = null;
+            }
         }
     }
 

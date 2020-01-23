@@ -33,7 +33,7 @@ public final class LookAtCharCmd extends AbstractCommand {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(LookAtCharCmd.class);
     /**
-     * Mode for looking in a polite way at a character. That leads to the point
+     * FrameAnimationMode for looking in a polite way at a character. That leads to the point
      * that the character you are looking at gets no message but you get only
      * limited information.
      */

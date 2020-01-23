@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,11 +16,14 @@
 package illarion.client.resources.data;
 
 import illarion.client.graphics.AvatarClothManager;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * This is the template that contains the required data to create the graphical representation of a avatar cloth.
@@ -38,7 +41,8 @@ public class AvatarClothTemplate extends AbstractMultiFrameEntityTemplate {
     /**
      * The ID of the cloth slot this cloth is displayed in.
      */
-    private final int clothSlot;
+    @Nonnull
+    private final AvatarClothGroup clothGroup;
 
     /**
      * The constructor of this class.
@@ -53,20 +57,30 @@ public class AvatarClothTemplate extends AbstractMultiFrameEntityTemplate {
         super(id, sprite, frames, 0, null, 0);
 
         this.avatarId = avatarId;
-        this.clothSlot = clothSlot;
+
+        Optional<AvatarClothGroup> matchingSlot;
+        //noinspection ConstantConditions
+        matchingSlot =
+                Arrays.asList(AvatarClothGroup.values()).stream().filter(g -> g.getGroupId() == clothSlot).findAny();
+
+        if (!matchingSlot.isPresent()) {
+            throw new IllegalArgumentException("cloth slot can't be mapped to a group: " + clothSlot);
+        }
+        clothGroup = matchingSlot.get();
     }
 
     public int getAvatarId() {
         return avatarId;
     }
 
-    public int getClothSlot() {
-        return clothSlot;
+    @Nonnull
+    public AvatarClothGroup getClothGroup() {
+        return clothGroup;
     }
 
     @Nonnull
     @Override
     public String toString() {
-        return AvatarClothManager.toString(clothSlot);
+        return AvatarClothManager.toString(clothGroup);
     }
 }

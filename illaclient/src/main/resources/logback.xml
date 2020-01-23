@@ -19,6 +19,7 @@
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
     </appender>
+    <logger name="illarion.client.world.movement" level="debug" />
     <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>

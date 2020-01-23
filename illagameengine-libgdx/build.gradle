@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,9 +19,9 @@ apply plugin: 'maven-publish'
 archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
     compile project(':engine')
-    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.7.0'
-    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.7.0'
-    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.7.0', classifier: 'natives-desktop'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.6'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.6'
+    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.6', classifier: 'natives-desktop'
 }
 
 jar {

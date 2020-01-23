@@ -323,8 +323,9 @@ public final class World {
      * Prepare all components of the world. This needs to be called before the world is used.
      *
      * @param engine the engine that is used to display the game
+     * @param characterName the name of the character the world is being initialized for
      */
-    public static void initWorldComponents(@Nonnull Engine engine) throws EngineException {
+    public static void initWorldComponents(@Nonnull Engine engine, @Nonnull String characterName) throws EngineException {
         if (INSTANCE.init) {
             return;
         }
@@ -339,7 +340,7 @@ public final class World {
         INSTANCE.musicBox = new MusicBox(engine);
         INSTANCE.net = new NetComm();
         INSTANCE.people = new People();
-        INSTANCE.player = new Player(engine);
+        INSTANCE.player = new Player(engine, characterName);
         INSTANCE.weather = new Weather();
         INSTANCE.interactionManager = new InteractionManager();
     }

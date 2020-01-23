@@ -18,8 +18,6 @@ package illarion.client.graphics;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.FontManager;
 import org.illarion.engine.graphic.Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,14 +30,62 @@ import java.io.IOException;
  */
 public final class FontLoader {
     /**
+     * The font that is supposed to be used for chat bubbles.
+     */
+    @Nonnull
+    public static final String BUBBLE_FONT = "bubbleFont";
+    /**
+     * The font that is supposed to be used as the out line of the font for chat bubbles.
+     */
+    @Nonnull
+    public static final String BUBBLE_FONT_OUTLINE = "bubbleFontOutline";
+    /**
+     * The key for the menu font.
+     */
+    @Nonnull
+    public static final String MENU_FONT = "menuFont";
+    /**
+     * The key for the caption font.
+     */
+    @Nonnull
+    public static final String CAPTION_FONT = "captionFont";
+    /**
+     * The key for the small font.
+     */
+    public static final String SMALL_FONT = "smallFont";
+    /**
+     * The key for the text font.
+     */
+    @Nonnull
+    public static final String TEXT_FONT = "textFont";
+    /**
+     * The key for the chat font.
+     */
+    @Nonnull
+    public static final String CHAT_FONT = "chatFont";
+    /**
+     * The key for the console font.
+     */
+    @Nonnull
+    public static final String CONSOLE_FONT = "consoleFont";
+    /**
      * Singleton instance of the FontLoader.
      */
+    @Nonnull
     private static final FontLoader INSTANCE = new FontLoader();
+    @Nonnull
+    private static final String FONT_IMAGE_DIR = "gui/";
+    /**
+     * The font manager that is used to load the fonts.
+     */
+    @Nullable
+    private FontManager fontManager;
 
     /**
-     * The logger instance that takes care for the logging output of this class.
+     * Default constructor.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(FontLoader.class);
+    private FontLoader() {
+    }
 
     /**
      * Get instance of singleton.
@@ -52,14 +98,8 @@ public final class FontLoader {
     }
 
     /**
-     * Default constructor.
-     */
-    private FontLoader() {
-    }
-
-    /**
-     * Load a font, using the name stored in the configuration. The font is loaded from the buffer of the class in
-     * case its loaded already. Else its loaded from the resources.
+     * Load a font, using the name stored in the configuration. The font is loaded from the buffer of the class in case
+     * its loaded already. Else its loaded from the resources.
      *
      * @param cfgName the name of the font, this has to be load before hand
      * @return the font itself
@@ -75,54 +115,6 @@ public final class FontLoader {
         }
         return loadedFont;
     }
-
-    /**
-     * The font manager that is used to load the fonts.
-     */
-    @Nullable
-    private FontManager fontManager;
-
-    /**
-     * The font that is supposed to be used for chat bubbles.
-     */
-    public static final String BUBBLE_FONT = "bubbleFont";
-
-    /**
-     * The font that is supposed to be used as the out line of the font for chat bubbles.
-     */
-    public static final String BUBBLE_FONT_OUTLINE = "bubbleFontOutline";
-
-    /**
-     * The key for the menu font.
-     */
-    public static final String MENU_FONT = "menuFont";
-
-    /**
-     * The key for the caption font.
-     */
-    public static final String CAPTION_FONT = "captionFont";
-
-    /**
-     * The key for the small font.
-     */
-    public static final String SMALL_FONT = "smallFont";
-
-    /**
-     * The key for the text font.
-     */
-    public static final String TEXT_FONT = "textFont";
-
-    /**
-     * The key for the chat font.
-     */
-    public static final String CHAT_FONT = "chatFont";
-
-    /**
-     * The key for the console font.
-     */
-    public static final String CONSOLE_FONT = "consoleFont";
-
-    private static final String FONT_IMAGE_DIR = "gui/";
 
     /**
      * This function loads all fonts that where yet not loaded.

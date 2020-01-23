@@ -19,6 +19,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Game;
+import illarion.client.states.AccountSystemState;
 import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
@@ -54,7 +55,7 @@ public final class LoadScreenController implements ScreenController {
         }
         loadingDoneCalled = true;
 
-        game.enterState(Game.STATE_PLAYING);
+        game.enterState(AccountSystemState.class);
     }
 
     public void setProgress(float progressValue) {

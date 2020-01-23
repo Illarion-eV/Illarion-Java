@@ -56,7 +56,7 @@ public final class LogoutState implements GameState {
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
         if (logoutDelay == 0) {
-            World.shutdownWorld();
+            World.cleanEnvironment();
         }
         logoutDelay += delta;
         if (logoutDelay > 1000) {

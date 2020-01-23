@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ package illarion.mapedit;
 
 import illarion.common.util.MessageSource;
 import illarion.mapedit.gui.MapEditorConfig;
-import javolution.text.TextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,11 +106,8 @@ public final class Lang implements MessageSource {
      */
     @Nonnull
     public static String getMsg(@Nonnull Class<?> clazz, String key) {
-        TextBuilder builder = new TextBuilder();
-        builder.append(clazz.getName());
-        builder.append('.');
-        builder.append(key);
-        return getMsg(builder.toString());
+        String builder = clazz.getName() + '.' + key;
+        return getMsg(builder);
     }
 
     /**
@@ -147,7 +143,7 @@ public final class Lang implements MessageSource {
         try {
             return messages.getString(key);
         } catch (@Nonnull MissingResourceException e) {
-            LOGGER.warn("Failed searching translated version of: " + key);
+            LOGGER.warn("Failed searching translated version of: {}", key);
             return '<' + key + '>';
         }
     }

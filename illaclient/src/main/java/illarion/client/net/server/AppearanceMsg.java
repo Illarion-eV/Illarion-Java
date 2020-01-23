@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.graphics.AvatarClothManager;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
@@ -49,73 +49,64 @@ public final class AppearanceMsg implements ServerReply {
      * Conversation value for the scale value received from the server and the value the client actually uses.
      */
     private static final float SCALE_MOD = 100.f;
-
+    /**
+     * The slots of the inventory that is required to display the paperdolling of this character.
+     */
+    @Nonnull
+    private final ItemId[] itemSlots;
     /**
      * Appearance of the character. This value contains the race and the gender
      * of the character.
      */
-    private int appearance;
+    private int raceId;
+
+    private int typeId;
 
     /**
      * The name of the character.
      */
     @Nullable
     private String name;
-
     /**
      * The custom given name of the character.
      */
     @Nullable
     private String customName;
-
     /**
      * The ID of the beard of the character.
      */
     private short beardID;
-
     /**
      * ID of the character this message is about.
      */
     @Nullable
     private CharacterId charId;
-
     /**
      * The dead flag of the character. {@code true} is dead, {@code false} is alive.
      */
     private boolean deadFlag;
-
     /**
      * The color of the hair
      */
     @Nullable
     private Color hairColor;
-
     /**
      * The ID of the hair the character has.
      */
     private short hairID;
-
     /**
      * Size modifier of the character.
      */
     private short size;
-
     /**
      * The color of the skin
      */
     @Nullable
     private Color skinColor;
-
     /**
      * The hit points of the character.
      */
     private int hitPoints;
-
-    /**
-     * The slots of the inventory that is required to display the paperdolling of this character.
-     */
-    @Nonnull
-    private final ItemId[] itemSlots;
 
     /**
      * Default constructor for the appearance message.
@@ -130,9 +121,8 @@ public final class AppearanceMsg implements ServerReply {
         name = reader.readString();
         customName = reader.readString();
 
-        int race = reader.readUShort();
-        boolean male = reader.readUByte() == 0;
-        appearance = getAppearance(race, male);
+        raceId = reader.readUShort();
+        typeId = reader.readUByte();
         hitPoints = reader.readUShort();
         size = reader.readUByte();
         hairID = reader.readUByte();
@@ -169,9 +159,9 @@ public final class AppearanceMsg implements ServerReply {
         character.setName(name);
         character.setCustomName(customName);
 
-        character.setAppearance(appearance);
-        character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
-        character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
+        character.setAppearance(raceId, typeId);
+        character.setWearingItem(AvatarClothGroup.Hair, hairID);
+        character.setWearingItem(AvatarClothGroup.Beard, beardID);
 
         character.resetLightValue();
         for (int i = 0; i < itemSlots.length; i++) {
@@ -185,105 +175,13 @@ public final class AppearanceMsg implements ServerReply {
             character.setSkinColor(skinColor);
         }
 
-        character.setClothColor(AvatarClothManager.GROUP_HAIR, hairColor);
-        character.setClothColor(AvatarClothManager.GROUP_BEARD, hairColor);
+        character.setClothColor(AvatarClothGroup.Hair, hairColor);
+        character.setClothColor(AvatarClothGroup.Beard, hairColor);
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
 
         return ServerReplyResult.Success;
-    }
-
-    /**
-     * Get the appearance for a race and a gender.
-     * TODO: This function is plain and utter crap. It needs to go away. Far away. Soon.
-     *
-     * @param race the race ID
-     * @param male {@code true} in case the character is male
-     * @return the appearance ID
-     */
-    private static int getAppearance(int race, boolean male) {
-        switch (race) {
-            case 0: //human
-                return male ? 1 : 16;
-            case 1: //dwarf
-                return male ? 12 : 17;
-            case 2: //halfling
-                return male ? 24 : 25;
-            case 3: //elf
-                return male ? 20 : 19;
-            case 4: //orc
-                return male ? 13 : 18;
-            case 5: //lizardman
-                return 7;
-            case 7: // column of resurrection
-                return 3;
-            case 9: //forest troll
-                return 21;
-            case 10: //mummy
-                return 2;
-            case 11: //skeleton
-                return 5;
-            case 12: //floating eye
-                return 6;
-            case 18: //sheep
-                return 9;
-            case 19: //spider
-                return 10;
-            case 24: //pig
-                return 23;
-            case 27: //wasp
-                return 28;
-            case 30: //golem
-                return 31;
-            case 37: //cow
-                return 40;
-            case 39: //wolf
-                return 42;
-            case 51: //bear
-                return 51;
-            case 52: //raptor
-                return 52;
-            case 53: //zombie
-                return 53;
-            case 54: //hellhound
-                return 54;
-            case 55: //imp
-                return 55;
-            case 56: //iron golem
-                return 56;
-            case 57: //ratman
-                return 57;
-            case 58: //dog
-                return 58;
-            case 59: //beetle
-                return 59;
-            case 60: //fox
-                return 60;
-            case 61: //slime
-                return 61;
-            case 62: //chicken
-                return 62;
-            case 63: //bone dragon
-                return 63;
-            case 111: //rat
-                return 111;
-            case 112: //black dragon
-                return 112;
-            case 113: //rabbit
-                return 113;
-            case 114: //Akaltut
-                return 114;
-            case 115: //fairy
-                return 115;
-            case 116: //deer
-                return 116;
-            case 117: //Ettin
-                return 117;
-            default:
-                log.warn("Unexpected race id {}. Using appearance with the same ID by chance.", race);
-                return race;
-        }
     }
 
     @Nonnull

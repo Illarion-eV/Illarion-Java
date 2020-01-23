@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -80,7 +80,7 @@ public final class Config {
 
     /**
      * The last generated list of opened files. When this is set to
-     * <code>null</code> the list is generated fresh once its requested the next
+     * {@code null} the list is generated fresh once its requested the next
      * time.
      */
     @Nullable
@@ -156,6 +156,10 @@ public final class Config {
         return folder;
     }
 
+    public void setEasyQuestFolder(@Nonnull Path newFolder) {
+        cfg.set(easyQuestFolder, newFolder);
+    }
+
     @Nonnull
     public Collection<Path> getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
@@ -208,6 +212,10 @@ public final class Config {
         return folder;
     }
 
+    public void setExportFolder(@Nonnull Path newFolder) {
+        cfg.set(exportFolder, newFolder);
+    }
+
     /**
      * Get the list of files that were open the last time the editor was
      * running.
@@ -226,6 +234,22 @@ public final class Config {
             paths[i] = Paths.get(splitFiles[i]);
         }
         return Arrays.asList(paths);
+    }
+
+    /**
+     * Set the list of files that shall be opened the next time the editor is
+     * started.
+     *
+     * @param files the files to open
+     */
+    public void setOldFiles(@Nonnull Iterable<Path> files) {
+        StringBuilder buffer = new StringBuilder();
+        for (Path file : files) {
+            buffer.append(file.toAbsolutePath());
+            buffer.append(File.pathSeparator);
+        }
+        buffer.setLength(buffer.length() - 1);
+        cfg.set(openFiles, buffer.toString());
     }
 
     /**
@@ -256,45 +280,21 @@ public final class Config {
         cfg.save();
     }
 
-    public void setEasyQuestFolder(@Nonnull Path newFolder) {
-        cfg.set(easyQuestFolder, newFolder);
-    }
-
-    public void setExportFolder(@Nonnull Path newFolder) {
-        cfg.set(exportFolder, newFolder);
-    }
-
-    /**
-     * Set the list of files that shall be opened the next time the editor is
-     * started.
-     *
-     * @param files the files to open
-     */
-    public void setOldFiles(@Nonnull Iterable<Path> files) {
-        StringBuilder buffer = new StringBuilder();
-        for (Path file : files) {
-            buffer.append(file.toAbsolutePath());
-            buffer.append(File.pathSeparator);
-        }
-        buffer.setLength(buffer.length() - 1);
-        cfg.set(openFiles, buffer.toString());
+    @Nullable
+    public String getCharacter() {
+        return cfg.getString(character);
     }
 
     public void setCharacter(@Nonnull String newCharacter) {
         cfg.set(character, newCharacter);
     }
 
-    public void setPassword(@Nonnull String newPassword) {
-        cfg.set(password, newPassword);
-    }
-
-    @Nullable
-    public String getCharacter() {
-        return cfg.getString(character);
-    }
-
     @Nullable
     public String getPassword() {
         return cfg.getString(password);
+    }
+
+    public void setPassword(@Nonnull String newPassword) {
+        cfg.set(password, newPassword);
     }
 }
