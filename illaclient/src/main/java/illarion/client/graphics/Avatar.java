@@ -331,14 +331,21 @@ public final class Avatar extends AvatarEntity {
             } else {
                 ServerCoordinate target = parentChar.getLocation();
                 if (target != null) {
-                    log.debug("Walking to and using the character {}", interactiveChar);
-                    TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                    handler.walkTo(parentChar.getLocation(), interactiveChar.getUseRange());
-                    handler.setTargetReachedAction(interactiveChar::use);
-                    handler.assumeControl();
+                    if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                        log.debug("Double alt-click to turn to character {} at {}", parentChar, target);
+                        TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                        handler.turnTo(target);
+                        handler.assumeControl();
+                    } else {
+                        log.debug("Walking to and using the character {} at {}", interactiveChar, target);
+                        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                        handler.walkTo(target, 1);
+                        handler.setTargetReachedAction(interactiveChar::use);
+                        handler.assumeControl();
+                    }
                 } else {
                     log.debug("Walking to and using the character {} doesn't work, because it has no location.",
-                              interactiveChar);
+                            interactiveChar);
                 }
             }
         }

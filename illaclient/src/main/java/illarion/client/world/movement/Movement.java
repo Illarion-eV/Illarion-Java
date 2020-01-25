@@ -81,6 +81,9 @@ public class Movement {
     private final MouseTargetMovementHandler targetMouseMovementHandler;
 
     @Nonnull
+    private final TargetTurnHandler targetTurnHandler;
+
+    @Nonnull
     private final MoveAnimation moveAnimation;
     /**
      * The currently active movement handler.
@@ -111,6 +114,7 @@ public class Movement {
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
         targetMouseMovementHandler = new WalkToMouseMovementHandler(this, input);
+        targetTurnHandler = new TurnToMovementHandler(this);
 
         executorService = Executors.newSingleThreadExecutor(
                 new ThreadFactoryBuilder()

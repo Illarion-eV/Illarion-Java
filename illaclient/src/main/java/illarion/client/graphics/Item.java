@@ -40,6 +40,8 @@ import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,6 +94,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * is the only one or the one at the top position on one location.
      */
     private boolean showNumber;
+
+    /**
+     * The logging instance that takes care for the logging output of this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(Item.class);
+
     private int showHighlight;
     @Nullable
     private ItemStack parentStack;
@@ -223,7 +232,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 }
 
                 if (event instanceof DoubleClickOnMapEvent) {
-                    return isEventProcessed((DoubleClickOnMapEvent) event);
+                    return isEventProcessed((DoubleClickOnMapEvent) event, container);
                 }
             }
             if (event instanceof PrimaryKeyMapDrag) {
@@ -324,6 +333,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     public ItemId getItemId() {
         return itemId;
     }
+
+
 
     private boolean isEventProcessed(@Nonnull CurrentMouseLocationEvent event) {
         if (!isMouseInInteractionRect(event.getX(), event.getY())) {
