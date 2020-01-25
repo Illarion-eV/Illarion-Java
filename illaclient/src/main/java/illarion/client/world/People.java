@@ -298,6 +298,22 @@ public final class People {
     }
 
     /**
+     * Get the list of the known characters.
+     *
+     * @return a new list containing all known characters
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public List<Char> getAllCharacters() {
+        charsLock.readLock().lock();
+        try {
+            return new ArrayList<Char>(chars.values());
+        } finally {
+            charsLock.readLock().unlock();
+        }
+    }
+
+    /**
      * Get the character on a special location on the map.
      *
      * @param coordinate the location the character is searched at

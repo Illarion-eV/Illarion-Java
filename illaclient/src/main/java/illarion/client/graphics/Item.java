@@ -27,6 +27,7 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.client.world.movement.MouseTargetMovementHandler;
 import illarion.client.world.movement.TargetMovementHandler;
+import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
 import illarion.common.gui.AbstractMultiActionHelper;
@@ -39,6 +40,7 @@ import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -386,6 +388,17 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if ((mouseTile == null) || !mouseTile.isAtPlayerLevel()) {
             return false;
         }
+
+        if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+            log.debug("Single alt-click on item at {}", parentTile.getCoordinates());
+            TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+            handler.turnTo(parentTile.getCoordinates());
+            handler.assumeControl();
+            return true;
+        }
+
+        log.debug("Single click on item at {}", mouseTile.getCoordinates());
+
         delayGoToItem.reset();
 
         TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
@@ -411,7 +424,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return true;
     }
 
-    private boolean isEventProcessed(@Nonnull DoubleClickOnMapEvent event) {
+    private boolean isEventProcessed(@Nonnull DoubleClickOnMapEvent event, @Nonnull GameContainer container) {
         if (event.getKey() != Button.Left) {
             return false;
         }
@@ -423,13 +436,23 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         delayGoToItem.reset();
 
         if (parentTile.getInteractive().isInUseRange()) {
+            log.debug("Double click on item at {}, using", parentTile.getCoordinates());
             parentTile.getInteractive().use();
         } else {
-            InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentTile.getCoordinates(), 1);
-            handler.setTargetReachedAction(interactiveMapTile::use);
-            handler.assumeControl();
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                log.debug("Double alt-click on item at {}, turning", parentTile.getCoordinates());
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(parentTile.getCoordinates());
+                handler.assumeControl();
+            } else {
+                log.debug("Double click on item at {}, walking and using", parentTile.getCoordinates());
+                InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
+                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                handler.walkTo(parentTile.getCoordinates(), 1);
+                handler.setTargetReachedAction(interactiveMapTile::use);
+                handler.assumeControl();
+            }
         }
 
         return true;

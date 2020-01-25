@@ -419,6 +419,10 @@ public class Movement {
         return defaultMovementMode;
     }
 
+    public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
+        this.defaultMovementMode = defaultMovementMode;
+    }
+
     @Nonnull
     @Contract(pure = true)
     public MouseMovementHandler getFollowMouseHandler() {
@@ -443,8 +447,10 @@ public class Movement {
         return targetMouseMovementHandler;
     }
 
-    public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
-        this.defaultMovementMode = defaultMovementMode;
+    @Nonnull
+    @Contract(pure = true)
+    public TargetTurnHandler getTargetTurnHandler() {
+        return targetTurnHandler;
     }
 
     public void shutdown() {

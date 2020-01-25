@@ -32,6 +32,7 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
+import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
@@ -274,6 +275,16 @@ public final class Avatar extends AvatarEntity {
         }
 
         if (event.getKey() == Button.Left) {
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                ServerCoordinate target = parentChar.getLocation();
+                log.debug("Single alt-click on character {} at {}", parentChar, target);
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(target);
+                handler.assumeControl();
+                return true;
+            }
+
             if (delayedWalkingHandler != null) {
                 delayedWalkingHandler.pulse();
             } else {
@@ -320,10 +331,12 @@ public final class Avatar extends AvatarEntity {
         }
 
         if (parentChar.isHuman()) {
+            // Not checking for Alt pressed, because LookAtCharCmd makes sense in any case.
             //Sending a LookAtCharCmd will open the character window on server response.
             World.getNet().sendCommand(new LookAtCharCmd(parentChar.getCharId(), LookAtCharCmd.LOOKAT_STARE));
         } else {
             InteractiveChar interactiveChar = parentChar.getInteractive();
+            Input input = container.getEngine().getInput();
 
             if (interactiveChar.isInUseRange()) {
                 log.debug("Using the character {}", interactiveChar);
