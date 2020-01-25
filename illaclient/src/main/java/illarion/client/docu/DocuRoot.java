@@ -67,7 +67,6 @@ public final class DocuRoot implements Iterable<DocuEntry> {
     @Nonnull
     private static DocuEntry createNoChatDocu() {
         DocuNode docu = new DocuNode("noChat");
-        docu.addChild("space");
         docu.addChild("wasd");
         docu.addChild("arrow");
         docu.addChild("numpad");
