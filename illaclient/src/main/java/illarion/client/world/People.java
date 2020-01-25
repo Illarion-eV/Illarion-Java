@@ -31,7 +31,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -296,22 +295,6 @@ public final class People {
         charsLock.readLock().lock();
         try {
             return chars.get(id);
-        } finally {
-            charsLock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Get the list of the known characters.
-     *
-     * @return a new list containing all known characters
-     */
-    @Nonnull
-    @Contract(pure = true)
-    public List<Char> getAllCharacters() {
-        charsLock.readLock().lock();
-        try {
-            return new ArrayList<Char>(chars.values());
         } finally {
             charsLock.readLock().unlock();
         }
