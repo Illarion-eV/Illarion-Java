@@ -27,7 +27,6 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.client.world.movement.MouseTargetMovementHandler;
 import illarion.client.world.movement.TargetMovementHandler;
-import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
 import illarion.common.gui.AbstractMultiActionHelper;
@@ -40,7 +39,6 @@ import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
-import org.illarion.engine.input.Key;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -377,17 +375,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if ((mouseTile == null) || !mouseTile.isAtPlayerLevel()) {
             return false;
         }
-
-        if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
-            log.debug("Single alt-click on item at {}", parentTile.getCoordinates());
-            TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
-            handler.turnTo(parentTile.getCoordinates());
-            handler.assumeControl();
-            return true;
-        }
-
-        log.debug("Single click on item at {}", mouseTile.getCoordinates());
-
         delayGoToItem.reset();
 
         TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
@@ -413,7 +400,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return true;
     }
 
-    private boolean isEventProcessed(@Nonnull DoubleClickOnMapEvent event, @Nonnull GameContainer container) {
+    private boolean isEventProcessed(@Nonnull DoubleClickOnMapEvent event) {
         if (event.getKey() != Button.Left) {
             return false;
         }
@@ -479,7 +466,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 }
 
                 if (event instanceof DoubleClickOnMapEvent) {
-                    return isEventProcessed((DoubleClickOnMapEvent) event, container);
+                    return isEventProcessed((DoubleClickOnMapEvent) event);
                 }
             }
             if (event instanceof PrimaryKeyMapDrag) {
