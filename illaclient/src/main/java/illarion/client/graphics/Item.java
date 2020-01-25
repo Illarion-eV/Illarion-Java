@@ -409,17 +409,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
 
-        Input input = container.getEngine().getInput();
-        if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
-            log.debug("Double alt-click on item at {}", parentTile.getCoordinates());
-            TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
-            handler.turnTo(parentTile.getCoordinates());
-            handler.assumeControl();
-            return true;
-        }
-
-        log.debug("Double click on item at {}", parentTile.getCoordinates());
-
         delayGoToItem.reset();
 
         if (parentTile.getInteractive().isInUseRange()) {
@@ -442,100 +431,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return event.startDraggingItemFromTile(parentTile);
 
     }
-
-    @SuppressWarnings("SimplifiableIfStatement")
-    @Override
-    public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
-        if (getAlpha() == 0) {
-            return false;
-        }
-
-        if (event instanceof AbstractMouseLocationEvent) {
-            AbstractMouseLocationEvent locationEvent = (AbstractMouseLocationEvent) event;
-            if (isMouseInInteractionRect(locationEvent.getX(), locationEvent.getY())) {
-                if (event instanceof CurrentMouseLocationEvent) {
-                    return isEventProcessed((CurrentMouseLocationEvent) event);
-                }
-
-                if (event instanceof PointOnMapEvent) {
-                    return isEventProcessed((PointOnMapEvent) event);
-                }
-
-                // Uses a method from AbstractEntity that walks the player to the point at the mouse
-                if (event instanceof ClickOnMapEvent) {
-                    return processMapClick((ClickOnMapEvent) event, container);
-                }
-
-                if (event instanceof DoubleClickOnMapEvent) {
-                    return isEventProcessed((DoubleClickOnMapEvent) event);
-                }
-            }
-            if (event instanceof PrimaryKeyMapDrag) {
-                return isEventProcessed((PrimaryKeyMapDrag) event);
-            }
-        }
-
-
-        return false;
-    }
-
-    private static final class DelayGoToItemHandler extends AbstractMultiActionHelper {
-        @Nullable
-        private ServerCoordinate target;
-
-        DelayGoToItemHandler() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
-        }
-
-        void setLocation(@Nullable ServerCoordinate target) {
-            this.target = target;
-        }
-
-        @Override
-        public void executeAction(int count) {
-            if ((count == 1) && (target != null)) {
-                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                handler.walkTo(target, 0);
-                handler.assumeControl();
-            }
-        }
-    }
-
-    @Nonnull
-    private static final DelayGoToItemHandler delayGoToItem = new DelayGoToItemHandler();
-
-    @Override
-    protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {
-        if (super.isMouseInInteractionRect(mouseX, mouseY)) {
-            if (isCurrentlyEffectedByFadingCorridor()) {
-                Tile tile = parentTile.getTile();
-                return (tile != null) && tile.isMouseInInteractionRect(mouseX, mouseY);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Set number of stacked items.
-     *
-     * @param newCount the number of items on this stack, in case its more then
-     * one a text is displayed next to the item that shown how many
-     * items are on the stack
-     */
-    public void setCount(@Nullable ItemCount newCount) {
-        count = newCount;
-
-        // write number to text for display
-        if (ItemCount.isGreaterOne(count)) {
-            number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
-        } else {
-            number = null;
-        }
-    }
-
-    @Nullable
-    private ItemStack parentStack;
 
     public void show(@Nonnull ItemStack stack) {
         //noinspection AssignmentToCollectionOrArrayFieldFromParameter
