@@ -32,7 +32,9 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
+import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.gui.AbstractMultiActionHelper;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -273,6 +275,16 @@ public final class Avatar extends AvatarEntity {
         }
 
         if (event.getKey() == Button.Left) {
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                ServerCoordinate target = parentChar.getLocation();
+                log.debug("Single alt-click on character {} at {}", parentChar, target);
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(target);
+                handler.assumeControl();
+                return true;
+            }
+
             if (delayedWalkingHandler != null) {
                 delayedWalkingHandler.pulse();
             } else {
@@ -319,10 +331,12 @@ public final class Avatar extends AvatarEntity {
         }
 
         if (parentChar.isHuman()) {
+            // Not checking for Alt pressed, because LookAtCharCmd makes sense in any case.
             //Sending a LookAtCharCmd will open the character window on server response.
             World.getNet().sendCommand(new LookAtCharCmd(parentChar.getCharId(), LookAtCharCmd.LOOKAT_STARE));
         } else {
             InteractiveChar interactiveChar = parentChar.getInteractive();
+            Input input = container.getEngine().getInput();
 
             if (interactiveChar.isInUseRange()) {
                 log.debug("Using the character {}", interactiveChar);
@@ -330,14 +344,21 @@ public final class Avatar extends AvatarEntity {
             } else {
                 ServerCoordinate target = parentChar.getLocation();
                 if (target != null) {
-                    log.debug("Walking to and using the character {}", interactiveChar);
-                    TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                    handler.walkTo(parentChar.getLocation(), interactiveChar.getUseRange());
-                    handler.setTargetReachedAction(interactiveChar::use);
-                    handler.assumeControl();
+                    if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                        log.debug("Double alt-click to turn to character {} at {}", parentChar, target);
+                        TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                        handler.turnTo(target);
+                        handler.assumeControl();
+                    } else {
+                        log.debug("Walking to and using the character {} at {}", interactiveChar, target);
+                        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                        handler.walkTo(target, 1);
+                        handler.setTargetReachedAction(interactiveChar::use);
+                        handler.assumeControl();
+                    }
                 } else {
                     log.debug("Walking to and using the character {} doesn't work, because it has no location.",
-                              interactiveChar);
+                            interactiveChar);
                 }
             }
         }
