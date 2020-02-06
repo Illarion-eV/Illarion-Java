@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class MemoryPools {
 
-    protected static Map<Class<?>,MemoryPool<?>> pools = new HashMap<>();
+    protected final static Map<Class<?>,MemoryPool<?>> pools = new HashMap<>();
 
     protected MemoryPools() {
         //
