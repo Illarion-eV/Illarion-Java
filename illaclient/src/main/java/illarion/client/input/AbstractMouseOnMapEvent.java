@@ -29,7 +29,6 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     /**
      * The mouse key that was clicked.
      */
-    @Nonnull
     private Button key;
 
     /**
@@ -78,7 +77,6 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
      *
      * @return the key that was clicked
      */
-    @Nonnull
     public Button getKey() {
         return key;
     }
