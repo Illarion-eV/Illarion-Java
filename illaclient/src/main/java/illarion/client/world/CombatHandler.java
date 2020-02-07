@@ -158,20 +158,27 @@ public final class CombatHandler {
      */
     public void attackNearestMonster() {
         log.debug("Looking for nearest monster to atttack");
+        ServerCoordinate playerLoc = World.getPlayer().getLocation();
         List<Char> allKnownChars = World.getPeople().getAllCharacters();
         Char candidateChar = null;
         double candidateDistance = Double.POSITIVE_INFINITY;
         for (Char character : allKnownChars) {
-            if (character.isMonster()) {
-                double distance = ServerCoordinate.getDistance(character.getLocation(), World.getPlayer().getLocation());
-                if ((character.getLocation().getZ() == World.getPlayer().getLocation().getZ()) && (distance < candidateDistance)) {
-                    // found a closer monster
-                    candidateChar = character;
-                    candidateDistance = distance;
-                    if (candidateDistance <= 1)
-                        // good enough
-                        break;
-                }
+            if (!character.isMonster())
+                continue;
+            ServerCoordinate loc = character.getLocation();
+            if (loc == null)
+                continue;
+            // only same z-level is considered
+            if (playerLoc.getZ() != loc.getZ())
+                continue;
+            double distance = ServerCoordinate.getDistance(loc, playerLoc);
+            if (distance < candidateDistance) {
+                // found a closer monster
+                candidateChar = character;
+                candidateDistance = distance;
+                if (candidateDistance <= 1)
+                    // good enough
+                    break;
             }
         }
         if (candidateChar != null) {
