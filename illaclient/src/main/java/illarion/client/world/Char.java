@@ -102,6 +102,13 @@ public final class Char implements AnimatedMove {
     @Nonnull
     private static final Color NAME_COLOR_MONSTER = Color.RED;
 
+
+    /**
+     * This color is used to display the name in case the character is a monster.
+     */
+    @Nonnull
+    private static final Color NAME_COLOR_PET = Color.BLUE;
+
     /**
      * This color is used to display the name in case the character is a NPC.
      */
@@ -276,6 +283,17 @@ public final class Char implements AnimatedMove {
     }
 
     /**
+     * Return true if the character is a pet
+     * This is checked by looking if the charcter has a "pet collar" item equipped
+     *
+     * @return true iff is a monster and wearItems includes an item with id <Collar_id>222</Collar_id>
+     */
+    public boolean isPet(){
+        Integer COLLAR_ID = 3917;
+        return isMonster() && wearItems.containsValue(COLLAR_ID);
+    }
+
+    /**
      * Set a attribute to a new value.
      *
      * @param attribute the attribute value to update
@@ -324,6 +342,8 @@ public final class Char implements AnimatedMove {
             setNameColor(NAME_COLOR_NPC);
         } else if (charId.isMonster()) {
             setNameColor(NAME_COLOR_MONSTER);
+        } else if(isPet()){
+            setNameColor(NAME_COLOR_PET);
         } else {
             log.warn("Failed to detect character type for {}", charId);
         }
