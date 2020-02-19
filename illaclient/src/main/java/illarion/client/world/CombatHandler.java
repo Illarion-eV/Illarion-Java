@@ -163,7 +163,7 @@ public final class CombatHandler {
         Char candidateChar = null;
         double candidateDistance = Double.POSITIVE_INFINITY;
         for (Char character : allKnownChars) {
-            if (!character.isMonster())
+            if (!character.isMonster() || character.isPet())
                 continue;
             ServerCoordinate loc = character.getLocation();
             if (loc == null)
