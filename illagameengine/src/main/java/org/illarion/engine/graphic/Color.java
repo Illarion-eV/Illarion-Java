@@ -50,7 +50,7 @@ public class Color {
     /**
      * A fully opaque blue color. This color is immutable.
      */
-    public static final ImmutableColor Blue = new ImmutableColor(0.f, 0.f, 1.f);
+    public static final ImmutableColor Blue = new ImmutableColor(0.25f, 0.65f, 1.f);
 
     /**
      * A fully opaque yellow color. This color is immutable.
