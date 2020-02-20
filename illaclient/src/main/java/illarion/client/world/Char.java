@@ -107,7 +107,7 @@ public final class Char implements AnimatedMove {
      * This color is used to display the name in case the character is a monster.
      */
     @Nonnull
-    private static final Color NAME_COLOR_PET = Color.BLUE;
+    private static final Color NAME_COLOR_PET = Color.Blue;
 
     /**
      * This color is used to display the name in case the character is a NPC.
@@ -297,12 +297,12 @@ public final class Char implements AnimatedMove {
 
     /**
      * Return true if the character is a pet
-     * This is checked by looking if the charcter has a "pet collar" item equipped
+     * This is checked by looking if the character has a "pet collar" item equipped
      *
-     * @return true iff is a monster and wearItems includes an item with id <Collar_id>222</Collar_id>
+     * @return true iff is a monster and wearItems includes an item with id <Collar_id>3917</Collar_id>
      */
     public boolean isPet(){
-        Integer COLLAR_ID = 3917;
+        final Integer COLLAR_ID = 3917;
         return isMonster() && wearItems.containsValue(COLLAR_ID);
     }
 
@@ -349,14 +349,17 @@ public final class Char implements AnimatedMove {
     @SuppressWarnings("IfStatementWithTooManyBranches")
     public void setCharId(@Nonnull CharacterId newCharId) {
         charId = newCharId;
+    }
+
+    public void setNameColor() {
         if (charId.isHuman()) {
             setNameColor(NAME_COLOR_HUMAN);
+        } else if(isPet()){
+            setNameColor(NAME_COLOR_PET);
         } else if (charId.isNPC()) {
             setNameColor(NAME_COLOR_NPC);
         } else if (charId.isMonster()) {
             setNameColor(NAME_COLOR_MONSTER);
-        } else if(isPet()){
-            setNameColor(NAME_COLOR_PET);
         } else {
             log.warn("Failed to detect character type for {}", charId);
         }

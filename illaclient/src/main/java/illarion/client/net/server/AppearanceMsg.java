@@ -269,6 +269,7 @@ public final class AppearanceMsg implements ServerReply {
         character.setClothColor(AvatarClothGroup.Beard, hairColor);
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
+        character.setNameColor();
         character.updateLight();
 
         return ServerReplyResult.Success;
