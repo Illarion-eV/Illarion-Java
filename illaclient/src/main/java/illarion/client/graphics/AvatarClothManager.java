@@ -148,11 +148,6 @@ public final class AvatarClothManager {
         Beard(1, -1, -1),
 
         /**
-         * The index of the groups of all neck parts, such as amulets. Not used for paperdolling
-         */
-        Neck(2,2, 2),
-
-        /**
          * The index of the groups of all chest parts, such as shirts, armors and so on this avatar can wear.
          */
         Chest(3, 3, 4),
