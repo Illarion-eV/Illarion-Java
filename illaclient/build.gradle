@@ -36,9 +36,9 @@ dependencies {
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
-    compile group: 'lessvoid', name: 'nifty', version: project.ext.niftyGuiVersion
+    compile group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
     runtime group: 'org.illarion', name: 'rsc_books', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_chars', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_effects', version: project.ext.illarionResourcesVersion

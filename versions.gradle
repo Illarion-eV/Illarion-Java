@@ -18,6 +18,6 @@ ext {
     logbackVersion = '1.1.7'
     janinoVersion = '2.7.8'
     illarionResourcesVersion = '2.1.25.5-SNAPSHOT'
-    niftyGuiVersion = '1.4.1'
+    niftyGuiVersion = '1.4.2'
     insubstantialVersion = '7.3'
 }
