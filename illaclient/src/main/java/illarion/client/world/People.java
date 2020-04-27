@@ -22,7 +22,6 @@ import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ServerCoordinate;
-import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -34,9 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -76,7 +73,7 @@ public final class People {
      * A list of characters that are going to be removed.
      */
     @Nonnull
-    private final List<Char> removalList;
+    private final Queue<Char> removalList;
 
     private int permanentAvatarTagState;
 
@@ -84,7 +81,7 @@ public final class People {
      * Default constructor. Sets up all needed base variables to init the class.
      */
     public People() {
-        removalList = new FastTable<>();
+        removalList = new LinkedList<>();
         chars = new HashMap<>();
         charsLock = new ReentrantReadWriteLock();
 
@@ -195,7 +192,7 @@ public final class People {
         if (World.getPlayer().isPlayer(removeChar.getCharId())) {
             throw new IllegalArgumentException("Removing player character from the chars list is not allowed.");
         }
-        removalList.add(removeChar);
+        removalList.offer(removeChar);
     }
 
     /**
@@ -203,19 +200,21 @@ public final class People {
      * is cleared after calling this function.
      */
     public void cleanRemovalList() {
+        if (removalList.isEmpty()) {
+            return;
+        }
+
         charsLock.writeLock().lock();
         try {
-            if (!removalList.isEmpty()) {
-                for (Char removeChar : removalList) {
-                    CharacterId removeId = removeChar.getCharId();
-                    if (removeId == null) {
-                        log.error("Character without ID located in remove list.");
-                        continue;
-                    }
+            removalList.removeIf(removedChar -> {
+                CharacterId removeId = removedChar.getCharId();
+                if (removeId == null) {
+                    log.error("Character without ID located in remove list.");
+                } else {
                     removeCharacter(removeId);
                 }
-                removalList.clear();
-            }
+                return true;
+            });
         } finally {
             charsLock.writeLock().unlock();
         }
