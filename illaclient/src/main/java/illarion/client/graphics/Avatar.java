@@ -35,6 +35,7 @@ import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.ServerCoordinate;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -542,19 +543,23 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
                 log.debug("Using the character {}", interactiveChar);
                 interactiveChar.use();
             } else {
-                if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
-                    ServerCoordinate target = parentChar.getLocation();
-                    log.debug("Double alt-click to turn to character {} at {}", parentChar, target);
-                    TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
-                    handler.turnTo(target);
-                    handler.assumeControl();
+                ServerCoordinate target = parentChar.getLocation();
+                if (target != null) {
+                    if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                        log.debug("Double alt-click to turn to character {} at {}", parentChar, target);
+                        TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                        handler.turnTo(target);
+                        handler.assumeControl();
+                    } else {
+                        log.debug("Walking to and using the character {} at {}", interactiveChar, target);
+                        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                        handler.walkTo(target, 1);
+                        handler.setTargetReachedAction(interactiveChar::use);
+                        handler.assumeControl();
+                    }
                 } else {
-                    ServerCoordinate target = parentChar.getLocation();
-                    log.debug("Walking to and using the character {} at {}", interactiveChar, target);
-                    TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                    handler.walkTo(target, 1);
-                    handler.setTargetReachedAction(interactiveChar::use);
-                    handler.assumeControl();
+                    log.debug("Walking to and using the character {} doesn't work, because it has no location.",
+                            interactiveChar);
                 }
             }
         }
