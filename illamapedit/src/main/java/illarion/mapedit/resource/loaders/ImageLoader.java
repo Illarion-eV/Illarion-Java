@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,26 +51,6 @@ public final class ImageLoader implements Resource {
 
     }
 
-    @Override
-    public void load() throws IOException {
-        Class<?> clazz = ImageLoader.class;
-        for (String file : FILES) {
-            String filePath = '/' + file;
-            String key = filePath.substring(1, filePath.length() - 4);
-            InputStream is = clazz.getResourceAsStream(filePath);
-            if (is == null) {
-                throw new IOException(filePath + " does not exist!");
-            }
-            IMAGES.put(key, ImageIO.read(is));
-        }
-    }
-
-    @Nonnull
-    @Override
-    public String getDescription() {
-        return "Images";
-    }
-
     @Nonnull
     public static ImageLoader getInstance() {
         return INSTANCE;
@@ -78,7 +58,7 @@ public final class ImageLoader implements Resource {
 
     public static Image getImage(String key) {
         if (!IMAGES.containsKey(key)) {
-            LOGGER.warn("Image [" + key + "] does not exist!");
+            LOGGER.warn("Image [{}] does not exist!", key);
             throw new RuntimeException("Image [" + key + "] does not exist!");
             //            return null;
         }
@@ -98,5 +78,25 @@ public final class ImageLoader implements Resource {
     @Nonnull
     public static ImageIcon getImageIcon(String key) {
         return new ImageIcon(getImage(key));
+    }
+
+    @Override
+    public void load() throws IOException {
+        Class<?> clazz = ImageLoader.class;
+        for (String file : FILES) {
+            String filePath = '/' + file;
+            String key = filePath.substring(1, filePath.length() - 4);
+            InputStream is = clazz.getResourceAsStream(filePath);
+            if (is == null) {
+                throw new IOException(filePath + " does not exist!");
+            }
+            IMAGES.put(key, ImageIO.read(is));
+        }
+    }
+
+    @Nonnull
+    @Override
+    public String getDescription() {
+        return "Images";
     }
 }

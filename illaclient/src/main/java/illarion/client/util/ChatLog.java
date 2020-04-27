@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,22 +44,20 @@ public final class ChatLog {
      * The key used for the configuration to store if the text log is enabled or not.
      */
     public static final String CFG_TEXTLOG = "textLog"; //$NON-NLS-1$
-
+    /**
+     * Instance of the used logger.
+     */
+    @Nonnull
+    private static final Logger logger = LoggerFactory.getLogger("CHAT");
+    /**
+     * Stores the information if the logger is set up and working. Only in this case log files are written.
+     */
+    private final boolean loggerWorking;
     /**
      * Constant value to determine if the logger is active in general or not. In case the logging is disabled by the
      * config, nothing will be logged.
      */
     private boolean logActive;
-
-    /**
-     * Instance of the used logger.
-     */
-    private static final Logger logger = LoggerFactory.getLogger("CHAT");
-
-    /**
-     * Stores the information if the logger is set up and working. Only in this case log files are written.
-     */
-    private final boolean loggerWorking;
 
     /**
      * Private constructor to avoid that any instance but the singleton instance is created.
@@ -101,7 +99,7 @@ public final class ChatLog {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
 
         logger.info("");
-        logger.info(Lang.getMsg("log.newSession") + " - " + sdf.format(new Date()));
+        logger.info("{} - {}", Lang.getMsg("log.newSession"), sdf.format(new Date()));
 
         AnnotationProcessor.process(this);
     }

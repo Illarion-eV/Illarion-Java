@@ -1155,7 +1155,13 @@ public final class Char implements AnimatedMove {
     }
 
     public boolean isAnimationAvailable(int animation) {
-        return (avatar != null) && avatar.getTemplate().getAvatarInfo().isAnimationAvailable(animation);
+        try {
+            return (avatar != null) && avatar.getTemplate().getAvatarInfo().isAnimationAvailable(animation);
+        }
+        catch(IndexOutOfBoundsException e){
+            log.warn("Tried to perform illegal animation #{} on character {}", animation, getCharId());
+            return false;
+        }
     }
 
     /**
