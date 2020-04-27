@@ -52,6 +52,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     /**
      * The game listener that receives the updates regarding the game.
      */
+    @Nonnull
     private final GameListener gameListener;
 
     /**
@@ -97,7 +98,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws GdxEngineException in case the initialization goes wrong
      */
     public ApplicationGameContainer(
-            GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
+            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
@@ -177,17 +178,13 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
     @Override
     public void setMouseCursor(@Nullable MouseCursor cursor) {
-        if (!Display.isCreated()) {
-            throw new IllegalStateException("The game display was not yet created.");
+        if (engine == null) {
+            return;
         }
-        try {
-            if (cursor == null) {
-                Mouse.setNativeCursor(null);
-            } else if (cursor instanceof GdxLwjglCursor) {
-                Mouse.setNativeCursor(((GdxLwjglCursor) cursor).getLwjglCursor());
-            }
-        } catch (@Nonnull LWJGLException ignored) {
-            // nothing to do
+        if (cursor instanceof GdxCursor) {
+            engine.getGraphics().setCursor((GdxCursor) cursor);
+        } else {
+            engine.getGraphics().setCursor(null);
         }
     }
 
