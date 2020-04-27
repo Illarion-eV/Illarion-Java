@@ -24,8 +24,6 @@ dependencies {
     compile group: 'de.matthiasmann', name: 'pngdecoder', version: '20130527'
     compile gradleApi()
     compile localGroovy()
-    testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }
 
 jar {

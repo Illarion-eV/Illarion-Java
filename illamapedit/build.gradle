@@ -42,10 +42,6 @@ dependencies {
     runtime group: 'org.illarion', name: 'rsc_music', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_tiles', version: project.ext.illarionResourcesVersion
-    testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
-    testCompile group: 'org.easymock', name: 'easymock', version: '3.3.1'
-    testCompile group: 'org.powermock', name: 'powermock-module-testng', version: '1.6.2'
-    testCompile group: 'org.powermock', name: 'powermock-api-easymock', version: '1.6.2'
 }
 
 jar {
