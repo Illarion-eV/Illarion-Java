@@ -419,6 +419,10 @@ public class Movement {
         return defaultMovementMode;
     }
 
+    public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
+        this.defaultMovementMode = defaultMovementMode;
+    }
+
     @Nonnull
     @Contract(pure = true)
     public MouseMovementHandler getFollowMouseHandler() {
