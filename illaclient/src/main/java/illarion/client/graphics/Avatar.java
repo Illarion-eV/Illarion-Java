@@ -535,32 +535,26 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             //Sending a LookAtCharCmd will open the character window on server response.
             World.getNet().sendCommand(new LookAtCharCmd(parentChar.getCharId(), LookAtCharCmd.LOOKAT_STARE));
         } else {
-            Input input = container.getEngine().getInput();
-            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
-                ServerCoordinate target = parentChar.getLocation();
-                log.debug("Double alt-click on character {} at {}", parentChar, target);
-                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
-                handler.turnTo(target);
-                handler.assumeControl();
-                return true;
-            }
-
             InteractiveChar interactiveChar = parentChar.getInteractive();
+            Input input = container.getEngine().getInput();
 
             if (interactiveChar.isInUseRange()) {
                 log.debug("Using the character {}", interactiveChar);
                 interactiveChar.use();
             } else {
-                ServerCoordinate target = parentChar.getLocation();
-                if (target != null) {
-                    log.debug("Walking to and using the character {}", interactiveChar);
-                    TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                    handler.walkTo(parentChar.getLocation(), interactiveChar.getUseRange());
-                    handler.setTargetReachedAction(interactiveChar::use);
+                if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                    ServerCoordinate target = parentChar.getLocation();
+                    log.debug("Double alt-click to turn to character {} at {}", parentChar, target);
+                    TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                    handler.turnTo(target);
                     handler.assumeControl();
                 } else {
-                    log.debug("Walking to and using the character {} doesn't work, because it has no location.",
-                              interactiveChar);
+                    ServerCoordinate target = parentChar.getLocation();
+                    log.debug("Walking to and using the character {} at {}", interactiveChar, target);
+                    TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                    handler.walkTo(target, 1);
+                    handler.setTargetReachedAction(interactiveChar::use);
+                    handler.assumeControl();
                 }
             }
         }

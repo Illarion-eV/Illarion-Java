@@ -422,27 +422,26 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
 
-        Input input = container.getEngine().getInput();
-        if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
-            log.debug("Double alt-click on item at {}", parentTile.getCoordinates());
-            TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
-            handler.turnTo(parentTile.getCoordinates());
-            handler.assumeControl();
-            return true;
-        }
-
-        log.debug("Double click on item at {}", parentTile.getCoordinates());
-
         delayGoToItem.reset();
 
         if (parentTile.getInteractive().isInUseRange()) {
+            log.debug("Double click on item at {}, using", parentTile.getCoordinates());
             parentTile.getInteractive().use();
         } else {
-            InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentTile.getCoordinates(), 1);
-            handler.setTargetReachedAction(interactiveMapTile::use);
-            handler.assumeControl();
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                log.debug("Double alt-click on item at {}, turning", parentTile.getCoordinates());
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(parentTile.getCoordinates());
+                handler.assumeControl();
+            } else {
+                log.debug("Double click on item at {}, walking and using", parentTile.getCoordinates());
+                InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
+                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                handler.walkTo(parentTile.getCoordinates(), 1);
+                handler.setTargetReachedAction(interactiveMapTile::use);
+                handler.assumeControl();
+            }
         }
 
         return true;
