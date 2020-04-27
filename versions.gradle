@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  */
 ext {
-    slf4jVersion = '1.7.13'
+    slf4jVersion = '1.7.14'
     logbackVersion = '1.1.3'
     janinoVersion = '2.7.8'
     illarionResourcesVersion = '2.1.25.3-SNAPSHOT'
