@@ -296,17 +296,6 @@ public final class Char implements AnimatedMove {
     }
 
     /**
-     * Return true if the character is a pet
-     * This is checked by looking if the character has a "pet collar" item equipped
-     *
-     * @return true iff is a monster and wearItems includes an item with id <Collar_id>3917</Collar_id>
-     */
-    public boolean isPet(){
-        final Integer COLLAR_ID = 3917;
-        return isMonster() && wearItems.containsValue(COLLAR_ID);
-    }
-
-    /**
      * Set a attribute to a new value.
      *
      * @param attribute the attribute value to update
@@ -354,7 +343,7 @@ public final class Char implements AnimatedMove {
     public void setNameColor() {
         if (charId.isHuman()) {
             setNameColor(NAME_COLOR_HUMAN);
-        } else if(isPet()){
+        } else if(charId.isPet()){
             setNameColor(NAME_COLOR_PET);
         } else if (charId.isNPC()) {
             setNameColor(NAME_COLOR_NPC);
@@ -1014,6 +1003,16 @@ public final class Char implements AnimatedMove {
     }
 
     /**
+     * Check if the character is a pet.
+     *
+     * @return true if the character is a pet, false if not.
+     */
+    @Contract(pure = true)
+    public boolean isPet() {
+        return (charId != null) && charId.isPet();
+    }
+
+    /**
      * Move the character to a new position with animation. This function takes absolute coordinates.
      *
      * @param newPos the target location of the move
@@ -1312,30 +1311,11 @@ public final class Char implements AnimatedMove {
             return;
         }
         applyLightValue(itemId);
-        switch (slot) {
-            case 1:
-                setWearingItem(AvatarClothGroup.Hat, itemId.getValue());
-                break;
-            case 3:
-                setWearingItem(AvatarClothGroup.Chest, itemId.getValue());
-                break;
-            case 5:
-                setWearingItem(AvatarClothGroup.FirstHand, itemId.getValue());
-                break;
-            case 6:
-                setWearingItem(AvatarClothGroup.SecondHand, itemId.getValue());
-                break;
-            case 9:
-                setWearingItem(AvatarClothGroup.Trousers, itemId.getValue());
-                break;
-            case 10:
-                setWearingItem(AvatarClothGroup.Shoes, itemId.getValue());
-                break;
-            case 11:
-                setWearingItem(AvatarClothGroup.Coat, itemId.getValue());
-                break;
-            default:
-                break;
+        AvatarClothGroup group = AvatarClothGroup.getFromInventorySlot(slot);
+        if (group != null) {
+            setWearingItem(group, itemId.getValue());
+        }else if(itemId.getValue() == 3917 /*Constant defined item ID for pet collars*/){
+            charId.setIsPet(true);
         }
     }
 
