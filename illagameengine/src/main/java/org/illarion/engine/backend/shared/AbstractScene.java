@@ -63,13 +63,8 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * This is the snapshot array that is taken and filled shortly before the update calls. Is then used to render
      * and update the scene.
      */
-    @Nonnull
-    private SceneElement[] workingArray = new SceneElement[0];
-
-    /**
-     * The amount of elements in the array that are currently valid.
-     */
-    private int workingArraySize;
+    @Nullable
+    private SceneElement[] workingArray;
 
     /**
      * Create a new scene and setup the internal structures.
@@ -78,6 +73,14 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
         sceneElements = new ArrayList<>();
         eventQueue = new ConcurrentLinkedQueue<>();
         sceneEffects = new ArrayList<>();
+    }
+
+    @Nullable
+    private static <T> T getFromArray(@Nonnull T[] array, int index) {
+        if (index >= array.length) {
+            return null;
+        }
+        return array[index];
     }
 
     @Override
@@ -128,17 +131,22 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * @param delta the time since the last update that is reported to the elements
      */
     protected final void updateScene(@Nonnull GameContainer container, int delta) {
-        Arrays.fill(workingArray, null);
+        SceneElement[] sceneElementArray = workingArray;
+        int sceneElementCount;
         synchronized (sceneElements) {
-            workingArray = sceneElements.toArray(workingArray);
-            workingArraySize = sceneElements.size();
+            sceneElementCount = sceneElements.size();
+            if (sceneElementArray == null) {
+                sceneElementArray = new SceneElement[sceneElementCount];
+            }
+            sceneElementArray = sceneElements.toArray(sceneElementArray);
         }
+        workingArray = sceneElementArray;
 
-        @Nullable SceneEvent event = eventQueue.poll();
-        while (event != null) {
-            boolean notProcessed = true;
-            for (int i = workingArraySize - 1; i >= 0; i--) {
-                SceneElement element = workingArray[i];
+        @Nullable SceneEvent event;
+        while ((event = eventQueue.poll()) != null) {
+            boolean processed = false;
+            for (int i = sceneElementCount - 1; i >= 0; i--) {
+                SceneElement element = sceneElementArray[i];
                 if (element.isEventProcessed(container, delta, event)) {
                     notProcessed = false;
                     break;
@@ -150,7 +158,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
             event = eventQueue.poll();
         }
 
-        for (int i = 0; i < workingArraySize; i++) {
+        for (int i = 0; i < sceneElementCount; i++) {
             SceneElement element = workingArray[i];
             element.update(container, delta);
         }
@@ -162,8 +170,14 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * @param graphics the graphics instance that is used to render the game
      */
     protected final void renderScene(@Nonnull Graphics graphics) {
-        for (int i = 0; i < workingArraySize; i++) {
-            SceneElement element = workingArray[i];
+        SceneElement[] sceneElementArray = workingArray;
+        if (sceneElementArray == null) {
+            return;
+        }
+
+        int i = 0;
+        SceneElement element;
+        while ((element = getFromArray(sceneElementArray, ++i)) != null) {
             element.render(graphics);
         }
     }
@@ -211,8 +225,9 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * @param index the index of the effect
      * @return the scene effect
      */
+    @Nonnull
     protected final T getEffect(int index) {
-        return sceneEffects.get(index);
+        return Objects.requireNonNull(sceneEffects.get(index));
     }
 
     /**
