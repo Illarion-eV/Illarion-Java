@@ -15,6 +15,7 @@
  */
 package org.illarion.engine.backend.shared;
 
+import illarion.common.memory.MemoryPools;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
@@ -155,7 +156,9 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
             if (notProcessed) {
                 event.notHandled();
             }
-            event = eventQueue.poll();
+
+            // Recycle event so it can be reused
+            MemoryPools.free(event);
         }
 
         for (int i = 0; i < sceneElementCount; i++) {
