@@ -42,11 +42,7 @@ dependencies {
     compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.0.2.v20150114'
     compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.0.2.v20150114'
     compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.0.2.v20150114'
-    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.3'
-    testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
-    testCompile group: 'org.easymock', name: 'easymock', version: '3.3.1'
-    testCompile group: 'org.powermock', name: 'powermock-module-testng', version: '1.6.2'
-    testCompile group: 'org.powermock', name: 'powermock-api-easymock', version: '1.6.2'
+    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
 }
 
 jar {
