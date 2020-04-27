@@ -697,6 +697,7 @@ public final class Char implements AnimatedMove {
     private void setNameColor(@Nonnull Color color) {
         nameColor = color;
 
+        Avatar avatar = this.avatar;
         if (avatar != null) {
             avatar.setNameColor(color);
         }

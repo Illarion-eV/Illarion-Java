@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,11 +18,9 @@ package illarion.client.world;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Avatar;
 import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ServerCoordinate;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.jetbrains.annotations.Contract;
@@ -33,7 +31,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -341,7 +342,6 @@ public final class People {
         try {
             Char chara = chars.get(id);
             if (chara != null) {
-                EventBus.publish(new CharRemovedEvent(id));
                 // cancel attack when character is removed
                 if (World.getPlayer().getCombatHandler().isAttacking(chara)) {
                     World.getPlayer().getCombatHandler().standDown();
