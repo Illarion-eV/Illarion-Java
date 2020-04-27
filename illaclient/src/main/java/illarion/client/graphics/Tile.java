@@ -27,6 +27,7 @@ import illarion.client.world.MapGroup;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.movement.TargetMovementHandler;
+import illarion.client.world.movement.TargetTurnHandler;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Direction;
@@ -40,6 +41,8 @@ import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.graphic.effects.TextureEffect;
 import org.illarion.engine.graphic.effects.TileLightEffect;
 import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,6 +231,15 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             }
             if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
                 return false;
+            }
+
+            Input input = container.getEngine().getInput();
+            if (input.isAnyKeyDown(Key.LeftAlt, Key.RightAlt)) {
+                log.debug("Single alt-click on tile at {}", parentTile.getCoordinates());
+                TargetTurnHandler handler = World.getPlayer().getMovementHandler().getTargetTurnHandler();
+                handler.turnTo(parentTile.getCoordinates());
+                handler.assumeControl();
+                return true;
             }
 
             log.debug("Single click on tile at {}", parentTile.getCoordinates());
