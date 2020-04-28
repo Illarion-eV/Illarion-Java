@@ -22,9 +22,6 @@ import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.GameListener;
 import org.illarion.engine.MouseCursor;
 import org.illarion.engine.graphic.GraphicResolution;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,23 +35,20 @@ import java.util.List;
  */
 public class ApplicationGameContainer implements DesktopGameContainer {
     /**
-     * The libGDX application that contains the game.
-     */
-    @Nullable
-    private GdxLwjglApplication gdxApplication;
-
-    /**
      * The configuration used to create the application.
      */
     @Nonnull
     private final LwjglApplicationConfiguration config;
-
     /**
      * The game listener that receives the updates regarding the game.
      */
     @Nonnull
     private final GameListener gameListener;
-
+    /**
+     * The libGDX application that contains the game.
+     */
+    @Nullable
+    private GdxLwjglApplication gdxApplication;
     /**
      * The graphic resolutions that can be applied to the game.
      */
@@ -193,11 +187,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         gdxApplication = new GdxLwjglApplication(new ListenerApplication(gameListener, this), config);
     }
 
-    void createEngine() {
-        assert gdxApplication != null;
-        engine = new GdxEngine(gdxApplication, this);
-    }
-
     @Override
     public void exitGame() {
         if (gdxApplication != null) {
@@ -219,21 +208,10 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         return gdxApplication.getGraphics().getFramesPerSecond();
     }
 
-    void setLastFrameRenderCalls(int calls) {
-        lastFrameRenderCalls = calls;
-    }
-
     @Nonnull
     @Override
     public CharSequence[] getDiagnosticLines() {
         return new CharSequence[]{"Render calls: " + lastFrameRenderCalls};
-    }
-
-    @Override
-    public void setIcons(@Nonnull String... icons) {
-        for (@Nullable String icon : icons) {
-            config.addIcon(icon, FileType.Internal);
-        }
     }
 
     @Override
@@ -287,7 +265,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
                 } else {
                     if (mode.refreshRate >= 50) {
                         resultResolutions.add(new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel,
-                                                                    mode.refreshRate));
+                                mode.refreshRate));
                     }
                 }
             }
@@ -322,6 +300,22 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             } else {
                 setWindowSize(windowWidth, windowHeight);
             }
+        }
+    }
+
+    void createEngine() {
+        assert gdxApplication != null;
+        engine = new GdxEngine(gdxApplication, this);
+    }
+
+    void setLastFrameRenderCalls(int calls) {
+        lastFrameRenderCalls = calls;
+    }
+
+    @Override
+    public void setIcons(@Nonnull String... icons) {
+        for (@Nullable String icon : icons) {
+            config.addIcon(icon, FileType.Internal);
         }
     }
 }

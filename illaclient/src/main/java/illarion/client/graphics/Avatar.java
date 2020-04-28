@@ -21,6 +21,7 @@ import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
+import illarion.client.net.client.LookAtCharCmd;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.Resource;

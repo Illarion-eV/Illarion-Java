@@ -18,6 +18,8 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +29,9 @@ import javax.annotation.Nonnull;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class LookatCharCmd extends AbstractCommand {
+public final class LookAtCharCmd extends AbstractCommand {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(LookAtCharCmd.class);
     /**
      * FrameAnimationMode for looking in a polite way at a character. That leads to the point
      * that the character you are looking at gets no message but you get only

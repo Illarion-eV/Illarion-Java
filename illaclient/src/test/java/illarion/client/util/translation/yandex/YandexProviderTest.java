@@ -33,7 +33,7 @@ public class YandexProviderTest {
         provider = new YandexProvider();
     }
 
-    @Test
+    @Test(enabled = false)
     public void testGermanToEnglish() {
         if (provider == null) {
             throw new SkipException("Provider was not correctly prepared.");
@@ -43,7 +43,7 @@ public class YandexProviderTest {
         assertEquals(translation, "Hello!", "Translation service is not yielding the expected result.");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testEnglishToGerman() {
         if (provider == null) {
             throw new SkipException("Provider was not correctly prepared.");

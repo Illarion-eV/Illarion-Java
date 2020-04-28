@@ -107,7 +107,7 @@ public final class OptionScreenController implements ScreenController {
         translationProviders = tabRoot.findNiftyControl("translationProviders", DropDown.class);
         translationProviders.addItem("${options-bundle.translation.provider.none}");
         translationProviders.addItem("${options-bundle.translation.provider.mymemory}");
-        translationProviders.addItem("${options-bundle.translation.provider.yandex}");
+        //translationProviders.addItem("${options-bundle.translation.provider.yandex}");
         //noinspection unchecked
         translationDirections = tabRoot.findNiftyControl("translationDirections", DropDown.class);
         translationDirections.addItem("${options-bundle.translation.direction.default}");
@@ -168,6 +168,25 @@ public final class OptionScreenController implements ScreenController {
             serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
             serverResetSettings.setChecked(false);
         }
+    }
+
+    @Override
+    public void onEndScreen() {
+    }
+
+    @Nonnull
+    public static List<String> getResolutionList() {
+        DesktopGameContainer container = IllaClient.getInstance().getContainer();
+
+        GraphicResolution[] resolutions = container.getFullScreenResolutions();
+
+        List<String> resList = new ArrayList<>();
+
+        for (GraphicResolution resolution : resolutions) {
+            resList.add(resolution.toString());
+        }
+
+        return resList;
     }
 
     @NiftyEventSubscriber(pattern = "tabRoot#tab-content-panel#[a-z]+Tab")
@@ -284,22 +303,23 @@ public final class OptionScreenController implements ScreenController {
         nifty.gotoScreen("login");
     }
 
-    @Override
-    public void onEndScreen() {
     }
 
-    @Nonnull
-    public static List<String> getResolutionList() {
-        DesktopGameContainer container = IllaClient.getInstance().getContainer();
-
-        GraphicResolution[] resolutions = container.getFullScreenResolutions();
-
-        List<String> resList = new ArrayList<>();
-
-        for (GraphicResolution resolution : resolutions) {
-            resList.add(resolution.toString());
+    @NiftyEventSubscriber (id = "musicOn")
+    public void onMusicOnChangedEvent(String topic, CheckBoxStateChangedEvent event){
+        AudioPlayer audioPlayer = AudioPlayer.getInstance();
+        if(musicOn.isChecked()) {
+            audioPlayer.setMusicVolume(musicVolume.getValue());
+            if (!audioPlayer.isCurrentMusic(audioPlayer.getLastMusic())) {
+                audioPlayer.playLastMusic();
+            }
+        } else{
+            audioPlayer.setMusicVolume(0.f);
         }
+    }
 
-        return resList;
+    @NiftyEventSubscriber(id = "cancelButton")
+    public void onCancelButtonClickedEvent(String topic, ButtonClickedEvent event) {
+        nifty.gotoScreen("login");
     }
 }

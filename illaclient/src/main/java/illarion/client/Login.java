@@ -255,10 +255,10 @@ public final class Login {
             conn.setRequestProperty("Content-Length", Integer.toString(query.getBytes("UTF-8").length));
             conn.setUseCaches(false);
 
-            SSLSocketFactory sslSocketFactory = IllarionSSLSocketFactory.getFactory();
-            if (sslSocketFactory != null) {
-                conn.setSSLSocketFactory(sslSocketFactory);
-            }
+            //SSLSocketFactory sslSocketFactory = IllarionSSLSocketFactory.getFactory();
+            //if (sslSocketFactory != null) {
+            //    conn.setSSLSocketFactory(sslSocketFactory);
+            //}
 
             conn.connect();
             // Send the query to the server

@@ -16,6 +16,9 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.MathUtils;
@@ -23,8 +26,6 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import illarion.common.util.FastMath;
 import org.illarion.engine.MouseCursor;
 import org.illarion.engine.backend.shared.AbstractCursorManager;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Cursor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +38,13 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class GdxLwjglCursorManager extends AbstractCursorManager {
+class GdxCursorManager extends AbstractCursorManager {
+    /**
+     * The graphics handler of libGDX.
+     */
+    @Nonnull
+    private final Graphics graphics;
+
     /**
      * The file system handler of libGDX that is supposed to be used by this manager.
      */
@@ -47,23 +54,27 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
     /**
      * Create a new instance of this manager.
      *
+     * @param graphics the libGDX graphics implementation.
      * @param files the files implementation that is supposed to be used to load the data
      */
-    GdxLwjglCursorManager(@Nonnull Files files) {
+    GdxCursorManager(@Nonnull Graphics graphics, @Nonnull Files files) {
+        this.graphics = graphics;
         this.files = files;
     }
 
     @Nullable
     @Override
-    protected MouseCursor loadCursor(@Nonnull String ref, int hotspotX, int hotspotY) {
+    protected MouseCursor loadCursor(@Nonnull String ref, int hotSpotX, int hotSpotY) {
         try {
             Pixmap cursorPixels = new Pixmap(files.internal(ref));
 
             int cursorHeight = cursorPixels.getHeight();
             int cursorWidth = cursorPixels.getWidth();
 
-            cursorHeight = FastMath.clamp(cursorHeight, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
-            cursorWidth = FastMath.clamp(cursorWidth, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
+            int minSize = org.lwjgl.input.Cursor.getMinCursorSize();
+            int maxSize = org.lwjgl.input.Cursor.getMaxCursorSize();
+            cursorHeight = FastMath.clamp(cursorHeight, minSize, maxSize);
+            cursorWidth = FastMath.clamp(cursorWidth, minSize, maxSize);
 
             cursorHeight = MathUtils.nextPowerOfTwo(cursorHeight);
             cursorWidth = MathUtils.nextPowerOfTwo(cursorWidth);
@@ -72,16 +83,19 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
                     (cursorPixels.getFormat() != Format.RGBA8888)) {
 
                 Pixmap tempPixMap = new Pixmap(cursorWidth, cursorHeight, Format.RGBA8888);
+                tempPixMap.setColor(Color.CLEAR);
+                tempPixMap.fill();
                 tempPixMap.drawPixmap(cursorPixels, 0, 0);
                 cursorPixels.dispose();
                 cursorPixels = tempPixMap;
             }
-            Cursor lwjglCursor = new Cursor(cursorPixels.getWidth(), cursorPixels.getHeight(), hotspotX, hotspotY, 1,
-                                            cursorPixels.getPixels().asIntBuffer(), null);
-            return new GdxLwjglCursor(lwjglCursor);
-        } catch (@Nonnull GdxRuntimeException e) {
+
+            Cursor cursor = graphics.newCursor(cursorPixels, hotSpotX, hotSpotY);
+            if (cursor != null) {
+                return new GdxCursor(cursor);
+            }
             return null;
-        } catch (@Nonnull LWJGLException e) {
+        } catch (@Nonnull GdxRuntimeException e) {
             return null;
         }
     }

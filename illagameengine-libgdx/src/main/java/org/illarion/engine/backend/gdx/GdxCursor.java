@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,8 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.Cursor;
 import org.illarion.engine.MouseCursor;
-import org.lwjgl.input.Cursor;
 
 import javax.annotation.Nonnull;
 
@@ -28,20 +28,20 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class GdxLwjglCursor implements MouseCursor {
+class GdxCursor implements MouseCursor {
     /**
-     * The LWJGL implementation of the mouse cursor.
+     * The actual mouse cursor of libGDX
      */
     @Nonnull
-    private final Cursor lwjglCursor;
+    private final Cursor gdxCursor;
 
     /**
      * Create a new engine mouse cursor and set the LWJGL mouse cursor that is wrapped by this class.
      *
-     * @param lwjglCursor the lwjgl mouse cursor
+     * @param gdxCursor the lwjgl mouse cursor
      */
-    GdxLwjglCursor(@Nonnull Cursor lwjglCursor) {
-        this.lwjglCursor = lwjglCursor;
+    GdxCursor(@Nonnull Cursor gdxCursor) {
+        this.gdxCursor = gdxCursor;
     }
 
     /**
@@ -49,7 +49,6 @@ class GdxLwjglCursor implements MouseCursor {
      */
     @Override
     public void dispose() {
-        lwjglCursor.destroy();
     }
 
     /**
@@ -58,7 +57,7 @@ class GdxLwjglCursor implements MouseCursor {
      * @return the LWJGL mouse cursor
      */
     @Nonnull
-    Cursor getLwjglCursor() {
-        return lwjglCursor;
+    Cursor getGdxCursor() {
+        return gdxCursor;
     }
 }

@@ -17,6 +17,7 @@
     <useControls filename="illarion-inventoryslot.xml"/>
     <useControls filename="illarion-itemcontainer.xml"/>
     <useControls filename="illarion-dialog-crafting.xml"/>
+    <useControls filename="illarion-dialog-character.xml"/>
     <useControls filename="illarion-dialog-message.xml"/>
     <useControls filename="illarion-dialog-input.xml"/>
     <useControls filename="illarion-dialog-merchant.xml"/>

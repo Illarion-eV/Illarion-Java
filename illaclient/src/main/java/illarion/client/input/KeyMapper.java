@@ -322,7 +322,6 @@ public final class KeyMapper {
                     handleEscape();
                 }
                 break;
-
             case F:
                 if (firstPressed) {
                     if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
