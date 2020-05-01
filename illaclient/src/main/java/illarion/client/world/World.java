@@ -324,7 +324,7 @@ public final class World {
      *
      * @param engine the engine that is used to display the game
      */
-    public static void initWorldComponents(@Nonnull Engine engine, @Nonnull String characterName) throws EngineException {
+    public static void initWorldComponents(@Nonnull Engine engine) throws EngineException {
         if (INSTANCE.init) {
             return;
         }
@@ -339,7 +339,7 @@ public final class World {
         INSTANCE.musicBox = new MusicBox(engine);
         INSTANCE.net = new NetComm();
         INSTANCE.people = new People();
-        INSTANCE.player = new Player(engine, characterName);
+        INSTANCE.player = new Player(engine);
         INSTANCE.weather = new Weather();
         INSTANCE.interactionManager = new InteractionManager();
     }
