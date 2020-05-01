@@ -60,19 +60,13 @@ public final class LookAtCharCmd extends AbstractCommand {
 
     /**
      * Default constructor for the look at character command.
-     */
-    public LookatCharCmd() {
-        super(CommandList.CMD_LOOKAT_CHAR);
-    }
-
-    /**
-     * Set the target of the look at and the way the look at is done.
      *
      * @param lookAtCharId the ID of the char we want to look at
      * @param lookAtMode the mode of the look at so the method used to look at
      * the target character
      */
-    public void examine(CharacterId lookAtCharId, int lookAtMode) {
+    public LookAtCharCmd(CharacterId lookAtCharId, int lookAtMode) {
+        super(CommandList.CMD_LOOKAT_CHAR);
         charId = lookAtCharId;
         mode = (byte) lookAtMode;
     }

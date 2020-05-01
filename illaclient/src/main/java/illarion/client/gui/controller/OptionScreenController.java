@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -282,26 +282,6 @@ public final class OptionScreenController implements ScreenController {
         }else{
             audioPlayer.setMusicVolume(musicVolume.getValue());
         }
-
-    }
-
-    @NiftyEventSubscriber (id = "musicOn")
-    public void onMusicOnChangedEvent(String topic, CheckBoxStateChangedEvent event){
-        AudioPlayer audioPlayer = AudioPlayer.getInstance();
-        if(musicOn.isChecked()) {
-            audioPlayer.setMusicVolume(musicVolume.getValue());
-            if (!audioPlayer.isCurrentMusic(audioPlayer.getLastMusic())) {
-                audioPlayer.playLastMusic();
-            }
-        } else{
-            audioPlayer.setMusicVolume(0.f);
-        }
-    }
-
-    @NiftyEventSubscriber(id = "cancelButton")
-    public void onCancelButtonClickedEvent(String topic, ButtonClickedEvent event) {
-        nifty.gotoScreen("login");
-    }
 
     }
 

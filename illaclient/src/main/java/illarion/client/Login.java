@@ -20,8 +20,7 @@ import illarion.client.net.client.LoginCmd;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
-import illarion.common.data.IllarionSSLSocketFactory;
-import illarion.common.util.Base64;
+import java.util.Base64;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import org.jetbrains.annotations.Contract;
@@ -346,7 +345,7 @@ public final class Login {
 
             Cipher cipher = Cipher.getInstance("DES");
             if (decode) {
-                byte[] encrypedPwdBytes = Base64.decode(pw.getBytes(usedCharset));
+                byte[] encrypedPwdBytes = Base64.getDecoder().decode(pw.getBytes(usedCharset));
                 cipher.init(Cipher.DECRYPT_MODE, key);
                 encrypedPwdBytes = cipher.doFinal(encrypedPwdBytes);
                 return new String(encrypedPwdBytes, usedCharset);
@@ -354,7 +353,7 @@ public final class Login {
 
             byte[] cleartext = pw.getBytes(usedCharset);
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            return new String(Base64.encode(cipher.doFinal(cleartext)), usedCharset);
+            return new String(Base64.getEncoder().encode(cipher.doFinal(cleartext)), usedCharset);
         } catch (@Nonnull GeneralSecurityException e) {
             if (decode) {
                 LOGGER.warn("Decoding the password failed");

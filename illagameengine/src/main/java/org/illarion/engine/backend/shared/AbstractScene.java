@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -149,11 +149,11 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
             for (int i = sceneElementCount - 1; i >= 0; i--) {
                 SceneElement element = sceneElementArray[i];
                 if (element.isEventProcessed(container, delta, event)) {
-                    notProcessed = false;
+                    processed = true;
                     break;
                 }
             }
-            if (notProcessed) {
+            if (!processed) {
                 event.notHandled();
             }
 

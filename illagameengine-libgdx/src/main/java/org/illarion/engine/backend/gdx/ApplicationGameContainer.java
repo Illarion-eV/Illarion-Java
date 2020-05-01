@@ -227,7 +227,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         windowWidth = width;
         windowHeight = height;
         if (!isFullScreen() && (gdxApplication != null)) {
-            gdxApplication.getGraphics().setDisplayMode(width, height, false);
+            gdxApplication.getGraphics().setWindowedMode(width, height);
         }
     }
 
@@ -235,7 +235,22 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public void setFullScreenResolution(@Nonnull GraphicResolution resolution) throws GdxEngineException {
         fullScreenResolution = resolution;
         if (isFullScreen() && (gdxApplication != null)) {
-            gdxApplication.getGraphics().setDisplayMode(resolution.getWidth(), resolution.getHeight(), true);
+            DisplayMode[] modes = gdxApplication.getGraphics().getDisplayModes();
+            for (@Nullable DisplayMode mode : modes) {
+                if (mode == null) {
+                    continue;
+                }
+                if ((mode.width != fullScreenResolution.getWidth()) ||
+                        (mode.height != fullScreenResolution.getHeight()) ||
+                        (mode.bitsPerPixel != fullScreenResolution.getBPP())) {
+                    continue;
+                }
+
+                if ((resolution.getRefreshRate() == -1) || (resolution.getRefreshRate() == mode.refreshRate)) {
+                    gdxApplication.getGraphics().setFullscreenMode(mode);
+                    return;
+                }
+            }
         }
     }
 
