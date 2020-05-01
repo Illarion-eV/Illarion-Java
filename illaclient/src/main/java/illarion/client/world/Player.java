@@ -148,13 +148,6 @@ public final class Player {
     private MerchantList merchantDialog;
 
     /**
-     * Constructor for the player that receives the character name from the login data automatically.
-     */
-    public Player(@Nonnull Engine engine) {
-        this(engine, Login.getInstance().getLoginCharacter());
-    }
-
-    /**
      * Default constructor for the player.
      *
      * @param charName the character name of the player playing this game

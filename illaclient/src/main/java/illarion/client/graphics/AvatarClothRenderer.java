@@ -45,7 +45,6 @@ final class AvatarClothRenderer {
     static {
         RENDER_DIR = new EnumMap<>(Direction.class);
 
-        //noinspection ConstantConditions
         int groups = AvatarClothGroup.values().length;
 
         {
@@ -327,7 +326,10 @@ final class AvatarClothRenderer {
             List<AvatarClothGroup> renderOrder = RENDER_DIR.get(direction);
             assert renderOrder != null;
 
-            renderOrder.stream().map(currentClothes::get).filter(Objects::nonNull).forEach(cloth -> cloth.render(g));
+            renderOrder.stream()
+                    .map(currentClothes::get)
+                    .filter(Objects::nonNull)
+                    .forEachOrdered(cloth -> cloth.render(g));
         } finally {
             clothLock.readLock().unlock();
         }

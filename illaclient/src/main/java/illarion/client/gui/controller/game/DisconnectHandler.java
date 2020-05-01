@@ -123,6 +123,6 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
     @Override
     public void onEvent(@Nonnull String topic, @Nonnull ButtonClickedEvent data) {
         popup.hide();
-        IllaClient.returnToLogin();
+        IllaClient.returnToLogin(null);
     }
 }

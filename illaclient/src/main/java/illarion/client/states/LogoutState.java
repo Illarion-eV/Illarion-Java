@@ -60,7 +60,7 @@ public final class LogoutState implements GameState {
         }
         logoutDelay += delta;
         if (logoutDelay > 1000) {
-            IllaClient.returnToLogin();
+            IllaClient.returnToLogin(null);
         }
     }
 

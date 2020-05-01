@@ -492,8 +492,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         INSTANCE.game.enterState(Game.STATE_LOGOUT);
     }
 
-    public static void returnToLogin() {
-        LOGGER.info("Returning to login initiated");
+    public static void returnToLogin(@Nullable String message) {
+        if (message == null) {
+            LOGGER.info("Returning to login initiated.");
+        } else {
+            LOGGER.info("Returning to login initiated. Reason: {}", message);
+        }
+
         INSTANCE.game.enterState(Game.STATE_LOGIN);
     }
 

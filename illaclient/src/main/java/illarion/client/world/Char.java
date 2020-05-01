@@ -139,10 +139,14 @@ public final class Char implements AnimatedMove {
      */
     @Nonnull
     private final Map<CharacterAttribute, Integer> attributes;
+    @Nonnull
+    private final AvatarId avatarId;
     /**
      * The alive state of the character. {@code true} in case the character is alive.
      */
     private boolean alive;
+    private int currentAvatarId;
+
     /**
      * The animation that is currently shown by the character.
      */
@@ -156,20 +160,13 @@ public final class Char implements AnimatedMove {
      */
     @Nullable
     private Avatar avatar;
-    /**
-     * ID of the avatar that represents the character.
-     */
-    private int avatarId;
+
     /**
      * Character ID the the character.
      */
     @Nullable
     private CharacterId charId;
-    /**
-     * Current looking direction of the character.
-     */
-    @Nonnull
-    private Direction direction;
+
     @Nullable
     private DisplayCoordinate displayPos;
     /**
@@ -243,10 +240,10 @@ public final class Char implements AnimatedMove {
         attributes = new EnumMap<>(CharacterAttribute.class);
 
         scale = 0;
-        avatarId = -1;
+        avatarId = new AvatarId(-1, 0, Direction.North, CharAnimations.STAND);
+        currentAvatarId = -1;
         appearance = 0;
         animation = CharAnimations.STAND;
-        direction = Direction.North;
     }
 
     private static void applyPaperdollingItem(@Nullable Avatar avatar, @Nonnull AvatarClothGroup group,
@@ -381,7 +378,6 @@ public final class Char implements AnimatedMove {
         } else {
             avatar.changeBaseColor(DEAD_COLOR);
 
-            //noinspection ConstantConditions
             Arrays.asList(AvatarClothGroup.values()).forEach(group -> avatar.changeClothColor(group, DEAD_COLOR));
         }
     }
@@ -441,7 +437,7 @@ public final class Char implements AnimatedMove {
         } else {
             log.debug("{}: Resetting the animation. Finished: {}", this, finished);
             if (finished) {
-                animation = CharAnimations.STAND;
+                avatarId.setAnimationId(CharAnimations.STAND);
                 if (location != null) {
                     updateAvatar();
                     if (avatar != null) {
@@ -467,18 +463,16 @@ public final class Char implements AnimatedMove {
         }
 
         // nothing to do for invisible folks
-        if ((appearance == 0) || (animation < 0)) {
-            log.debug("{}: Can't show avatar with appearance {} and animation {}", this, appearance, animation);
+        if (avatarId.getAnimationId() < 0) {
+            log.debug("{}: Can't show avatar with ID {}", this, avatarId);
             return;
         }
 
         // calculate avatar id
-        //noinspection ConstantConditions
-        int newAvatarId = (((appearance * Direction.values().length) + direction.getServerId()) *
-                           CharAnimations.TOTAL_ANIMATIONS) + animation;
+        int newAvatarId = avatarId.getAvatarId();
 
         // no change, return
-        if ((avatarId == newAvatarId) && (avatar != null)) {
+        if ((currentAvatarId == newAvatarId) && (avatar != null)) {
             log.debug("{}: Avatar received update but did not change.", this);
             return;
         }
@@ -504,7 +498,6 @@ public final class Char implements AnimatedMove {
             wearItemsColors.forEach(newAvatar::changeClothColor);
             newAvatar.changeBaseColor(skinColor);
         } else {
-            //noinspection ConstantConditions
             Arrays.asList(AvatarClothGroup.values()).forEach(group -> newAvatar.changeClothColor(group, DEAD_COLOR));
             newAvatar.changeBaseColor(DEAD_COLOR);
         }
@@ -532,7 +525,7 @@ public final class Char implements AnimatedMove {
         log.debug("{}: Showing new avatar: {}", this, newAvatar);
 
         Avatar oldAvatar = avatar;
-        avatarId = newAvatarId;
+        currentAvatarId = newAvatarId;
         avatar = newAvatar;
         if (oldAvatar != null) {
             oldAvatar.markAsRemoved();
@@ -570,7 +563,6 @@ public final class Char implements AnimatedMove {
             applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, firstHandItem);
         }
 
-        //noinspection ConstantConditions
         Arrays.asList(AvatarClothGroup.values()).forEach(group -> {
             if ((group != AvatarClothGroup.FirstHand) && (group != AvatarClothGroup.SecondHand)) {
                 applyPaperdollingItem(avatar, group, wearItems.get(group));
@@ -688,7 +680,8 @@ public final class Char implements AnimatedMove {
         log.debug("{}: Releasing the avatar.", this);
         Avatar localAvatar = avatar;
         avatar = null;
-        avatarId = -1;
+        avatarId.setRaceId(-1);
+        currentAvatarId = -1;
         if (localAvatar != null) {
             localAvatar.markAsRemoved();
         }
@@ -759,7 +752,7 @@ public final class Char implements AnimatedMove {
     @Nonnull
     @Contract(pure = true)
     public Direction getDirection() {
-        return direction;
+        return avatarId.getDirection();
     }
 
     /**
@@ -768,18 +761,18 @@ public final class Char implements AnimatedMove {
      * @param newDirection the new direction value
      */
     public void setDirection(@Nonnull Direction newDirection) {
-        if (direction == newDirection) {
+        if (avatarId.getDirection() == newDirection) {
             log.debug("{}: Skipping direction change, because direction already matches: {}", this, newDirection);
             return;
         }
         log.debug("{}: Applying a new direction to the character: {}", this, newDirection);
-        direction = newDirection;
+        avatarId.setDirection(newDirection);
 
         // The update of the direction arrives before the location of the character is set. That is okay because
         // the update of the character will take the stored direction into account.
         World.getUpdateTaskManager().addTask((container, delta) -> {
             if (!move.isRunning() && (location != null)) {
-                if (animation == CharAnimations.STAND) {
+                if (avatarId.getAnimationId() == CharAnimations.STAND) {
                     updateAvatar();
                 } else {
                     resetAnimation(true);
@@ -884,49 +877,54 @@ public final class Char implements AnimatedMove {
     @Contract(pure = true)
     private String getFallbackName() {
         String key;
-        switch (appearance) {
+        switch (avatarId.getRaceId()) {
             // humans
-            case 1:
-                key = "character.name.fallback.human.male";
-                break;
-            case 16:
-                key = "character.name.fallback.human.female";
+            case 0:
+                if (avatarId.getTypeId() == 0) {
+                    key = "character.name.fallback.human.male";
+                } else {
+                    key = "character.name.fallback.human.female";
+                }
                 break;
 
             // dwarfs
-            case 12:
-                key = "character.name.fallback.dwarf.male";
-                break;
-            case 17:
-                key = "character.name.fallback.dwarf.female";
+            case 1:
+                if (avatarId.getTypeId() == 0) {
+                    key = "character.name.fallback.dwarf.male";
+                } else {
+                    key = "character.name.fallback.dwarf.female";
+                }
                 break;
 
             // halflings
-            case 24:
-                key = "character.name.fallback.halfling.male";
-                break;
-            case 25:
-                key = "character.name.fallback.halfling.female";
+            case 2:
+                if (avatarId.getTypeId() == 0) {
+                    key = "character.name.fallback.halfling.male";
+                } else {
+                    key = "character.name.fallback.halfling.female";
+                }
                 break;
 
             // elves
-            case 20:
-                key = "character.name.fallback.elf.male";
-                break;
-            case 19:
-                key = "character.name.fallback.elf.female";
+            case 3:
+                if (avatarId.getTypeId() == 0) {
+                    key = "character.name.fallback.elf.male";
+                } else {
+                    key = "character.name.fallback.elf.female";
+                }
                 break;
 
             // orcs
-            case 13:
-                key = "character.name.fallback.orc.male";
-                break;
-            case 18:
-                key = "character.name.fallback.orc.female";
+            case 4:
+                if (avatarId.getTypeId() == 0) {
+                    key = "character.name.fallback.orc.male";
+                } else {
+                    key = "character.name.fallback.orc.female";
+                }
                 break;
 
             // lizards
-            case 7:
+            case 5:
                 key = "character.name.fallback.lizard";
                 break;
 
@@ -1242,8 +1240,8 @@ public final class Char implements AnimatedMove {
             }
             return;
         }
-        animation = newAnimation;
-        log.debug("{}: Starting new animation: {} for {}ms", this, animation, duration);
+        avatarId.setAnimationId(newAnimation);
+        log.debug("{}: Starting new animation: {} for {}ms", this, newAnimation, duration);
         updateAvatar();
 
         if (avatar == null) {
@@ -1265,16 +1263,18 @@ public final class Char implements AnimatedMove {
     /**
      * Change the appearance of the character.
      *
-     * @param newAppearance the new appearance value
+     * @param raceId the new race Id
+     * @param typeId the new type Id
      */
-    public void setAppearance(int newAppearance) {
+    public void setAppearance(int raceId, int typeId) {
         if (removedCharacter) {
             log.warn("Trying to update the appearance of a removed character.");
             return;
         }
-        if (appearance != newAppearance) {
-            log.debug("{}: Changing appearance to: {}", this, newAppearance);
-            appearance = newAppearance;
+        if ((avatarId.getRaceId() != raceId) || (avatarId.getTypeId() != typeId)) {
+            log.debug("{}: Changing race to {} and type to {}", this, raceId, typeId);
+            avatarId.setRaceId(raceId);
+            avatarId.setTypeId(typeId);
             if (location != null) {
                 updateAvatar();
             }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -143,7 +144,7 @@ class GdxGraphics implements Graphics {
 
     void setCursor(@Nullable GdxCursor cursor) {
         if (cursor == null) {
-            gdxGraphics.setCursor(null);
+            gdxGraphics.setSystemCursor(SystemCursor.Arrow);
         } else {
             gdxGraphics.setCursor(cursor.getGdxCursor());
         }
@@ -237,18 +238,6 @@ class GdxGraphics implements Graphics {
                 usedEffect.disableEffect(spriteBatch);
             }
         }
-    }
-
-    private void activateSpriteBatch() {
-        if (spriteBatchActive) {
-            return;
-        }
-
-        if (shapeRenderer.getCurrentType() != null) {
-            shapeRenderer.end();
-        }
-        spriteBatch.begin();
-        spriteBatchActive = true;
     }
 
     /**
@@ -476,6 +465,18 @@ class GdxGraphics implements Graphics {
         shapeRenderer.rect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
         shapeRenderer.end();
         gdxGraphics.getGL20().glDisable(GL20.GL_BLEND);
+    }
+
+    private void activateSpriteBatch() {
+        if (spriteBatchActive) {
+            return;
+        }
+
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
+        spriteBatch.begin();
+        spriteBatchActive = true;
     }
 
     private void activateShapeRenderer() {
