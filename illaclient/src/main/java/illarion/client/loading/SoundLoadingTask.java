@@ -21,7 +21,10 @@ import illarion.common.util.ProgressMonitor;
 import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * This loading task is used to load all songs and sounds.
@@ -45,39 +48,44 @@ class SoundLoadingTask implements LoadingTask {
      * The list of songs that need to be loaded.
      */
     @Nonnull
-    private final List<String> songsToLoad;
+    private final Queue<String> songsToLoad;
 
     /**
      * The list of sounds that need to be loaded.
      */
     @Nonnull
-    private final List<String> soundsToLoad;
+    private final Queue<String> soundsToLoad;
 
     /**
      * The amount of resources to load before the loading started.
      */
     private final int initialAmount;
 
+    /**
+     * The amount of entries that still need loading.
+     */
+    private int remaining;
+
     SoundLoadingTask(@Nonnull Engine engine) {
         this.engine = engine;
         monitor = new ProgressMonitor(3.f);
 
-        songsToLoad = SongFactory.getInstance().getSongNames();
-        soundsToLoad = SoundFactory.getInstance().getSoundNames();
+        songsToLoad = new LinkedList<>(SongFactory.getInstance().getSongNames());
+        soundsToLoad = new LinkedList<>(SoundFactory.getInstance().getSoundNames());
         initialAmount = songsToLoad.size() + soundsToLoad.size();
+        remaining = initialAmount;
     }
 
     @Override
     public void load() {
         if (!songsToLoad.isEmpty()) {
-            SongFactory.getInstance()
-                    .loadSong(engine.getAssets().getSoundsManager(), songsToLoad.remove(songsToLoad.size() - 1));
+            SongFactory.getInstance().loadSong(engine.getAssets().getSoundsManager(), songsToLoad.poll());
         } else if (!soundsToLoad.isEmpty()) {
-            SoundFactory.getInstance()
-                    .loadSound(engine.getAssets().getSoundsManager(), soundsToLoad.remove(soundsToLoad.size() - 1));
+            SoundFactory.getInstance().loadSound(engine.getAssets().getSoundsManager(), soundsToLoad.poll());
         }
+        remaining--;
 
-        monitor.setProgress(1.f - ((float) (songsToLoad.size() + soundsToLoad.size()) / (float) initialAmount));
+        monitor.setProgress(1.f - (remaining / (float) initialAmount));
     }
 
     @Override

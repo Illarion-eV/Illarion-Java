@@ -275,7 +275,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             });
         } else {
             engine.getSounds().stopMusic(15);
-            game.enterState(Game.STATE_LOADING);
+            game.enterState(Game.STATE_PLAYING);
         }
     }
 

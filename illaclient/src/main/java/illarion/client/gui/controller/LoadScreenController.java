@@ -54,7 +54,7 @@ public final class LoadScreenController implements ScreenController {
         }
         loadingDoneCalled = true;
 
-        game.enterState(Game.STATE_PLAYING);
+        game.enterState(Game.STATE_LOGIN);
     }
 
     public void setProgress(float progressValue) {

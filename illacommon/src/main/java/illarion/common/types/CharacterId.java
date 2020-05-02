@@ -50,6 +50,11 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
     private static final int MONSTER_MASK = 0xFE000000;
 
     /**
+     * Check if the character is a pet
+     */
+    private boolean isPet = false;
+
+    /**
      * The item count.
      */
     private final int value;
@@ -93,6 +98,13 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
         return (value & TYPE_MASK) == MONSTER_MASK;
     }
 
+    public boolean isPet(){
+        return isPet;
+    }
+
+    public void setIsPet(boolean isPet){
+        this.isPet = isMonster() && isPet;
+    }
     /**
      * Check if this character ID is the ID of a human controlled character.
      *

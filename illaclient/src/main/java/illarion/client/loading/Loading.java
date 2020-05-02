@@ -69,7 +69,6 @@ public final class Loading {
             addToTaskList(new SoundLoadingTask(gameEngine));
             loadingDone = true;
         }
-        addToTaskList(new GameEnvironmentLoading(gameEngine));
     }
 
     /**

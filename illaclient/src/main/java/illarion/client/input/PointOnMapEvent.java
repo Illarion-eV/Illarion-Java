@@ -31,4 +31,21 @@ public final class PointOnMapEvent extends AbstractMouseLocationEvent {
     public PointOnMapEvent(int x, int y) {
         super(x, y);
     }
+
+    /**
+     * Create and initialize such an event.
+     */
+    public PointOnMapEvent() {
+        super(0, 0);
+    }
+
+    /**
+     * Initialize such an event.
+     *
+     * @param x the x coordinate of the click
+     * @param y the y coordinate of the click
+     */
+    public void set (int x, int y) {
+        super.set(x, y);
+    }
 }

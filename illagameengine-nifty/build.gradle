@@ -22,7 +22,7 @@ archivesBaseName = 'illarion_engine_nifty'
 dependencies {
     compile project(':common')
     compile project(':engine')
-    compile group: 'lessvoid', name: 'nifty', version: project.ext.niftyGuiVersion
+    compile group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
 }
 
 jar {

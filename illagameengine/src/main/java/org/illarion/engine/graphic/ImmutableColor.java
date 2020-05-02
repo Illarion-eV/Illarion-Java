@@ -96,6 +96,22 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
+    public void add(@Nonnull Color color) {
+        throwImmutableException();
+    }
+
+    @Nonnull
+    @Override
+    public ImmutableColor getImmutableCopy() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
+     */
+    @Override
     public void setAlpha(int alpha) {
         throwImmutableException();
     }
@@ -197,16 +213,6 @@ public class ImmutableColor extends Color {
      */
     @Override
     public void multiply(float value) {
-        throwImmutableException();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
-     */
-    @Override
-    public void add(@Nonnull Color color) {
         throwImmutableException();
     }
 }

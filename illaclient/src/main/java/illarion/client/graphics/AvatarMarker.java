@@ -31,7 +31,8 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * The logging instance of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarMarker.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(AvatarMarker.class);
 
     /**
      * The avatar that is the parent of this class.
@@ -51,8 +52,9 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     }
 
     @Override
-    protected boolean isShown() {
-        return parent.isShown();
+    public void setAlpha(int newAlpha) {
+        super.setAlpha(newAlpha);
+        setAlphaTarget(newAlpha);
     }
 
     @Override
@@ -61,13 +63,12 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     }
 
     @Override
-    public void setAlpha(int alpha) {
-        super.setAlpha(alpha);
-        setAlphaTarget(alpha);
+    public void show() {
+        log.warn("Show was called for a avatar marker. This shouldn't happen.");
     }
 
     @Override
-    public void show() {
-        LOGGER.warn("Show was called for a avatar marker. This shouldn't happen.");
+    protected boolean isShown() {
+        return parent.isShown();
     }
 }

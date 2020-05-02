@@ -15,6 +15,7 @@
  */
 package illarion.client.net;
 
+import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.common.net.NetCommWriter;
 import org.slf4j.Logger;
@@ -105,6 +106,10 @@ final class Sender implements NetCommWriter {
         commandExecutor.submit(() -> {
             try {
                 encodeCommand(cmd);
+            } catch (IOException e) {
+                log.error("Connection failure: {}", e.getMessage());
+                IllaClient.returnToLogin(e.getLocalizedMessage());
+                commandExecutor.shutdownNow();
             } catch (Exception e) {
                 log.error("Error while sending command.", e);
             }

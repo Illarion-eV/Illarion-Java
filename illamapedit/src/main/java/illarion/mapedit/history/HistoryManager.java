@@ -18,7 +18,6 @@ package illarion.mapedit.history;
 import illarion.mapedit.events.HistoryEvent;
 import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
-import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -27,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * The HistoryManager class stores the chain of all history entries that are connected
@@ -52,8 +52,8 @@ public class HistoryManager {
 
     public HistoryManager() {
         AnnotationProcessor.process(this);
-        undoList = new FastTable<>();
-        redoList = new FastTable<>();
+        undoList = new LinkedList<>();
+        redoList = new LinkedList<>();
     }
 
     /**

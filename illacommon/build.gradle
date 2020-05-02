@@ -22,19 +22,13 @@ apply from: '../versions.gradle'
 archivesBaseName = 'illarion_common'
 
 dependencies {
-    compile group: 'org.jetbrains', name: 'annotations', version: '13.0'
-    compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
+    compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
-    compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
+    compile group: 'org.ogce', name: 'xpp3', version: '1.1.6'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile(group: 'org.mantisbt', name: 'mantisconnect', version: '1.1.2.0') {
-        exclude module: 'log4j'
-        exclude module: 'commons-logging'
-    }
-    testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
+    compile group: 'biz.futureware.mantis', name: 'mantis-axis-soap-client', version: '1.2.19'
 }
 
 processResources.dependsOn("downloadSkills")

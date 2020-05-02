@@ -52,6 +52,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     /**
      * The game listener that receives the updates regarding the game.
      */
+    @Nonnull
     private final GameListener gameListener;
 
     /**
@@ -97,7 +98,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws GdxEngineException in case the initialization goes wrong
      */
     public ApplicationGameContainer(
-            GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
+            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
@@ -177,8 +178,13 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
     @Override
     public void setMouseCursor(@Nullable MouseCursor cursor) {
-        if (!Display.isCreated()) {
-            throw new IllegalStateException("The game display was not yet created.");
+        if (engine == null) {
+            return;
+        }
+        if (cursor instanceof GdxCursor) {
+            engine.getGraphics().setCursor((GdxCursor) cursor);
+        } else {
+            engine.getGraphics().setCursor(null);
         }
         try {
             if (cursor == null) {
@@ -252,7 +258,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         windowWidth = width;
         windowHeight = height;
         if (!isFullScreen() && (gdxApplication != null)) {
-            gdxApplication.getGraphics().setDisplayMode(width, height, false);
+            gdxApplication.getGraphics().setWindowedMode(width, height);
         }
     }
 
@@ -260,7 +266,22 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public void setFullScreenResolution(@Nonnull GraphicResolution resolution) throws GdxEngineException {
         fullScreenResolution = resolution;
         if (isFullScreen() && (gdxApplication != null)) {
-            gdxApplication.getGraphics().setDisplayMode(resolution.getWidth(), resolution.getHeight(), true);
+            DisplayMode[] modes = gdxApplication.getGraphics().getDisplayModes();
+            for (@Nullable DisplayMode mode : modes) {
+                if (mode == null) {
+                    continue;
+                }
+                if ((mode.width != fullScreenResolution.getWidth()) ||
+                        (mode.height != fullScreenResolution.getHeight()) ||
+                        (mode.bitsPerPixel != fullScreenResolution.getBPP())) {
+                    continue;
+                }
+
+                if ((resolution.getRefreshRate() == -1) || (resolution.getRefreshRate() == mode.refreshRate)) {
+                    gdxApplication.getGraphics().setFullscreenMode(mode);
+                    return;
+                }
+            }
         }
     }
 

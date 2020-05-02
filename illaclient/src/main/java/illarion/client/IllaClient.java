@@ -374,9 +374,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
         if (doubleClick instanceof Number) {
-            cfg.set("doubleClickInterval", ((Number) doubleClick).intValue());
+            cfg.set("doubleClickInterval", ((Number) doubleClick).intValue() * 2);
         } else {
-            cfg.set("doubleClickInterval", 500);
+            cfg.set("doubleClickInterval", 1000);
         }
 
         Crypto crypt = new Crypto();
@@ -387,6 +387,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Basic initialization of the log files and the debug settings.
      */
+    @SuppressWarnings("Duplicates")
     private static void initLogfiles() throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
@@ -491,8 +492,19 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         return INSTANCE;
     }
 
-    public static void returnToLogin() {
-        LOGGER.info("Returning to login initiated");
+    public static void performLogout() {
+        LOGGER.info("Logout requested.");
+        getInstance().quitGame();
+        INSTANCE.game.enterState(Game.STATE_LOGOUT);
+    }
+
+    public static void returnToLogin(@Nullable String message) {
+        if (message == null) {
+            LOGGER.info("Returning to login initiated.");
+        } else {
+            LOGGER.info("Returning to login initiated. Reason: {}", message);
+        }
+
         INSTANCE.game.enterState(Game.STATE_LOGIN);
     }
 
@@ -531,7 +543,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param server the server that is used to connect with
      */
-    public void setUsedServer(Servers server) {
+    public void setUsedServer(@Nonnull Servers server) {
         usedServer = server;
     }
 

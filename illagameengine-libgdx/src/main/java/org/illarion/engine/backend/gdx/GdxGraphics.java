@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -151,6 +152,14 @@ class GdxGraphics implements Graphics {
     @Nonnull
     SpriteBatch getSpriteBatch() {
         return spriteBatch;
+    }
+
+    void setCursor(@Nullable GdxCursor cursor) {
+        if (cursor == null) {
+            gdxGraphics.setSystemCursor(SystemCursor.Arrow);
+        } else {
+            gdxGraphics.setCursor(cursor.getGdxCursor());
+        }
     }
 
     /**
@@ -293,8 +302,16 @@ class GdxGraphics implements Graphics {
         }
     }
 
-    @Nonnull
-    private static final float[] FLT_BUFFER = new float[20];
+    /**
+     * Transfer the color values from a game engine color instance to a libGDX color instance.
+     *
+     * @param source the engine color instance that is the source of the color data
+     * @param target the libGDX color instance that is the target of the color data
+     */
+    static void transferColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color target) {
+        target.set(source.getRedf(), source.getGreenf(), source.getBluef(), source.getAlphaf());
+        target.clamp();
+    }
 
     @Override
     public void drawTileSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color topColor,
@@ -524,6 +541,41 @@ class GdxGraphics implements Graphics {
         shapeRenderer.rect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
         shapeRenderer.end();
         gdxGraphics.getGL20().glDisable(GL20.GL_BLEND);
+    }
+
+    private void activateSpriteBatch() {
+        if (spriteBatchActive) {
+            return;
+        }
+
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
+        spriteBatch.begin();
+        spriteBatchActive = true;
+    }
+
+    private void activateShapeRenderer() {
+        if (shapeRenderer.getCurrentType() != null) {
+            return;
+        }
+        if (spriteBatchActive) {
+            spriteBatch.end();
+            spriteBatchActive = false;
+        }
+
+        GL20 gl20 = gdxGraphics.getGL20();
+        gl20.glEnable(GL20.GL_BLEND);
+        assert lastBlendingMode != null;
+        switch (lastBlendingMode) {
+            case AlphaBlend:
+                gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case Multiply:
+                gl20.glBlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+                break;
+        }
+        shapeRenderer.begin(ShapeType.Filled);
     }
 
     @Override
