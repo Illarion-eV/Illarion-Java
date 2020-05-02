@@ -492,12 +492,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         return INSTANCE;
     }
 
-    public static void performLogout() {
-        LOGGER.info("Logout requested.");
-        getInstance().quitGame();
-        INSTANCE.game.enterState(Game.STATE_LOGOUT);
-    }
-
     public static void returnToLogin(@Nullable String message) {
         if (message == null) {
             LOGGER.info("Returning to login initiated.");

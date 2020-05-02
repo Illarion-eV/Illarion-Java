@@ -21,6 +21,8 @@ import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
 import java.util.Base64;
+
+import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import org.jetbrains.annotations.Contract;
