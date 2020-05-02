@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Additional Info for an avatar. Every avatar for every avatar gets only one Avatar info object and has to report all
- * animations known for this character to the object.
+ * Additional Info for an avatar. Every avatar for every avatar gets only one Avatar info object and has to report
+ * all animations known for this character to the object.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -71,8 +71,8 @@ public final class AvatarInfo {
     }
 
     /**
-     * Clean this class up. This should be called after all avatars are loaded. It ensures that is becomes impossible to
-     * modify the instances of this class and the unneeded buffer table is emptied and removed.
+     * Clean this class up. This should be called after all avatars are loaded. It ensures that is becomes impossible
+     * to modify the instances of this class and the unneeded buffer table is emptied and removed.
      */
     public static void cleanup() {
         if (buffer != null) {
@@ -82,8 +82,8 @@ public final class AvatarInfo {
     }
 
     /**
-     * Get the avatar instance for a avatar appearance with some set information about the avatar. This function creates
-     * a new instance of the AvatarInfo class with the parameters, or returns a already created one for this
+     * Get the avatar instance for a avatar appearance with some set information about the avatar. This function
+     * creates a new instance of the AvatarInfo class with the parameters, or returns a already created one for this
      * appearance.
      *
      * @param appearance the appearance this avatar information are related to
@@ -133,8 +133,8 @@ public final class AvatarInfo {
     }
 
     /**
-     * Report to this Avatar info that a particular animation is available. After reporting this it must be ensured that
-     * this animation is available to be shown.
+     * Report to this Avatar info that a particular animation is available. After reporting this it must be ensured
+     * that this animation is available to be shown.
      *
      * @param animationID the ID of the animation that is available.
      */

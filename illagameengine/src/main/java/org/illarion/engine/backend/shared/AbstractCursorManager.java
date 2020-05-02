@@ -61,10 +61,10 @@ public abstract class AbstractCursorManager implements CursorManager {
      * Load the cursor that is referred to with the reference.
      *
      * @param ref the reference to the cursor
-     * @param hotSpotX the x coordinate of the hot spot
-     * @param hotSpotY the y coordinate of the hot spot
+     * @param hotspotX the x coordinate of the hotspot
+     * @param hotspotY the y coordinate of the hotspot
      * @return the newly load cursor
      */
     @Nullable
-    protected abstract MouseCursor loadCursor(@Nonnull String ref, int hotSpotX, int hotSpotY);
+    protected abstract MouseCursor loadCursor(@Nonnull String ref, int hotspotX, int hotspotY);
 }

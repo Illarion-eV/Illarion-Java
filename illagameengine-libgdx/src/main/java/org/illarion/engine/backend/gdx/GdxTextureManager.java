@@ -16,7 +16,6 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -37,11 +36,7 @@ class GdxTextureManager extends AbstractTextureManager<Pixmap> {
     @Nullable
     protected Pixmap loadTextureData(@Nonnull String textureName) {
         try {
-            FileHandle fileH = Gdx.files.classpath(textureName);
-            if (!fileH.exists()) {
-                return null;
-            }
-            return new Pixmap(fileH);
+            return new Pixmap(Gdx.files.internal(textureName));
         } catch (@Nonnull Exception ignored) {
             return null;
         }

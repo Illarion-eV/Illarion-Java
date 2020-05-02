@@ -59,7 +59,6 @@ public enum Key {
     CursorDown,
     Enter,
     Backspace,
-    Space,
     NumPad0,
     NumPad1,
     NumPad2,

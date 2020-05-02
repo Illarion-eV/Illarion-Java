@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2016 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -27,36 +27,28 @@
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="300px" width="100%" align="center" valign="center" backgroundColor="#0000"
+            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
-                <control name="label" id="statusText" text="" align="center"/>
+                <control name="label" id="statusText" text=""/>
                 <panel height="30px"/>
                 <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                        childLayout="vertical" visibleToMouse="true">
-
-                    <control name="dropDown" id="server" marginBottom="10px" />
-
-                    <panel childLayout="center" visibleToMouse="true" align="center" marginBottom="30px">
-                        <control id="characterList" name="listBox" vertical="on" horizontal="off"
+                    <panel childLayout="center" visibleToMouse="true" align="center">
+                        <control id="myListBox" name="listBox" vertical="on" horizontal="off"
                                  displayItems="5" selection="Single" forceSelection="true"/>
-                        <panel style="nifty-panel-small" childLayout="center" marginLeft="320px" width="200px">
-                            <image id="characterImage" valign="bottom" align="center" marginBottom="10px" />
-                        </panel>
                     </panel>
+
+                    <panel height="30px"/>
 
                     <panel childLayout="horizontal" visibleToMouse="true">
                         <panel width="90px"/>
-                        <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100px"
-                                 height="35px" marginRight="20px">
+                        <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100" height="35">
                             <interact onRelease="play()"/>
                         </control>
-                        <control id="createBtn" name="button" label="${charselect-bundle.create}" width="170px"
-                                 height="35px" marginRight="20px">
-                            <interact onRelease="createChar()"/>
-                        </control>
-                        <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100px"
-                                 height="35px">
+                        <panel width="20px"/>
+                        <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100"
+                                 height="35">
                             <interact onRelease="logout()"/>
                         </control>
                     </panel>

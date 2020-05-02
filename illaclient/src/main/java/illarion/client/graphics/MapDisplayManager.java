@@ -19,7 +19,6 @@ import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
-import illarion.common.memory.MemoryPools;
 import illarion.common.types.DisplayCoordinate;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
@@ -41,28 +40,25 @@ import javax.annotation.Nullable;
  * @author Nop
  */
 public final class MapDisplayManager implements AnimatedMove {
+
     /**
      * Offset of the tiles due the perspective of the map view.
      */
     public static final int TILE_PERSPECTIVE_OFFSET = 3;
+
+    private boolean active;
+
     @Nonnull
     private final FadingCorridor corridor;
+
+    @Nullable
+    private DisplayCoordinate origin;
+
     /**
      * The scene the game is displayed in.
      */
     @Nonnull
     private final Scene gameScene;
-    private boolean active;
-    @Nullable
-    private DisplayCoordinate origin;
-    /**
-     * This flag stores if the fog effect was already applied to the scene.
-     */
-    private boolean fogEnabled;
-    /**
-     * This flag stores if the gray scale filter that is applied in case the character is dead was already enabled.
-     */
-    private boolean deadViewEnabled;
 
     public MapDisplayManager(@Nonnull Engine engine) {
         active = false;
@@ -70,16 +66,6 @@ public final class MapDisplayManager implements AnimatedMove {
         corridor = FadingCorridor.getInstance();
 
         gameScene = engine.getAssets().createNewScene();
-    }
-
-    private static int getMapCenterX() {
-        GameContainer window = IllaClient.getInstance().getContainer();
-        return window.getWidth() >> 1;
-    }
-
-    private static int getMapCenterY() {
-        GameContainer window = IllaClient.getInstance().getContainer();
-        return window.getHeight() >> 1;
     }
 
     /**
@@ -107,20 +93,27 @@ public final class MapDisplayManager implements AnimatedMove {
         return (y - getMapCenterY()) + origin.getY();
     }
 
-    public boolean isActive() {
-        return active && (origin != null);
+    private static int getMapCenterX() {
+        GameContainer window = IllaClient.getInstance().getContainer();
+        return window.getWidth() >> 1;
+    }
+
+    private static int getMapCenterY() {
+        GameContainer window = IllaClient.getInstance().getContainer();
+        return window.getHeight() >> 1;
     }
 
     /**
-     * Set the map display as active.
+     * Fix avatar's position in the middle of the screen and Z-Order
      *
-     * @param active the active flag
+     * @param av
      */
-    public void setActive(boolean active) {
-        if (!active) {
-            origin = null;
-        }
-        this.active = active;
+    public void glueAvatarToOrigin(@Nonnull Avatar av) {
+        //av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ());
+    }
+
+    public boolean isActive() {
+        return active && (origin != null);
     }
 
     /**
@@ -143,32 +136,41 @@ public final class MapDisplayManager implements AnimatedMove {
 
         Avatar av = World.getPlayer().getCharacter().getAvatar();
         if (av != null) {
+            glueAvatarToOrigin(av);
             corridor.setCorridor(av);
         }
 
         Camera.getInstance().setViewport(-offX, -offY, container.getWidth(), container.getHeight());
 
         Input engineInput = container.getEngine().getInput();
-        CurrentMouseLocationEvent event = MemoryPools.get(CurrentMouseLocationEvent.class);
-        event.set(engineInput.getMouseX(), engineInput.getMouseY());
-        gameScene.publishEvent(event);
+        gameScene.publishEvent(new CurrentMouseLocationEvent(engineInput.getMouseX(), engineInput.getMouseY()));
         gameScene.update(container, delta);
         updateFog(container);
         updateDeadView(container);
     }
 
     /**
+     * This flag stores if the fog effect was already applied to the scene.
+     */
+    private boolean fogEnabled;
+
+    /**
+     * This flag stores if the gray scale filter that is applied in case the character is dead was already enabled.
+     */
+    private boolean deadViewEnabled;
+
+    /**
      * Update the graphical effects applied in case the character died.
      *
-     * @param container the game container
+     * @param c the game container
      */
-    private void updateDeadView(@Nonnull GameContainer container) {
+    private void updateDeadView(@Nonnull GameContainer c) {
         int hitPoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
         if (hitPoints == 0) {
             if (!deadViewEnabled) {
                 try {
-                    GrayScaleEffect effect =
-                            container.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
+                            .getGrayScaleEffect(true);
                     gameScene.addEffect(effect);
                     deadViewEnabled = true;
                 } catch (EngineException e) {
@@ -178,8 +180,8 @@ public final class MapDisplayManager implements AnimatedMove {
         } else {
             if (deadViewEnabled) {
                 try {
-                    GrayScaleEffect effect =
-                            container.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
+                            .getGrayScaleEffect(true);
                     gameScene.removeEffect(effect);
                     deadViewEnabled = false;
                 } catch (EngineException e) {
@@ -192,13 +194,13 @@ public final class MapDisplayManager implements AnimatedMove {
     /**
      * Update the graphical effect that shows the fog on the map.
      *
-     * @param container the game container
+     * @param c the game container
      */
-    private void updateFog(@Nonnull GameContainer container) {
+    private void updateFog(@Nonnull GameContainer c) {
         float fog = World.getWeather().getFog();
         if (fog > 0.f) {
             try {
-                FogEffect effect = container.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
                 effect.setDensity(fog);
                 if (!fogEnabled) {
                     gameScene.addEffect(effect);
@@ -209,7 +211,7 @@ public final class MapDisplayManager implements AnimatedMove {
             }
         } else if (fogEnabled) {
             try {
-                FogEffect effect = container.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
                 gameScene.removeEffect(effect);
                 fogEnabled = false;
             } catch (EngineException e) {
@@ -221,21 +223,28 @@ public final class MapDisplayManager implements AnimatedMove {
     /**
      * Render all visible map items
      *
-     * @param container the game container the map is rendered in
+     * @param c the game container the map is rendered in
      */
-    public void render(@Nonnull GameContainer container) {
+    public void render(@Nonnull GameContainer c) {
         if (!isActive()) {
             return;
         }
 
         Camera camera = Camera.getInstance();
-        gameScene.render(container.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
+        gameScene.render(c.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
+    }
+
+    public void setActive(boolean active) {
+        if (!active) {
+            origin = null;
+        }
+        this.active = active;
     }
 
     /**
      * Move the map origin to a new location
      *
-     * @param location the location on the map the view is focused on
+     * @param location
      */
     public void setLocation(@Nonnull DisplayCoordinate location) {
         origin = location;

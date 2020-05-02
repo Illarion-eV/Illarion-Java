@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -44,7 +43,7 @@ final class Receiver extends Thread implements NetCommReader {
     /**
      * Length of the byte buffer used to store the data from the server.
      */
-    private static final int INITIAL_BUFFER_SIZE = 1000;
+    private static final int BUFFER_LENGTH = 10000;
 
     /**
      * The XOR mask the command ID is masked with to decode the checking ID and ensure that the start of a command
@@ -62,31 +61,37 @@ final class Receiver extends Thread implements NetCommReader {
      * Time the receiver waits for more data before throwing away the incomplete things it already got.
      */
     private static final int RECEIVER_TIMEOUT = 1000;
+
+    /**
+     * The buffer that stores the byte that we received from the server for decoding.
+     */
+    @Nonnull
+    private final ByteBuffer buffer;
+
     /**
      * The decoder that is used to decode the strings that are send to the client by the server.
      */
     @Nonnull
     private final CharsetDecoder decoder;
+
     /**
      * The buffer that is used to temporary store the decoded characters that were send to the player.
      */
     @Nonnull
     private final CharBuffer decodingBuffer = CharBuffer.allocate(65535);
+
     /**
      * The input stream of the connection socket of the connection to the server.
      */
     @Nonnull
     private final ReadableByteChannel inChannel;
+
     /**
      * The list that stores the commands there were decoded and prepared for the NetComm for execution.
      */
     @Nonnull
     private final MessageExecutor executor;
-    /**
-     * The buffer that stores the byte that we received from the server for decoding.
-     */
-    @Nullable
-    private ByteBuffer buffer = null;
+
     /**
      * Indicator if the Receiver is currently running.
      */
@@ -110,33 +115,12 @@ final class Receiver extends Thread implements NetCommReader {
         this.executor = executor;
         inChannel = in;
 
+        buffer = ByteBuffer.allocateDirect(BUFFER_LENGTH);
+        buffer.order(ByteOrder.BIG_ENDIAN);
+        buffer.limit(0);
+
         decoder = NetComm.SERVER_STRING_ENCODING.newDecoder();
         setDaemon(true);
-    }
-
-    @Nonnull
-    private ByteBuffer getBuffer() {
-        return getBuffer(0);
-    }
-
-    @Nonnull
-    private ByteBuffer getBuffer(int bufferSize) {
-        ByteBuffer oldBuffer = buffer;
-        if ((oldBuffer != null) && (oldBuffer.capacity() >= bufferSize)) {
-            return oldBuffer;
-        }
-
-        buffer = ByteBuffer.allocateDirect(
-                ((bufferSize / INITIAL_BUFFER_SIZE) * INITIAL_BUFFER_SIZE) + INITIAL_BUFFER_SIZE);
-        buffer.order(ByteOrder.BIG_ENDIAN);
-
-        if (oldBuffer != null) {
-            buffer.put(oldBuffer);
-            buffer.flip();
-        } else {
-            buffer.limit(0);
-        }
-        return buffer;
     }
 
     /**
@@ -148,7 +132,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     @Override
     public byte readByte() throws IOException {
-        return getBuffer().get();
+        return buffer.get();
     }
 
     /**
@@ -160,7 +144,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     @Override
     public int readInt() throws IOException {
-        return getBuffer().getInt();
+        return buffer.getInt();
     }
 
     /**
@@ -172,7 +156,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     @Override
     public short readShort() throws IOException {
-        return getBuffer().getShort();
+        return buffer.getShort();
     }
 
     /**
@@ -191,7 +175,6 @@ final class Receiver extends Thread implements NetCommReader {
             return "";
         }
 
-        ByteBuffer buffer = getBuffer();
         if (len > buffer.remaining()) {
             throw new IndexOutOfBoundsException("reading beyond receive buffer " + (buffer.remaining() + len));
         }
@@ -273,7 +256,6 @@ final class Receiver extends Thread implements NetCommReader {
             try {
                 while (running && receiveData(minRequiredData)) {
                     while (true) {
-                        ByteBuffer buffer = getBuffer();
                         // wait for a complete message header
                         if (buffer.remaining() < CommandList.HEADER_SIZE) {
                             break;
@@ -379,7 +361,6 @@ final class Receiver extends Thread implements NetCommReader {
      * @return true in case the command is complete, false if not
      */
     private boolean isDataComplete(int len) {
-        ByteBuffer buffer = getBuffer();
         if (len <= buffer.remaining()) {
             timeOut = 0;
             return true;
@@ -411,7 +392,7 @@ final class Receiver extends Thread implements NetCommReader {
      * @throws IOException In case there is something wrong with the input stream
      */
     private boolean receiveData(int neededDataInBuffer) throws IOException {
-        ByteBuffer buffer = getBuffer(neededDataInBuffer);
+
         int data = buffer.remaining();
 
         int appPos = buffer.limit();

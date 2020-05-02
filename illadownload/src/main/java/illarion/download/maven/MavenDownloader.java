@@ -279,7 +279,7 @@ public class MavenDownloader {
                 setupRepository("ibiblio.net", "http://www.ibiblio.net/pub/packages/maven2/"),
                 setupRepository("central-uk", "http://uk.maven.org/maven2/")));
 
-        illarionRepository = setupRepository("illarion", "https://illarion.org/media/java/maven", true, snapshot);
+        illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", true, snapshot);
         repositories.add(illarionRepository);
         repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/"));
 

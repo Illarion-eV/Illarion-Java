@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package org.illarion.engine.backend.shared;
 
-import illarion.common.memory.MemoryPools;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
@@ -64,8 +63,13 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * This is the snapshot array that is taken and filled shortly before the update calls. Is then used to render
      * and update the scene.
      */
-    @Nullable
-    private SceneElement[] workingArray;
+    @Nonnull
+    private SceneElement[] workingArray = new SceneElement[0];
+
+    /**
+     * The amount of elements in the array that are currently valid.
+     */
+    private int workingArraySize;
 
     /**
      * Create a new scene and setup the internal structures.
@@ -74,14 +78,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
         sceneElements = new ArrayList<>();
         eventQueue = new ConcurrentLinkedQueue<>();
         sceneEffects = new ArrayList<>();
-    }
-
-    @Nullable
-    private static <T> T getFromArray(@Nonnull T[] array, int index) {
-        if (index >= array.length) {
-            return null;
-        }
-        return array[index];
     }
 
     @Override
@@ -125,6 +121,53 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
         }
     }
 
+    /**
+     * This function performs the actual calling of the update functions for all scene elements.
+     *
+     * @param container the game container that is forwarded to the scene elements
+     * @param delta the time since the last update that is reported to the elements
+     */
+    protected final void updateScene(@Nonnull GameContainer container, int delta) {
+        Arrays.fill(workingArray, null);
+        synchronized (sceneElements) {
+            workingArray = sceneElements.toArray(workingArray);
+            workingArraySize = sceneElements.size();
+        }
+
+        @Nullable SceneEvent event = eventQueue.poll();
+        while (event != null) {
+            boolean notProcessed = true;
+            for (int i = workingArraySize - 1; i >= 0; i--) {
+                SceneElement element = workingArray[i];
+                if (element.isEventProcessed(container, delta, event)) {
+                    notProcessed = false;
+                    break;
+                }
+            }
+            if (notProcessed) {
+                event.notHandled();
+            }
+            event = eventQueue.poll();
+        }
+
+        for (int i = 0; i < workingArraySize; i++) {
+            SceneElement element = workingArray[i];
+            element.update(container, delta);
+        }
+    }
+
+    /**
+     * This function performs the actual render operation for all elements of the scene.
+     *
+     * @param graphics the graphics instance that is used to render the game
+     */
+    protected final void renderScene(@Nonnull Graphics graphics) {
+        for (int i = 0; i < workingArraySize; i++) {
+            SceneElement element = workingArray[i];
+            element.render(graphics);
+        }
+    }
+
     @Override
     public final void publishEvent(@Nonnull SceneEvent event) {
         eventQueue.offer(event);
@@ -163,74 +206,13 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     }
 
     /**
-     * This function performs the actual calling of the update functions for all scene elements.
-     *
-     * @param container the game container that is forwarded to the scene elements
-     * @param delta the time since the last update that is reported to the elements
-     */
-    protected final void updateScene(@Nonnull GameContainer container, int delta) {
-        SceneElement[] sceneElementArray = workingArray;
-        int sceneElementCount;
-        synchronized (sceneElements) {
-            sceneElementCount = sceneElements.size();
-            if (sceneElementArray == null) {
-                sceneElementArray = new SceneElement[sceneElementCount];
-            }
-            sceneElementArray = sceneElements.toArray(sceneElementArray);
-        }
-        workingArray = sceneElementArray;
-
-        @Nullable SceneEvent event;
-        while ((event = eventQueue.poll()) != null) {
-            boolean processed = false;
-            for (int i = sceneElementCount - 1; i >= 0; i--) {
-                SceneElement element = sceneElementArray[i];
-                if (element.isEventProcessed(container, delta, event)) {
-                    processed = true;
-                    break;
-                }
-            }
-            if (!processed) {
-                event.notHandled();
-            }
-
-            // Recycle event so it can be reused
-            MemoryPools.free(event);
-        }
-
-        for (int i = 0; i < sceneElementCount; i++) {
-            SceneElement element = workingArray[i];
-            element.update(container, delta);
-        }
-    }
-
-    /**
-     * This function performs the actual render operation for all elements of the scene.
-     *
-     * @param graphics the graphics instance that is used to render the game
-     */
-    protected final void renderScene(@Nonnull Graphics graphics) {
-        SceneElement[] sceneElementArray = workingArray;
-        if (sceneElementArray == null) {
-            return;
-        }
-
-        int i = 0;
-        SceneElement element;
-        while ((element = getFromArray(sceneElementArray, ++i)) != null) {
-            element.render(graphics);
-        }
-    }
-
-    /**
      * Get a scene effect applied to a specific image.
      *
      * @param index the index of the effect
      * @return the scene effect
      */
-    @Nonnull
     protected final T getEffect(int index) {
-        return Objects.requireNonNull(sceneEffects.get(index));
+        return sceneEffects.get(index);
     }
 
     /**

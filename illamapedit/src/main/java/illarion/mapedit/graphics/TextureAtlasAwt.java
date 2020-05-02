@@ -16,13 +16,14 @@
 package illarion.mapedit.graphics;
 
 import illarion.common.graphics.TextureAtlas;
+import javolution.util.FastMap;
+import javolution.util.function.Equalities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -44,7 +45,7 @@ public final class TextureAtlasAwt implements TextureAtlas<BufferedImage> {
      * @param textureDef the XML document that contains the locations of the sub-images on the large image
      */
     public TextureAtlasAwt(@Nonnull BufferedImage image, @Nonnull Document textureDef) {
-        textures = new HashMap<>();
+        textures = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         NodeList list = textureDef.getElementsByTagName("sprite");
         for (int i = 0; i < list.getLength(); i++) {

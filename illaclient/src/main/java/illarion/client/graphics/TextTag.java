@@ -25,7 +25,8 @@ import org.illarion.engine.graphic.ImmutableColor;
 import javax.annotation.Nonnull;
 
 /**
- * The text tags are the small texts over the heads of characters that display the name of the character.
+ * The text tags are the small texts over the heads of characters that display
+ * the name of the character.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -34,7 +35,6 @@ public class TextTag {
     /**
      * The color of the background pane that is displayed behind the text.
      */
-    @Nonnull
     private static final Color BACK_COLOR = new ImmutableColor(0.f, 0.f, 0.f, 0.3f);
 
     /**
@@ -48,37 +48,43 @@ public class TextTag {
      */
     @Nonnull
     private final Color color;
+
+    /**
+     * The x coordinate of the offset of this text tag.
+     */
+    private int dX;
+
+    /**
+     * The y coordinate of the offset of this text tag.
+     */
+    private int dY;
+
+    /**
+     * The x coordinate where the text is supposed to be displayed.
+     */
+    private int displayX;
+
+    /**
+     * The y coordinate where the text is supposed to be displayed.
+     */
+    private int displayY;
+
     /**
      * The actual text that is displayed by this tag.
      */
     @Nonnull
     private final String text;
-    @Nonnull
-    private final Rectangle displayRect = new Rectangle();
-    /**
-     * The x coordinate of the offset of this text tag.
-     */
-    private int dX;
-    /**
-     * The y coordinate of the offset of this text tag.
-     */
-    private int dY;
-    /**
-     * The x coordinate where the text is supposed to be displayed.
-     */
-    private int displayX;
-    /**
-     * The y coordinate where the text is supposed to be displayed.
-     */
-    private int displayY;
+
     /**
      * This flag is set {@code true} in case the tag got changed.
      */
     private boolean dirty;
+
     /**
      * The width of this tag. This value is generated once the text is set.
      */
     private int width;
+
     /**
      * The height of this tag. This value is generated once the text is set.
      */
@@ -147,6 +153,8 @@ public class TextTag {
         g.drawRectangle(displayRect, BACK_COLOR);
         g.drawText(font, text, color, displayX - dX, displayY - dY);
     }
+
+    private final Rectangle displayRect = new Rectangle();
 
     @Nonnull
     public Rectangle getDisplayRect() {

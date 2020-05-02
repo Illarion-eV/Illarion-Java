@@ -16,7 +16,7 @@
 package illarion.client.resources.data;
 
 import illarion.client.graphics.FrameAnimation;
-import illarion.client.graphics.FrameAnimationMode;
+import illarion.client.graphics.FrameAnimation.Mode;
 import illarion.common.graphics.TileInfo;
 import org.illarion.engine.graphic.Sprite;
 
@@ -59,7 +59,7 @@ public class TileTemplate extends AbstractAnimatedEntityTemplate {
         super(id, sprite, frames, 0, speed, null, 0);
         this.tileInfo = tileInfo;
         sharedAnimation = new FrameAnimation(null);
-        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimationMode.Looped);
+        sharedAnimation.setup(frames, 0, speed * 150, Mode.Looped);
     }
 
     @Nonnull

@@ -20,6 +20,7 @@ import illarion.mapedit.events.MapScrollEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.map.ZoomEvent;
 import illarion.mapedit.util.Vector2i;
+import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -30,7 +31,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class RendererManager {
     private Rectangle panelViewport;
 
     public RendererManager() {
-        renderers = new ArrayList<>();
+        renderers = new FastTable<>();
         AnnotationProcessor.process(this);
     }
 

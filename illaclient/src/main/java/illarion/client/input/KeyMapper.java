@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,16 +20,12 @@ import illarion.client.gui.GameGui;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.util.Lang;
-import illarion.client.world.Char;
-import illarion.client.world.MapTile;
-import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.movement.KeyboardMovementHandler;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
-import illarion.common.types.ServerCoordinate;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
@@ -50,7 +46,6 @@ public final class KeyMapper {
 
     @Nonnull
     private final Set<Key> keyPressed;
-    private boolean useWasdWalking;
 
     public KeyMapper(@Nonnull Input input) {
         this.input = input;
@@ -60,51 +55,7 @@ public final class KeyMapper {
         AnnotationProcessor.process(this);
     }
 
-    private static void handleEscape() {
-        GameGui gameGui = World.getGameGui();
-
-        if (gameGui.getChatGui().isChatBoxActive()) {
-            gameGui.getChatGui().deactivateChatBox(false);
-            return;
-        }
-
-        if (gameGui.getCloseGameGui().isClosingDialogShown()) {
-            gameGui.getCloseGameGui().hideClosingDialog();
-        } else {
-            gameGui.getCloseGameGui().showClosingDialog();
-        }
-    }
-
-    private static void startMovingTowards(@Nonnull Direction direction, boolean firstPressed) {
-        if (World.getPlayer().isLocationSet()) {
-            KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
-            handler.startMovingTowards(direction);
-            if (firstPressed) {
-                handler.assumeControl();
-            }
-        }
-    }
-
-    private static void cyclePermanentAvatarTag() {
-        Config config = IllaClient.getCfg();
-        int currentEntry = config.getInteger("showAvatarTagPermanently");
-        int newEntry = (currentEntry + 1) % 3;
-
-        switch (newEntry) {
-            case 0:
-                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.noNames"));
-                break;
-            case 1:
-                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.humanNames"));
-                break;
-            case 2:
-                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.allNames"));
-                break;
-            default:
-                break;
-        }
-        config.set("showAvatarTagPermanently", newEntry);
-    }
+    private boolean useWasdWalking;
 
     private void applyWasdWalkSettings() {
         useWasdWalking = IllaClient.getCfg().getBoolean("wasdWalk");
@@ -199,9 +150,6 @@ public final class KeyMapper {
                     }
                 }
                 break;
-            case M:
-                World.getGameGui().getMiniMapGui().toggleMiniMap();
-                break;
             case C:
                 if (firstPressed) {
                     World.getGameGui().getSkillGui().toggleSkillWindow();
@@ -228,18 +176,6 @@ public final class KeyMapper {
                     World.getNet().sendCommand(new PickUpAllItemsCmd());
                 }
                 break;
-            case Space:
-                if (firstPressed) {
-                    Player player = World.getPlayer();
-                    Char character = player.getCharacter();
-                    ServerCoordinate front = new ServerCoordinate(player.getLocation(), character.getDirection());
-                    MapTile mapTile = World.getMap().getMapAt(front);
-                    if (mapTile != null) {
-                        mapTile.getInteractive().use();
-                    }
-                }
-                break;
-
             case Enter:
                 if (firstPressed) {
                     World.getGameGui().getChatGui().activateChatBox();
@@ -322,16 +258,52 @@ public final class KeyMapper {
                     handleEscape();
                 }
                 break;
+        }
+    }
 
-            case F:
-                if (firstPressed) {
-                    if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
-                        World.getPlayer().getCombatHandler().standDown();
-                    } else {
-                        World.getPlayer().getCombatHandler().attackNearestMonster();
-                    }
-                }
+    private static void handleEscape() {
+        GameGui gameGui = World.getGameGui();
+
+        if (gameGui.getChatGui().isChatBoxActive()) {
+            gameGui.getChatGui().deactivateChatBox(false);
+            return;
+        }
+
+        if (gameGui.getCloseGameGui().isClosingDialogShown()) {
+            gameGui.getCloseGameGui().hideClosingDialog();
+        } else {
+            gameGui.getCloseGameGui().showClosingDialog();
+        }
+    }
+
+    private static void startMovingTowards(@Nonnull Direction direction, boolean firstPressed) {
+        if (World.getPlayer().isLocationSet()) {
+            KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
+            handler.startMovingTowards(direction);
+            if (firstPressed) {
+                handler.assumeControl();
+            }
+        }
+    }
+
+    private static void cyclePermanentAvatarTag() {
+        Config config = IllaClient.getCfg();
+        int currentEntry = config.getInteger("showAvatarTagPermanently");
+        int newEntry = (currentEntry + 1) % 3;
+
+        switch (newEntry) {
+            case 0:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.noNames"));
+                break;
+            case 1:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.humanNames"));
+                break;
+            case 2:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.allNames"));
+                break;
+            default:
                 break;
         }
+        config.set("showAvatarTagPermanently", newEntry);
     }
 }

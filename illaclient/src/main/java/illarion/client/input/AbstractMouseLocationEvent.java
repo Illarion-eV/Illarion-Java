@@ -15,7 +15,6 @@
  */
 package illarion.client.input;
 
-import illarion.common.memory.Poolable;
 import org.illarion.engine.graphic.SceneEvent;
 
 import javax.annotation.Nonnull;
@@ -25,16 +24,16 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractMouseLocationEvent implements SceneEvent, Poolable {
+public abstract class AbstractMouseLocationEvent implements SceneEvent {
     /**
      * The x coordinate on the screen where the click occurred.
      */
-    private int x;
+    private final int x;
 
     /**
      * The y coordinate on the screen where the click occurred.
      */
-    private int y;
+    private final int y;
 
     /**
      * Create and initialize such an event.
@@ -75,26 +74,8 @@ public abstract class AbstractMouseLocationEvent implements SceneEvent, Poolable
         return y;
     }
 
-    /**
-    * set x and y coordinate
-     *
-     * @param x the x coordinate on the screen where the click occurred.
-     * @param y the y coordinate on the screen where the click occurred.
-    */
-    protected void set (int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
     @Override
     public void notHandled() {
         // nothing
     }
-
-    @Override
-    public void reset () {
-        this.x = 0;
-        this.y = 0;
-    }
-
 }

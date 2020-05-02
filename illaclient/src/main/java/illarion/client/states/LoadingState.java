@@ -19,8 +19,6 @@ import de.lessvoid.nifty.Nifty;
 import illarion.client.Game;
 import illarion.client.gui.controller.LoadScreenController;
 import illarion.client.loading.Loading;
-import illarion.client.util.AudioPlayer;
-import illarion.common.data.SkillLoader;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -28,8 +26,6 @@ import javax.annotation.Nonnull;
 /**
  * This game state is active while the game loads. It takes care for showing the loading screen and to trigger the
  * actual loading.
- *
- * This loads all the textures, along with the definition tables and the skill table.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -63,8 +59,6 @@ public final class LoadingState implements GameState {
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
-        SkillLoader.load();
-        AudioPlayer.getInstance().initAudioPlayer(container.getEngine().getSounds());
     }
 
     @Override

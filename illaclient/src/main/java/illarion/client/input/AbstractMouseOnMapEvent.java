@@ -15,7 +15,6 @@
  */
 package illarion.client.input;
 
-import illarion.common.memory.Poolable;
 import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
@@ -29,7 +28,8 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     /**
      * The mouse key that was clicked.
      */
-    private Button key;
+    @Nonnull
+    private final Button key;
 
     /**
      * Create and initialize such an event.
@@ -44,13 +44,6 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     }
 
     /**
-     * Create and initialize such an event.
-     */
-    protected AbstractMouseOnMapEvent() {
-        super(0, 0);
-    }
-
-    /**
      * The copy constructor.
      *
      * @param org the original object to copy
@@ -61,30 +54,12 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     }
 
     /**
-     * Create and initialize such an event.
-     *
-     * @param key the mouse key that was clicked
-     * @param x the x coordinate of the click
-     * @param y the y coordinate of the click
-     */
-    public void set (@Nonnull Button key, int x, int y) {
-        super.set(x, y);
-        this.key = key;
-    }
-
-    /**
      * Get the key that was clicked on the mouse.
      *
      * @return the key that was clicked
      */
+    @Nonnull
     public Button getKey() {
         return key;
     }
-
-    @Override
-    public void reset () {
-        super.reset();
-        this.key = null;
-    }
-
 }

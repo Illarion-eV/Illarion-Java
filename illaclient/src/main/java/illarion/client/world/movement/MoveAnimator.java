@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,7 +26,6 @@ import illarion.common.graphics.Layer;
 import illarion.common.types.Direction;
 import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.ServerCoordinate;
-import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -97,8 +96,7 @@ class MoveAnimator implements AnimatedMove {
         if (uncomfirmedMoveTask != null) {
             log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
         } else {
-            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode,
-                      target, duration);
+            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode, target, duration);
             MovingTask task = new MovingTask(this, mode, target, duration);
             uncomfirmedMoveTask = task;
             scheduleTask(task);
@@ -183,9 +181,8 @@ class MoveAnimator implements AnimatedMove {
                             parentPlayer.getCharacter().updateMoveDuration(duration);
                         }
                     } else {
-                        log.warn(marker,
-                                 "Move to the wrong location. Resetting. Expected location: {} Player location: {}",
-                                 target, parentPlayer.getLocation());
+                        log.warn(marker, "Move to the wrong location. Resetting. Expected location: {} Player " +
+                                "location: {}", target, parentPlayer.getLocation());
                         /* Crap! We are moving to the wrong place... */
                         movement.executeServerLocation(target);
                         movement.reportReadyForNextStep();
@@ -215,7 +212,6 @@ class MoveAnimator implements AnimatedMove {
     }
 
     void cancelAll() {
-        log.debug("All moves canceled!");
         taskQueue.clear();
         moveAnimation.stop();
         lastRequestedTurn = null;
@@ -260,17 +256,6 @@ class MoveAnimator implements AnimatedMove {
     }
 
     private boolean executeNext() {
-        boolean reportReady = false; /* Report ready for next move if nothing is to do. */
-        @Nullable MovingTask confirmedTask = confirmedMoveTask;
-        if ((confirmedTask != null) && confirmedTask.isExecuted()) {
-            log.debug("Confirmed task is already done. Removing the task from the queue.");
-            if (Objects.equals(taskQueue.peek(), confirmedTask)) {
-                taskQueue.poll();
-            }
-            uncomfirmedMoveTask = null;
-            reportReady = true;
-        }
-
         @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
         if ((unconfirmedTask != null) && unconfirmedTask.isExecuted()) {
             log.debug("Stopping move execution because a unconfirmed move finished executing.");
@@ -278,10 +263,10 @@ class MoveAnimator implements AnimatedMove {
             animationInProgress = false;
             return false;
         }
-
         MoveAnimatorTask task = taskQueue.poll();
         if (task != null) {
             if (Objects.equals(task, unconfirmedTask)) {
+                MoveAnimatorTask confirmedTask = confirmedMoveTask;
                 if (confirmedTask != null) {
                     log.debug("Current move is a unconfirmed move. Using the confirmed version.");
                     confirmedMoveTask = null;
@@ -299,9 +284,6 @@ class MoveAnimator implements AnimatedMove {
             return true;
         } else {
             animationInProgress = false;
-            if (reportReady) {
-                movement.reportReadyForNextStep();
-            }
             return false;
         }
     }
@@ -318,7 +300,6 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
-    @Contract(pure = true)
     private boolean isReportingRequired() {
         return !reportingDone && (uncomfirmedMoveTask == null);
     }

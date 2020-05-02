@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,20 +14,7 @@
  * GNU General Public License for more details.
  */
 /**
- * This package contains all the states the client can be in.
- *
- * These stages basically follow always the same structure.
- * {@code
- *        Loading
- *           ↓
- *     AccountSystem ←┐
- *     │     ↓        │
- *     │  Playing     │
- *     │     ↓        │
- *     │  Logout ─────┘
- *     │     ↓
- *     └──→ End
- * }
+ * This package contains all the states the client can be in. 
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */

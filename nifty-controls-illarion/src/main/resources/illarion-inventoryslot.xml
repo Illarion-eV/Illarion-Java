@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2015 - Illarion e.V.
+  ~ Copyright © 2014 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -29,8 +29,7 @@
                 <image id="#staticBackgroundImage" visible="false"/>
                 <image id="#backgroundImage" visible="false"/>
                 <control id="#backgroundImageLabel" name="label" text="000" align="right" valign="bottom"
-                         marginRight="2px"
-                         visible="false" color="#ff0f" visibleToMouse="false" width="100%" textHAlign="right"/>
+                         visible="false" color="#ff0f" visibleToMouse="false"/>
                 <image id="#merchantOverlay" visible="false" align="right" valign="top" height="16px" width="16px"/>
             </panel>
 

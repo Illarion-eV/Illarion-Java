@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,7 +50,7 @@ public final class Utils {
         try {
             image = ImageIO.read(Utils.class.getClassLoader().getResource(resource));
         } catch (@Nonnull IOException e) {
-            LOGGER.error("Failed to read image: \"{}" + '"', resource);
+            LOGGER.error("Failed to read image: \"" + resource + '"');
             return null;
         }
         int height = image.getHeight(null);

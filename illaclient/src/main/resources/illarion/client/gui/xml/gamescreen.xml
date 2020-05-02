@@ -48,8 +48,6 @@
 
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
                     <panel align="right" marginBottom="3px" childLayout="horizontal">
-                        <control name="button" id="openMiniMapBtn" style="nifty-button-minimap" valign="bottom"
-                                 focusable="false" marginRight="10px"/>
                         <control name="button" id="openSkillsBtn" style="nifty-button-skills" valign="bottom"
                                  focusable="false" marginRight="10px">
                             <effect>
@@ -87,10 +85,6 @@
             <panel align="right" valign="top" width="189px" height="190px" childLayout="center" id="miniMapPanel">
                 <image id="miniMapImage" width="162px" height="162px"/>
                 <image width="189px" height="190px" filename="gui/minimap.png"/>
-            </panel>
-            <panel align="left" marginTop="5px" valign="top" childLayout="horizontal">
-                <control name="button" id="closeGameBtn" style="nifty-button-logout" valign="top"
-                         align="left" focusable="false" marginLeft="10px"/>
             </panel>
         </layer>
         <layer id="chatLayer" childLayout="absolute"/>
@@ -222,6 +216,17 @@
                 <control name="button" id="#buttonOkay" label="${gamescreen-bundle.ok}" width="49%"/>
                 <panel width="*"/>
                 <control name="button" id="#buttonCancel" label="${gamescreen-bundle.cancel}" width="49%"/>
+            </panel>
+        </panel>
+    </popup>
+
+    <popup id="noServerFound" childLayout="center">
+        <panel style="nifty-panel-small" childLayout="vertical">
+            <control name="label" id="#closeMsg" text="${gamescreen-bundle.noServer}" width="300px" style="nifty-label"
+                     wrap="true"/>
+            <panel height="10px" width="1px"/>
+            <panel childLayout="center" width="300px">
+                <control name="button" id="#closeOkButton" label="${gamescreen-bundle.ok}" width="95px"/>
             </panel>
         </panel>
     </popup>

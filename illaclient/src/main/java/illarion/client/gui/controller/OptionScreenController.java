@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
-import illarion.client.util.AudioPlayer;
+import illarion.client.Servers;
 import illarion.client.util.translation.Translator;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
@@ -43,63 +43,31 @@ public final class OptionScreenController implements ScreenController {
 
     //private DropDown<String> charNameLength;
     //private CheckBox showCharId;
-    @Nullable
     private CheckBox wasdWalk;
-    @Nullable
     private CheckBox disableChatAfterSending;
-    @Nullable
     private CheckBox showQuestsOnGameMap;
-    @Nullable
     private CheckBox showQuestsOnMiniMap;
 
-    @Nullable
     private DropDown<String> sendCrashReports;
 
-    @Nullable
     private DropDown<String> resolutions;
-    @Nullable
     private CheckBox fullscreen;
-    @Nullable
     private CheckBox showFps;
-    @Nullable
     private CheckBox showPing;
-    @Nullable
     private DropDown<String> translationProviders;
-    @Nullable
     private DropDown<String> translationDirections;
 
-    @Nullable
     private CheckBox soundOn;
-    @Nullable
     private Slider soundVolume;
-    @Nullable
     private CheckBox musicOn;
-    @Nullable
     private Slider musicVolume;
 
-    @Nullable
     private TextField serverAddress;
-    @Nullable
     private TextField serverPort;
-    @Nullable
+    private TextField clientVersion;
     private CheckBox serverAccountLogin;
     @Nullable
     private CheckBox serverResetSettings;
-
-    @Nonnull
-    public static List<String> getResolutionList() {
-        DesktopGameContainer container = IllaClient.getInstance().getContainer();
-
-        GraphicResolution[] resolutions = container.getFullScreenResolutions();
-
-        List<String> resList = new ArrayList<>();
-
-        for (GraphicResolution resolution : resolutions) {
-            resList.add(resolution.toString());
-        }
-
-        return resList;
-    }
 
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
@@ -138,7 +106,7 @@ public final class OptionScreenController implements ScreenController {
         translationProviders = tabRoot.findNiftyControl("translationProviders", DropDown.class);
         translationProviders.addItem("${options-bundle.translation.provider.none}");
         translationProviders.addItem("${options-bundle.translation.provider.mymemory}");
-        //translationProviders.addItem("${options-bundle.translation.provider.yandex}");
+        translationProviders.addItem("${options-bundle.translation.provider.yandex}");
         //noinspection unchecked
         translationDirections = tabRoot.findNiftyControl("translationDirections", DropDown.class);
         translationDirections.addItem("${options-bundle.translation.direction.default}");
@@ -154,13 +122,14 @@ public final class OptionScreenController implements ScreenController {
         if (serverTab == null) {
             return;
         }
-        if (IllaClient.IS_DEVELOP) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
+            tabRoot.getNiftyControl(TabGroup.class).removeTab(serverTab);
+        } else {
             serverAddress = serverTab.findNiftyControl("serverAddress", TextField.class);
             serverPort = serverTab.findNiftyControl("serverPort", TextField.class);
+            clientVersion = serverTab.findNiftyControl("clientVersion", TextField.class);
             serverAccountLogin = serverTab.findNiftyControl("serverAccountLogin", CheckBox.class);
             serverResetSettings = serverTab.findNiftyControl("resetServerSettings", CheckBox.class);
-        } else {
-            tabRoot.getNiftyControl(TabGroup.class).removeTab(serverTab);
         }
     }
 
@@ -188,15 +157,16 @@ public final class OptionScreenController implements ScreenController {
         musicVolume.setValue(IllaClient.getCfg().getFloat("musicVolume"));
 
         if (serverAddress != null) {
-            serverAddress.setText(IllaClient.getCfg().getString("customServer.domain"));
-            serverPort.setText(Integer.toString(IllaClient.getCfg().getInteger("customServer.port")));
-            serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("customServer.accountSystem"));
+            serverAddress.setText(IllaClient.getCfg().getString("serverAddress"));
+            serverPort.setText(Integer.toString(IllaClient.getCfg().getInteger("serverPort")));
+            if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
+                clientVersion.setText(Integer.toString(IllaClient.getCfg().getInteger("clientVersion")));
+            } else {
+                clientVersion.setText(Integer.toString(Servers.Customserver.getClientVersion()));
+            }
+            serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
             serverResetSettings.setChecked(false);
         }
-    }
-
-    @Override
-    public void onEndScreen() {
     }
 
     @NiftyEventSubscriber(pattern = "tabRoot#tab-content-panel#[a-z]+Tab")
@@ -257,48 +227,51 @@ public final class OptionScreenController implements ScreenController {
 
         if (serverAddress != null) {
             if (serverResetSettings.isChecked()) {
-                configSystem.set("customServer.domain", "localhost");
-                configSystem.set("customServer.port", "13000");
-                configSystem.set("customServer.accountSystem", false);
+                configSystem.set("serverAddress", Servers.Customserver.getServerHost());
+                configSystem.set("serverPort", Servers.Customserver.getServerPort());
+                configSystem.set("clientVersion", Servers.Customserver.getClientVersion());
+                configSystem.set("clientVersionOverwrite", false);
+                configSystem.set("serverAccountLogin", true);
             } else {
-                configSystem.set("customServer.domain", serverAddress.getRealText());
-                configSystem.set("customServer.port", Integer.parseInt(serverPort.getRealText()));
-                configSystem.set("customServer.accountSystem", serverAccountLogin.isChecked());
+                configSystem.set("serverAddress", serverAddress.getRealText());
+                configSystem.set("serverPort", Integer.parseInt(serverPort.getRealText()));
+
+                int clientVersionNumber = Integer.parseInt(clientVersion.getRealText());
+                if (clientVersionNumber == Servers.Customserver.getClientVersion()) {
+                    configSystem.set("clientVersion", Servers.Customserver.getClientVersion());
+                    configSystem.set("clientVersionOverwrite", false);
+                } else {
+                    configSystem.set("clientVersion", clientVersionNumber);
+                    configSystem.set("clientVersionOverwrite", true);
+                }
+                configSystem.set("serverAccountLogin", serverAccountLogin.isChecked());
             }
         }
 
         configSystem.save();
     }
 
-    @NiftyEventSubscriber (id = "musicVolume")
-    public void onMusicVolumeSliderChangedEvent(String topic, SliderChangedEvent event){
-        AudioPlayer audioPlayer = AudioPlayer.getInstance();
-        if(audioPlayer.getMusicVolume() == 0){
-            if(musicOn.isChecked() && !audioPlayer.isCurrentMusic(audioPlayer.getLastMusic())) {
-                audioPlayer.setMusicVolume(musicVolume.getValue());
-                audioPlayer.playLastMusic();
-            }
-        }else{
-            audioPlayer.setMusicVolume(musicVolume.getValue());
-        }
-
-    }
-
-    @NiftyEventSubscriber (id = "musicOn")
-    public void onMusicOnChangedEvent(String topic, CheckBoxStateChangedEvent event){
-        AudioPlayer audioPlayer = AudioPlayer.getInstance();
-        if(musicOn.isChecked()) {
-            audioPlayer.setMusicVolume(musicVolume.getValue());
-            if (!audioPlayer.isCurrentMusic(audioPlayer.getLastMusic())) {
-                audioPlayer.playLastMusic();
-            }
-        } else{
-            audioPlayer.setMusicVolume(0.f);
-        }
-    }
-
     @NiftyEventSubscriber(id = "cancelButton")
     public void onCancelButtonClickedEvent(String topic, ButtonClickedEvent event) {
         nifty.gotoScreen("login");
+    }
+
+    @Override
+    public void onEndScreen() {
+    }
+
+    @Nonnull
+    public static List<String> getResolutionList() {
+        DesktopGameContainer container = IllaClient.getInstance().getContainer();
+
+        GraphicResolution[] resolutions = container.getFullScreenResolutions();
+
+        List<String> resList = new ArrayList<>();
+
+        for (GraphicResolution resolution : resolutions) {
+            resList.add(resolution.toString());
+        }
+
+        return resList;
     }
 }

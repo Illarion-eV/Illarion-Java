@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,8 +27,8 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
+import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
-import illarion.client.gui.TextureRenderImage;
 import illarion.client.gui.Tooltip;
 import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.net.client.PickUpAllItemsCmd;
@@ -68,20 +68,75 @@ import java.util.Arrays;
  */
 public final class GUIInventoryHandler implements InventoryGui, ScreenController {
     /**
+     * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
+     * so the server can send the commands to clean everything up.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static class EndOfDragOperation implements Runnable {
+        /**
+         * The inventory slot that requires the reset.
+         */
+        private final InventorySlot invSlot;
+
+        /**
+         * Create a new instance of this class and set the effected elements.
+         *
+         * @param slot the inventory slot to reset
+         */
+        EndOfDragOperation(InventorySlot slot) {
+            invSlot = slot;
+        }
+
+        /**
+         * Execute this operation.
+         */
+        @Override
+        public void run() {
+            invSlot.retrieveDraggable();
+        }
+    }
+
+    private final class InventorySlotUpdate implements UpdateTask {
+        private final int slotId;
+        @Nullable
+        private final ItemId itemId;
+        @Nullable
+        private final ItemCount itemCount;
+
+        InventorySlotUpdate(int slotId, @Nullable ItemId itemId, @Nullable ItemCount itemCount) {
+            this.slotId = slotId;
+            this.itemId = itemId;
+            this.itemCount = itemCount;
+        }
+
+        @Override
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            setSlotItem(slotId, itemId, itemCount);
+        }
+    }
+
+    /**
      * The logger that takes care for the logging output of this class.
      */
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(GUIInventoryHandler.class);
+
     @Nonnull
     private final String[] slots;
     @Nonnull
     private final Element[] invSlots;
     @Nonnull
     private final boolean[] slotLabelVisibility;
+    @Nullable
+    private Element inventoryWindow;
+    private Nifty activeNifty;
+    private Screen activeScreen;
     private final NumberSelectPopupHandler numberSelect;
     private final TooltipHandler tooltipHandler;
     @Nonnull
     private final Input input;
+
     @Nonnull
     private final UpdateTask updateMerchantOverlays = (container, delta) -> {
         Inventory inventory = World.getPlayer().getInventory();
@@ -89,10 +144,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             updateMerchantOverlay(i, inventory.getItem(i).getItemID());
         }
     };
-    @Nullable
-    private Element inventoryWindow;
-    private Nifty activeNifty;
-    private Screen activeScreen;
+
     public GUIInventoryHandler(
             @Nonnull Input input, NumberSelectPopupHandler numberSelectPopupHandler, TooltipHandler tooltipHandler) {
         slots = new String[Inventory.SLOT_COUNT];
@@ -124,19 +176,14 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         this.input = input;
     }
 
-    /**
-     * Fetch a look at for a slot. This function does not perform any checks or something. It just requests the look
-     * at. Use with care.
-     *
-     * @param slot the slot to fetch
-     */
-    private static void fetchLookAt(@Nonnull illarion.client.world.items.InventorySlot slot) {
-        slot.getInteractive().lookAt();
-    }
-
     @NiftyEventSubscriber(id = "pickUpItemsBtn")
     public void onPickUpItemsBtnClick(String topic, @Nonnull ButtonClickedEvent event) {
         World.getNet().sendCommand(new PickUpAllItemsCmd());
+    }
+
+    @Override
+    public void updateCarryLoad() {
+        World.getUpdateTaskManager().addTask((container, delta) -> updateCarryLoadImpl());
     }
 
     private void updateCarryLoadImpl() {
@@ -167,52 +214,9 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         }
     }
 
-    /**
-     * Hide the inventory window from view
-     * Hides the current ToolTip
-     */
     @Override
-    public void hideInventory() {
-        World.getUpdateTaskManager().addTask((container, delta) -> {
-            if (inventoryWindow != null) {
-                tooltipHandler.hideToolTip();
-                inventoryWindow.hide();
-            }
-        });
-    }
-
-    @Override
-    public boolean isVisible() {
-        return inventoryWindow.isVisible();
-    }
-
-    @Override
-    public void setItemSlot(int slotId, @Nullable ItemId itemId, @Nullable ItemCount count) {
-        if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
-            throw new IllegalArgumentException("Slot ID out of valid range.");
-        }
-        World.getUpdateTaskManager().addTask(new InventorySlotUpdate(slotId, itemId, count));
-    }
-
-    @Override
-    public void showInventory() {
-        World.getUpdateTaskManager().addTask((container, delta) -> {
-            if (inventoryWindow != null) {
-                inventoryWindow.show(() -> {
-                    World.getUpdateTaskManager().addTaskForLater((container1, delta1) -> updateCarryLoad());
-                    inventoryWindow.getNiftyControl(Window.class).moveToFront();
-                });
-            }
-        });
-    }
-
-    @Override
-    public void showTooltip(int slotId, @Nonnull Tooltip tooltip) {
-        Element slot = invSlots[slotId];
-        Rectangle rect = new Rectangle();
-        rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
-
-        tooltipHandler.showToolTip(rect, tooltip);
+    public void updateMerchantOverlay() {
+        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
     @Override
@@ -228,14 +232,30 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         });
     }
 
+    /**
+     * Hide the inventory window from view
+     * Hides the current ToolTip
+     */
     @Override
-    public void updateCarryLoad() {
-        World.getUpdateTaskManager().addTask((container, delta) -> updateCarryLoadImpl());
+    public void hideInventory() {
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (inventoryWindow != null) {
+                tooltipHandler.hideToolTip();
+                inventoryWindow.hide();
+            }
+        });
     }
 
     @Override
-    public void updateMerchantOverlay() {
-        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
+    public void showInventory() {
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (inventoryWindow != null) {
+                inventoryWindow.show(() -> {
+                    World.getUpdateTaskManager().addTaskForLater((container1, delta1) -> updateCarryLoad());
+                    inventoryWindow.getNiftyControl(Window.class).moveToFront();
+                });
+            }
+        });
     }
 
     @NiftyEventSubscriber(id = "inventory")
@@ -362,6 +382,16 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         }
     }
 
+    /**
+     * Fetch a look at for a slot. This function does not perform any checks or something. It just requests the look
+     * at. Use with care.
+     *
+     * @param slot the slot to fetch
+     */
+    private static void fetchLookAt(@Nonnull illarion.client.world.items.InventorySlot slot) {
+        slot.getInteractive().lookAt();
+    }
+
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         activeNifty = nifty;
@@ -390,6 +420,18 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     }
 
     @Override
+    public boolean isVisible() {
+        return inventoryWindow.isVisible();
+    }
+
+    @Override
+    public void onEndScreen() {
+        activeNifty.unsubscribeAnnotations(this);
+        IllaClient.getCfg().set("inventoryPosX", Integer.toString(inventoryWindow.getX()) + "px");
+        IllaClient.getCfg().set("inventoryPosY", Integer.toString(inventoryWindow.getY()) + "px");
+    }
+
+    @Override
     public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
 
@@ -399,13 +441,6 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             invSlot = inventory.getItem(i);
             setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
         }
-    }
-
-    @Override
-    public void onEndScreen() {
-        activeNifty.unsubscribeAnnotations(this);
-        IllaClient.getCfg().set("inventoryPosX", Integer.toString(inventoryWindow.getX()) + "px");
-        IllaClient.getCfg().set("inventoryPosY", Integer.toString(inventoryWindow.getY()) + "px");
     }
 
     /**
@@ -427,7 +462,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
             NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
-                                                         new TextureRenderImage(displayedItem));
+                                                         new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
             if (ItemCount.isGreaterOne(count)) {
@@ -487,52 +522,20 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         control.hideMerchantOverlay();
     }
 
-    /**
-     * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
-     * so the server can send the commands to clean everything up.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static class EndOfDragOperation implements Runnable {
-        /**
-         * The inventory slot that requires the reset.
-         */
-        private final InventorySlot invSlot;
-
-        /**
-         * Create a new instance of this class and set the effected elements.
-         *
-         * @param slot the inventory slot to reset
-         */
-        EndOfDragOperation(InventorySlot slot) {
-            invSlot = slot;
+    @Override
+    public void setItemSlot(int slotId, @Nullable ItemId itemId, @Nullable ItemCount count) {
+        if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
+            throw new IllegalArgumentException("Slot ID out of valid range.");
         }
-
-        /**
-         * Execute this operation.
-         */
-        @Override
-        public void run() {
-            invSlot.retrieveDraggable();
-        }
+        World.getUpdateTaskManager().addTask(new InventorySlotUpdate(slotId, itemId, count));
     }
 
-    private final class InventorySlotUpdate implements UpdateTask {
-        private final int slotId;
-        @Nullable
-        private final ItemId itemId;
-        @Nullable
-        private final ItemCount itemCount;
+    @Override
+    public void showTooltip(int slotId, @Nonnull Tooltip tooltip) {
+        Element slot = invSlots[slotId];
+        Rectangle rect = new Rectangle();
+        rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
 
-        InventorySlotUpdate(int slotId, @Nullable ItemId itemId, @Nullable ItemCount itemCount) {
-            this.slotId = slotId;
-            this.itemId = itemId;
-            this.itemCount = itemCount;
-        }
-
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            setSlotItem(slotId, itemId, itemCount);
-        }
+        tooltipHandler.showToolTip(rect, tooltip);
     }
 }

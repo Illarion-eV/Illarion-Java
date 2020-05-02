@@ -14,9 +14,11 @@
  * GNU General Public License for more details.
  */
 package illarion.mapedit.resource;
+
+import javolution.util.FastTable;
+
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +27,7 @@ import java.util.List;
  *
  * @author Tim
  */
-public final class ResourceManager {
+public class ResourceManager {
     /**
      * The singleton instance of this class.
      */
@@ -44,7 +46,7 @@ public final class ResourceManager {
      * A private constructor to prevent multiple instances.
      */
     private ResourceManager() {
-        res = new ArrayList<>();
+        res = new FastTable<>();
         index = 0;
     }
 

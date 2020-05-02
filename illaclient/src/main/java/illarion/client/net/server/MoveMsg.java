@@ -63,8 +63,7 @@ public final class MoveMsg implements ServerReply {
     private static final int MODE_RUN = 0x0D;
 
     /**
-     * FrameAnimationMode information that the move request arrived at the server too early. That mode response is
-     * only valid in
+     * Mode information that the move request arrived at the server too early. That mode response is only valid in
      * for move commands related to the player character.
      */
     private static final int MODE_TOO_EARLY = 0x09;

@@ -66,7 +66,7 @@ public class YandexProvider implements TranslationProvider {
         }
         serviceUrl = url;
         userAgent = readUserAgent();
-        operational = false;
+        operational = true;
     }
 
     /**
@@ -99,10 +99,6 @@ public class YandexProvider implements TranslationProvider {
     @Nullable
     @Override
     public String getTranslation(@Nonnull String original, @Nonnull TranslationDirection direction) {
-        if (!isProviderWorking()) {
-            return null;
-        }
-
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(serviceUrl).append('?');
         try {

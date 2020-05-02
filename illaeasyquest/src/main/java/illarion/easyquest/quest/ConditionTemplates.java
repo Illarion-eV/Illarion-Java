@@ -16,6 +16,9 @@
 package illarion.easyquest.quest;
 
 import illarion.easyquest.Lang;
+import javolution.util.FastMap;
+import javolution.util.FastTable;
+import javolution.util.function.Equalities;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -23,30 +26,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class ConditionTemplates {
-    private static final ConditionTemplates INSTANCE = new ConditionTemplates();
-    @Nonnull
-    private final Map<String, ConditionTemplate> typeMap;
     /**
      * Internal storage for the templates.
      */
     private ConditionTemplate[] templates;
+
     /**
      * Templates array that gets exposed to the rest of the application.
      */
     private ConditionTemplate[] publicTemplates;
 
-    public ConditionTemplates() {
-        typeMap = new HashMap<>();
+    @Nonnull
+    private final Map<String, ConditionTemplate> typeMap;
 
-        load();
-    }
+    private static final ConditionTemplates INSTANCE = new ConditionTemplates();
 
     @Nonnull
     public static ConditionTemplates getInstance() {
         return INSTANCE;
+    }
+
+    public ConditionTemplates() {
+        typeMap = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
+
+        load();
     }
 
     private static InputStream getResource(String name) {
@@ -56,7 +64,7 @@ public class ConditionTemplates {
 
     @Nonnull
     private static List<String> loadFileList() {
-        List<String> result = new ArrayList<>();
+        List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
             bRead = new BufferedReader(new InputStreamReader(getResource("template/condition/filelist"), Charset.defaultCharset()));
@@ -82,7 +90,7 @@ public class ConditionTemplates {
 
     private void load() {
         Collection<String> templateFiles = loadFileList();
-        Collection<ConditionTemplate> templateList = new ArrayList<>();
+        Collection<ConditionTemplate> templateList = new FastTable<>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Condition directory does not exist!");

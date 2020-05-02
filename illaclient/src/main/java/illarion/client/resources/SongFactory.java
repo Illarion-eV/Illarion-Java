@@ -15,8 +15,7 @@
  */
 package illarion.client.resources;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableListMultimap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
 import org.illarion.engine.assets.SoundsManager;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,17 +59,10 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
     }
 
     /**
-     * This is the builder of the storage collection. This variable is only used during the initialization and disposed
-     * of after.
-     */
-    @Nullable
-    private ImmutableListMultimap.Builder<Integer, String> songsBuilder;
-
-    /**
      * The storage for the songs and the variations of the songs.
      */
     @Nullable
-    private ImmutableListMultimap<Integer, String> songs;
+    private TIntObjectHashMap<List<String>> songs;
 
     /**
      * Constructor of the factory. Starts to loading of table file containing the songs.
@@ -108,7 +101,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void init() {
-        songsBuilder = new ImmutableListMultimap.Builder<>();
+        songs = new TIntObjectHashMap<>();
     }
 
     /**
@@ -116,12 +109,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void loadingFinished() {
-        if (songsBuilder == null) {
-            throw new IllegalStateException("Factory was not initialized yet.");
-        }
 
-        songs = songsBuilder.build();
-        songsBuilder = null;
     }
 
     /**
@@ -129,14 +117,19 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void storeResource(@Nonnull IdWrapper<String> resource) {
-        if (songsBuilder == null) {
+        if (songs == null) {
             throw new IllegalStateException("Factory was not initialized yet.");
         }
 
         int clipID = resource.getId();
         String music = resource.getObject();
 
-        songsBuilder.put(clipID, music);
+        List<String> clipList = songs.get(clipID);
+        if (clipList == null) {
+            clipList = new ArrayList<>();
+            songs.put(clipID, clipList);
+        }
+        clipList.add(SONG_DIR + music);
     }
 
     /**
@@ -146,12 +139,17 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Nonnull
     @Contract(pure = true)
-    public ImmutableCollection<String> getSongNames() {
+    public List<String> getSongNames() {
         if (songs == null) {
             throw new IllegalStateException("Factory was not initialized yet.");
         }
 
-        return songs.values();
+        List<String> result = new ArrayList<>();
+        songs.forEachValue(object -> {
+            result.addAll(object);
+            return true;
+        });
+        return result;
     }
 
     /**

@@ -16,6 +16,7 @@
 package illarion.easyquest;
 
 import illarion.common.util.MessageSource;
+import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -34,17 +35,19 @@ public final class Lang implements MessageSource {
      */
     @Nonnull
     private static final String MESSAGE_BUNDLE = "easyquest_messages";
+
+    /**
+     * The current local settings.
+     */
+    @Nonnull
+    private Locale locale;
+
     /**
      * The storage of the localized messages. Holds the key for the string and
      * the localized full message.
      */
     @Nonnull
     private final ResourceBundle messages;
-    /**
-     * The current local settings.
-     */
-    @Nonnull
-    private Locale locale;
 
     /**
      * Constructor of the game. Triggers the messages to load.
@@ -80,7 +83,11 @@ public final class Lang implements MessageSource {
      */
     @Nonnull
     public static String getMsg(@Nonnull Class<?> clazz, @Nonnull String key) {
-        return getMsg(clazz.getName() + '.' + key);
+        TextBuilder builder = new TextBuilder();
+        builder.append(clazz.getName());
+        builder.append('.');
+        builder.append(key);
+        return getMsg(builder.toString());
     }
 
     /**

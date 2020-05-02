@@ -16,7 +16,7 @@
 package illarion.client.resources.data;
 
 import illarion.client.graphics.FrameAnimation;
-import illarion.client.graphics.FrameAnimationMode;
+import illarion.client.graphics.FrameAnimation.Mode;
 import illarion.common.graphics.ItemInfo;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Sprite;
@@ -99,7 +99,7 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
         this.paperdollingId = paperdollingId;
         this.paperdollingColor = paperdollingColor;
         sharedAnimation = new FrameAnimation();
-        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimationMode.Looped);
+        sharedAnimation.setup(frames, 0, speed * 150, Mode.Looped);
         this.guiTexture = guiTexture;
     }
 

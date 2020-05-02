@@ -26,12 +26,12 @@ import javax.annotation.Nullable;
  * Created: 23.08.2005 23:42:22
  */
 public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
     @Nullable
     private DisplayCoordinate start;
     @Nullable
     private DisplayCoordinate target;
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
 
     public MoveAnimation(AnimatedMove target) {
         super(target);
@@ -74,21 +74,6 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
         setSkipNextUpdate(true);
     }
 
-    @Override
-    public void stop() {
-        if (!isRunning()) {
-            return;
-        }
-
-        setRunning(false);
-        if (target == null) {
-            LOGGER.warn("Stopping animation received while there is not target location set. Something is wrong.");
-        } else {
-            setPosition(target);
-        }
-        animationFinished(false);
-    }
-
     /**
      * Start a movement animation
      *
@@ -102,6 +87,21 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
 
         setDuration(duration);
         restart();
+    }
+
+    @Override
+    public void stop() {
+        if (!isRunning()) {
+            return;
+        }
+
+        setRunning(false);
+        if (target == null) {
+            LOGGER.warn("Stopping animation received while there is not target location set. Something is wrong.");
+        } else {
+            setPosition(target);
+        }
+        animationFinished(false);
     }
 
     private void setPosition(@Nonnull DisplayCoordinate currentPos) {

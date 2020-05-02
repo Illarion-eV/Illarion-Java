@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ import java.util.concurrent.Callable
 class ConvertPlugin implements Plugin<Project> {
     public static final String COMPILE_CONFIGURATION_NAME = "compile"
 
-    public static final String BUILD_TASK_NAME = "buildConvert"
+    public static final String BUILD_TASK_NAME = "build"
 
     private final Instantiator instantiator
 

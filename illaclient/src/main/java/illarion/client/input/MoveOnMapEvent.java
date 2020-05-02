@@ -30,23 +30,4 @@ public final class MoveOnMapEvent extends AbstractMouseLocationEvent {
     public MoveOnMapEvent(int x, int y) {
         super(x, y);
     }
-
-    /**
-     * Create and initialize such an event.
-     */
-    public MoveOnMapEvent() {
-        super(0, 0);
-    }
-
-    /**
-     * Initialize such an event.
-     *
-     * @param x the x coordinate of the click
-     * @param y the y coordinate of the click
-     */
-    @Override
-    public void set (int x, int y) {
-        super.set(x, y);
-    }
-
 }

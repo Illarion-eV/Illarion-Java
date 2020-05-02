@@ -21,12 +21,10 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.bug.CrashReporter;
 import illarion.common.bug.ReportDialogFactorySwing;
-import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
-import illarion.easynpc.Parser;
 import illarion.easynpc.crash.AWTCrashHandler;
 import illarion.easynpc.gui.syntax.EasyNpcTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -50,8 +48,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -308,12 +304,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * @param args start arguments
      */
     public static void main(String... args) {
-        try {
-            initLogging();
-        } catch (IOException e) {
-            System.err.println("Failed to setup logging system!");
-            e.printStackTrace(System.err);
-        }
+        initLogging();
         Config.getInstance().init();
 
         JFrame.setDefaultLookAndFeelDecorated(Config.getInstance().getUseWindowDecoration());
@@ -336,42 +327,27 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         });
     }
 
-    /**
-     * Prepare the proper output of the log files.
-     */
-    @SuppressWarnings("Duplicates")
-    private static void initLogging() throws IOException {
+    private static void initLogging() {
+        //noinspection UseOfSystemOutOrSystemErr
+        System.out.println("Startup done.");
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
         Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
-        if (!Files.isDirectory(userDir)) {
-            if (Files.exists(userDir)) {
-                Files.delete(userDir);
-            }
-            Files.createDirectories(userDir);
+        if (userDir == null) {
+            return;
         }
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         ContextInitializer ci = new ContextInitializer(lc);
+        lc.reset();
         try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL resource = cl.getResource("logback-to-file.xml");
-            if (resource != null) {
-                ci.configureByResource(resource);
-            }
+            ci.autoConfig();
         } catch (JoranException ignored) {
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
-
-        //noinspection UseOfSystemOutOrSystemErr
-        System.out.println("Startup done.");
-        LOGGER.info("{} started.", Parser.APPLICATION.getApplicationIdentifier());
-        LOGGER.info("VM: {}", System.getProperty("java.version"));
-        LOGGER.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
-                System.getProperty("os.arch"));
     }
 
     /**

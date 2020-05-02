@@ -22,8 +22,8 @@ archivesBaseName = 'nifty-controls-illarion'
 
 dependencies {
     compile project(':common')
-    compile group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
-    compile group: 'com.github.nifty-gui', name: 'nifty-default-controls', version: project.ext.niftyGuiVersion
+    compile group: 'lessvoid', name: 'nifty', version: project.ext.niftyGuiVersion
+    compile group: 'lessvoid', name: 'nifty-default-controls', version: project.ext.niftyGuiVersion
 }
 
 jar {

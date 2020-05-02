@@ -18,7 +18,6 @@ package illarion.client.input;
 import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.gui.AbstractMultiActionHelper;
-import illarion.common.memory.MemoryPools;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.input.*;
 import org.slf4j.Logger;
@@ -86,9 +85,7 @@ public final class InputReceiver implements InputListener {
                     if (log.isDebugEnabled()) {
                         log.debug("Raising single click event for {} button at {} {}", key.name(), x, y);
                     }
-                    ClickOnMapEvent event = MemoryPools.get(ClickOnMapEvent.class);
-                    event.set(key, x, y);
-                    EventBus.publish(event);
+                    EventBus.publish(new ClickOnMapEvent(key, x, y));
                     break;
                 case 2:
                     if (log.isDebugEnabled()) {
@@ -134,9 +131,7 @@ public final class InputReceiver implements InputListener {
 
         @Override
         public void executeAction(int count) {
-            PointOnMapEvent event = MemoryPools.get(PointOnMapEvent.class);
-            event.set(x, y);
-            EventBus.publish(event);
+            EventBus.publish(new PointOnMapEvent(x, y));
         }
     }
 
@@ -260,9 +255,7 @@ public final class InputReceiver implements InputListener {
                 log.debug("Received {} mouse clicked {} times at {}, {}", button, count, mouseX, mouseY);
                 switch (count) {
                     case 1:
-                        ClickOnMapEvent event = MemoryPools.get(ClickOnMapEvent.class);
-                        event.set(button, mouseX, mouseY);
-                        World.getMapDisplay().getGameScene().publishEvent(event);
+                        World.getMapDisplay().getGameScene().publishEvent(new ClickOnMapEvent(button, mouseX, mouseY));
                         break;
                     case 2:
                         World.getMapDisplay().getGameScene()
@@ -280,9 +273,7 @@ public final class InputReceiver implements InputListener {
         if (enabled) {
             pointAtHelper.setInputData(mouseX, mouseY);
             pointAtHelper.pulse();
-            MoveOnMapEvent event = MemoryPools.get(MoveOnMapEvent.class);
-            event.set(mouseX, mouseY);
-            EventBus.publish(event);
+            EventBus.publish(new MoveOnMapEvent(mouseX, mouseY));
         }
     }
 

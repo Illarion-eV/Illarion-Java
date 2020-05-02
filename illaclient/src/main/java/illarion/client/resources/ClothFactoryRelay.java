@@ -73,7 +73,7 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTempl
 
         AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(resource.getAvatarId());
         AvatarClothManager manager = avatarTemplate.getClothes();
-        manager.addCloth(resource.getClothGroup(), resource);
+        manager.addCloth(resource.getClothSlot(), resource);
 
         if (!usedAvatars.contains(avatarTemplate)) {
             usedAvatars.add(avatarTemplate);

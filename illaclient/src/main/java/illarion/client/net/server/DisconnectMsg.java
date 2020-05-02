@@ -79,7 +79,7 @@ public final class DisconnectMsg implements ServerReply {
             case 12:
                 return Lang.getMsg("logout.no_skillpack");
             case 13:
-                return Lang.getMsg("logout.corrupt_inventory");
+                return Lang.getMsg("logout.corruput_inventory");
             default:
                 return Lang.getMsg("logout.unknown") + ' ' + Integer.toHexString(reason);
         }

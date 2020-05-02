@@ -25,16 +25,13 @@ import illarion.client.resources.SongFactory;
 import illarion.client.resources.SoundFactory;
 import illarion.client.resources.loaders.SongLoader;
 import illarion.client.resources.loaders.SoundLoader;
-import illarion.client.states.AccountSystemState;
-import illarion.client.states.EndState;
-import illarion.client.states.LogoutState;
-import illarion.client.states.PlayingState;
 import illarion.client.util.ChatLog;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.util.translation.Translator;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.client.world.events.ConnectionLostEvent;
 import illarion.common.bug.CrashReporter;
 import illarion.common.bug.ReportDialogFactorySwing;
 import illarion.common.config.Config;
@@ -64,11 +61,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Locale;
 import java.util.Locale.Category;
+import java.util.Objects;
 import java.util.Timer;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.TimerTask;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -86,12 +83,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final String CFG_FULLSCREEN = "fullscreen";
     @Nonnull
     public static final String CFG_RESOLUTION = "resolution";
-
     /**
-     * This is set to true in case this client is build as the development version.
+     * The default server the client connects too. The client will always connect to this server.
      */
-    public static final boolean IS_DEVELOP = !"master".equals(getBranch());
-
+    @Nonnull
+    public static final Servers DEFAULT_SERVER;
     /**
      * The singleton instance of this class.
      */
@@ -108,6 +104,21 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     private static boolean exitRequested;
 
+    static {
+        String server = System.getProperty("illarion.server", "realserver");
+        switch ((server == null) ? "" : server) {
+            case "testserver":
+                DEFAULT_SERVER = Servers.Testserver;
+                break;
+            case "devserver":
+                DEFAULT_SERVER = Servers.Devserver;
+                break;
+            default:
+                DEFAULT_SERVER = Servers.Illarionserver;
+                break;
+        }
+    }
+
     /**
      * The configuration of the client settings.
      */
@@ -120,6 +131,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * The container that is used to display the game.
      */
     private DesktopGameContainer gameContainer;
+    /**
+     * Stores the server the client shall connect to.
+     */
+    @Nonnull
+    private Servers usedServer = DEFAULT_SERVER;
 
     /**
      * The default empty constructor used to create the singleton instance of this class.
@@ -136,7 +152,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
         exitRequested = true;
 
-        INSTANCE.game.enterState(EndState.class);
+        INSTANCE.game.enterState(Game.STATE_ENDING);
     }
 
     /**
@@ -220,7 +236,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         CrashReporter.getInstance().setConfig(getCfg());
 
         // Report errors of the released version only
-        if (IS_DEVELOP) {
+        if (DEFAULT_SERVER != Servers.Illarionserver) {
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
         CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
@@ -293,8 +309,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg = new ConfigSystem(getFile("Illarion.xcfgz"));
         cfg.setDefault("debugLevel", 1);
         cfg.setDefault("showIDs", false);
-        cfg.setDefault(Player.CFG_SOUND_ON, true);
-        cfg.setDefault(Player.CFG_SOUND_VOL, Player.MAX_CLIENT_VOL);
+        cfg.setDefault("soundOn", true);
+        cfg.setDefault("soundVolume", Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
         cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.25f);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
@@ -332,9 +348,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosX", "100px");
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
-        cfg.setDefault("customServer.domain", "localhost");
-        cfg.setDefault("customServer.port", 13000);
-        cfg.setDefault("customServer.accountSystem", false);
+        cfg.setDefault("server", Servers.Devserver.getServerKey());
+        cfg.setDefault("serverAddress", Servers.Customserver.getServerHost());
+        cfg.setDefault("serverPort", Servers.Customserver.getServerPort());
+        cfg.setDefault("clientVersion", Servers.Customserver.getClientVersion());
+        cfg.setDefault("clientVersionOverwrite", false);
+        cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
@@ -355,9 +374,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
         if (doubleClick instanceof Number) {
-            cfg.set("doubleClickInterval", ((Number) doubleClick).intValue() * 2);
+            cfg.set("doubleClickInterval", ((Number) doubleClick).intValue());
         } else {
-            cfg.set("doubleClickInterval", 1000);
+            cfg.set("doubleClickInterval", 500);
         }
 
         Crypto crypt = new Crypto();
@@ -368,7 +387,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Basic initialization of the log files and the debug settings.
      */
-    @SuppressWarnings("Duplicates")
     private static void initLogfiles() throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
@@ -446,6 +464,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         return userDir.resolve(name);
     }
 
+    public static void performLogout() {
+        LOGGER.info("Logout requested.");
+        getInstance().quitGame();
+        INSTANCE.game.enterState(Game.STATE_LOGOUT);
+    }
+
     /**
      * End the game by user request and send the logout command to the server.
      */
@@ -467,35 +491,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         return INSTANCE;
     }
 
-    public static void performLogout() {
-        LOGGER.info("Logout requested.");
-        getInstance().quitGame();
-        INSTANCE.game.enterState(LogoutState.class);
-    }
-
     public static void returnToLogin() {
-        returnToLogin(null);
-    }
-
-    public static void returnToLogin(@Nullable String message) {
-        Game game = INSTANCE.game;
-
-        if (message != null) {
-            AccountSystemState accountSystemState = game.getState(AccountSystemState.class);
-            accountSystemState.setErrorMessage(message);
-        }
-
-        if (game.getCurrentState() instanceof LogoutState) {
-            game.enterState(AccountSystemState.class);
-        } else {
-            game.enterState(LogoutState.class);
-        }
-
-        if (message == null) {
-            LOGGER.info("Returning to login initiated.");
-        } else {
-            LOGGER.info("Returning to login initiated. Reason: {}", message);
-        }
+        LOGGER.info("Returning to login initiated");
+        INSTANCE.game.enterState(Game.STATE_LOGIN);
     }
 
     /**
@@ -505,7 +503,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     public static void sendDisconnectEvent(@Nonnull String message, boolean tryToReconnect) {
         LOGGER.warn("Disconnect received: {}", message);
-        returnToLogin(message);
+        EventBus.publish(new ConnectionLostEvent(message, tryToReconnect));
     }
 
     /**
@@ -515,6 +513,26 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     public DesktopGameContainer getContainer() {
         return gameContainer;
+    }
+
+    /**
+     * Get the server that was selected as connection target.
+     *
+     * @return the selected server
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public Servers getUsedServer() {
+        return usedServer;
+    }
+
+    /**
+     * Set the server that shall be used to login at.
+     *
+     * @param server the server that is used to connect with
+     */
+    public void setUsedServer(Servers server) {
+        usedServer = server;
     }
 
     /**
@@ -554,25 +572,5 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 LOGGER.error("Failed to apply graphic mode: {}", resolutionString);
             }
         }
-    }
-
-    @Nullable
-    private static String getBranch() {
-        try {
-            Enumeration<URL> resources = IllaClient.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
-            while (resources.hasMoreElements()) {
-                URL nextManifest = resources.nextElement();
-                Manifest manifest = new Manifest(nextManifest.openStream());
-                Attributes mainAttributes = manifest.getMainAttributes();
-                if (mainAttributes.containsKey("Application-Name") && mainAttributes.containsKey("Source-Branch")) {
-                    String appName = mainAttributes.getValue("Application-Name");
-                    if ("Illarion Client".equals(appName)) {
-                        return mainAttributes.getValue("Source-Branch");
-                    }
-                }
-            }
-        } catch (IOException ignored) {
-        }
-        return null;
     }
 }
