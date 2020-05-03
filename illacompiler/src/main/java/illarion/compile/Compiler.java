@@ -201,7 +201,7 @@ public final class Compiler {
             System.exit(-1);
         }
 
-        Compile compile = usedType.getCompiler();
+        Compile compile = usedType.getImplementation();
         System.exit(compile.compileStream(System.in, System.out));
     }
 
@@ -213,7 +213,7 @@ public final class Compiler {
 
         for (CompilerType type : CompilerType.values()) {
             if (type.isValidFile(path)) {
-                Compile compile = type.getCompiler();
+                Compile compile = type.getImplementation();
                 if (path.isAbsolute()) {
                     if (storagePaths.containsKey(type)) {
                         compile.setTargetDir(storagePaths.get(type));

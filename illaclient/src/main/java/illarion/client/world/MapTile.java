@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -59,80 +59,97 @@ public final class MapTile {
      */
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MapTile.class);
+
+    /**
+     * This value contains the value the quest marker is elevated by.
+     */
+    private int questMarkerElevation;
+
     /**
      * List of items on the tile.
      */
     @Nonnull
     @GuardedBy("itemsLock")
     private final ItemStack items;
+
     /**
      * The color value supplied by the light tracer.
      */
     @Nonnull
     private final Color tracerColor;
+
     /**
      * The calculated light in the center of the tile.
      */
     @Nonnull
     private final Color targetCenterColor;
+
     /**
      * The storage of the color values.
      */
     @Nonnull
     private final Map<Direction, AnimatedColor> colors;
+
     /**
      * The color on this tile.
      */
     @Nonnull
     private final AnimatedColor localColor;
-    /**
-     * The coordinates where this tile is located.
-     */
-    @Nonnull
-    private final ServerCoordinate tileCoordinate;
-    /**
-     * The temporary light instance that is used for the calculations before its applied to the actual light.
-     */
-    @Nonnull
-    private final Color tmpLight = new Color(Color.WHITE);
-    /**
-     * This value contains the value the quest marker is elevated by.
-     */
-    private int questMarkerElevation;
+
     /**
      * Light Source that is on the tile.
      */
     @Nullable
     private LightSource lightSrc;
+
     /**
      * Light value of the light on this tile.
      */
     private int lightValue;
+
+    /**
+     * The coordinates where this tile is located.
+     */
+    @Nonnull
+    private final ServerCoordinate tileCoordinate;
+
     /**
      * Flag if there is still work to do for the LOS calculation on this tile.
      */
     private boolean losDirty;
+
     /**
      * The ID of the sound track that is played while the player is standing on this tile.
      */
     private int musicId;
+
     /**
      * Value for partial obstruction.
      */
     private int obstruction;
+
     /**
      * Graphical representation of the tile.
      */
     @Nullable
     private Tile tile;
+
     /**
      * ID of the tile.
      */
     private int tileId;
+
     /**
      * The movement cost of this tile.
      */
     private int movementCost;
+
+    /**
+     * The temporary light instance that is used for the calculations before its applied to the actual light.
+     */
+    @Nonnull
+    private final Color tmpLight = new Color(Color.WHITE);
+
     /**
      * The reference to the tile that is obstructing this tile.
      */
@@ -156,26 +173,12 @@ public final class MapTile {
      */
     private boolean removedTile;
 
-    /**
-     * Create a new instance of the map and assign its coordinates.
-     *
-     * @param coordinate the coordinates of this tile
-     */
-    public MapTile(@Nonnull ServerCoordinate coordinate) {
-        tileCoordinate = coordinate;
-        tileId = ID_NONE;
-        tile = null;
-        lightSrc = null;
-        losDirty = true;
-        targetCenterColor = new Color(World.getWeather().getAmbientLight());
-        tracerColor = new Color(Color.BLACK);
-        localColor = new AnimatedColor(targetCenterColor);
-        colors = new EnumMap<>(Direction.class);
-        items = new ItemStack(coordinate.toDisplayCoordinate(Layer.Items));
-    }
-
     public int getQuestMarkerElevation() {
         return questMarkerElevation;
+    }
+
+    public void setObstructingTile(@Nonnull MapTile tile) {
+        obstructingTileRef = new WeakReference<>(tile);
     }
 
     @Nullable
@@ -196,8 +199,8 @@ public final class MapTile {
         return obstructingTile;
     }
 
-    public void setObstructingTile(@Nonnull MapTile tile) {
-        obstructingTileRef = new WeakReference<>(tile);
+    public void setMapGroup(@Nonnull MapGroup group) {
+        this.group = group;
     }
 
     @Nullable
@@ -205,8 +208,22 @@ public final class MapTile {
         return group;
     }
 
-    public void setMapGroup(@Nonnull MapGroup group) {
-        this.group = group;
+    /**
+     * Create a new instance of the map and assign its coordinates.
+     *
+     * @param coordinate the coordinates of this tile
+     */
+    public MapTile(@Nonnull ServerCoordinate coordinate) {
+        tileCoordinate = coordinate;
+        tileId = ID_NONE;
+        tile = null;
+        lightSrc = null;
+        losDirty = true;
+        targetCenterColor = new Color(World.getWeather().getAmbientLight());
+        tracerColor = new Color(Color.BLACK);
+        localColor = new AnimatedColor(targetCenterColor);
+        colors = new EnumMap<>(Direction.class);
+        items = new ItemStack(coordinate.toDisplayCoordinate(Layer.Items));
     }
 
     @Nonnull
@@ -227,10 +244,13 @@ public final class MapTile {
 
     public boolean hasLightGradient() {
         Color lastColor = getLight();
-        return !colors.values().stream()
-                     .filter(Objects::nonNull)
-                     .map(AnimatedColor::getCurrentColor)
-                     .allMatch(lastColor::equals);
+        for (@Nullable AnimatedColor testAnimatedColor : colors.values()) {
+            Color testColor = (testAnimatedColor == null) ? null : testAnimatedColor.getCurrentColor();
+            if ((testColor != null) && !lastColor.equals(testColor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateColor(int delta) {
@@ -634,10 +654,6 @@ public final class MapTile {
         return movementCost;
     }
 
-    public void setMovementCost(int newMovementCost) {
-        movementCost = newMovementCost;
-    }
-
     /**
      * Get the ID of the background music track that is supposed to be played on this tile.
      *
@@ -790,6 +806,10 @@ public final class MapTile {
             changedSomething = true;
         }
         return changedSomething;
+    }
+
+    public void setMovementCost(int newMovementCost) {
+        movementCost = newMovementCost;
     }
 
     /**

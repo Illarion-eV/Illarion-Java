@@ -34,9 +34,10 @@
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
             </effect>
 
-            <panel width="400px" childLayout="vertical">
+            <panel height="300px" width="400px" childLayout="vertical">
                 <image filename="gui/illarion_title.png" imageMode="normal" align="center" marginBottom="30px"/>
                 <panel childLayout="vertical">
+
                     <panel id="serverPanel" childLayout="horizontal" marginBottom="2px">
                         <control name="label" text="${login-bundle.server}" font="captionFont" textHAlign="left"
                                  width="130px"/>
@@ -66,12 +67,6 @@
                             <panel childLayout="center" marginBottom="15px" width="350">
                                 <control id="loginBtn" name="button" label="${login-bundle.login}"
                                          style="nifty-button-large" width="225px" height="45px">
-                                    <control id="#text" font="menuFont"/>
-                                </control>
-                            </panel>
-                            <panel childLayout="center" marginBottom="15px" width="350">
-                                <control id="registerBtn" name="button" label="${login-bundle.register}"
-                                         style="nifty-button-large" width="350px" height="35px">
                                     <control id="#text" font="menuFont"/>
                                 </control>
                             </panel>

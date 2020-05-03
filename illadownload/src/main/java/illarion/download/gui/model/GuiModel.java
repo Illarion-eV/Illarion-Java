@@ -79,11 +79,9 @@ public class GuiModel {
         cfg.setDefault("channelEasyNpc", 1);
         cfg.setDefault("channelEasyQuest", 1);
         cfg.setDefault("channelMapEditor", 1);
-        cfg.setDefault("launchAggressive", false);
+        cfg.setDefault("launchAggressive", true);
         cfg.setDefault("stayOpenAfterLaunch", true);
         cfg.setDefault("verifyArtifactChecksum", false);
-
-        cfg.set("launchAggressive", false);
         return cfg;
     }
 }

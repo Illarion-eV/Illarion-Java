@@ -28,7 +28,7 @@ import java.io.IOException;
 /**
  * @author Tim
  */
-public final class SplashScreen extends JWindow {
+public class SplashScreen extends JWindow {
     private static final Logger LOGGER = LoggerFactory.getLogger(SplashScreen.class);
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     public static final int HEIGHT_ADJUSTMENT = 30;

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,9 +31,63 @@ import java.util.*;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class AStar implements PathFindingAlgorithm {
+public class AStar implements PathFindingAlgorithm {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(AStar.class);
+
+    @Nullable
+    @Override
+    public Path findPath(
+            @Nonnull MoveCostProvider costProvider,
+            @Nonnull ServerCoordinate start,
+            @Nonnull ServerCoordinate end,
+            int approachDistance, @Nonnull Collection<Direction> allowedDirections,
+            @Nonnull CharMovementMode movementMethod,
+            @Nonnull CharMovementMode... movementMethods) {
+        if (start.equals(end)) {
+            throw new IllegalArgumentException("Start and target location must not be equal.");
+        }
+        /* Pre-Checks */
+        if (approachDistance < 0) {
+            throw new IllegalArgumentException("The approach distance must not be negative.");
+        }
+        if (start.getZ() != end.getZ()) {
+            /* Different levels are not supported by this algorithm. */
+            return null;
+        }
+        if (start.getDistance(end) <= approachDistance) {
+            /* close enough */
+            return null;
+        }
+        log.debug("Searching path from {} to {} getting as close as {} tiles", start, end, approachDistance);
+        /* Setting up the data structures. */
+        /* Nodes that are in this set were yet not fully processed. */
+        NavigableSet<AStarPathNode> openNodes = new TreeSet<>();
+        /* The list of nodes and their corresponding locations. */
+        Map<ServerCoordinate, AStarPathNode> knownNodes = new HashMap<>();
+        /* The methods of movement that apply. */
+        EnumSet<CharMovementMode> movementMethodSettings = EnumSet.of(movementMethod, movementMethods);
+
+        expandNode(costProvider, end, null, start, allowedDirections, movementMethodSettings, openNodes);
+
+        while (!openNodes.isEmpty()) {
+            /* Take the unchecked node closest to the target. */
+            AStarPathNode currentNode = openNodes.pollFirst();
+            if (currentNode.getLocation().getStepDistance(end) <= approachDistance) {
+                Path createdPath = buildPath(currentNode);
+                log.debug("Current node is within range. Building path: {}", createdPath);
+                return createdPath;
+            }
+            AStarPathNode alternative = knownNodes.get(currentNode.getLocation());
+            if ((alternative == null) || (alternative.getCost() > currentNode.getCost())) {
+                knownNodes.put(currentNode.getLocation(), currentNode);
+                expandNode(costProvider, end, currentNode, currentNode.getLocation(), allowedDirections, movementMethodSettings,
+                           openNodes);
+            }
+        }
+
+        return null;
+    }
 
     @Nonnull
     private static Path buildPath(@Nonnull AStarPathNode lastNode) {
@@ -100,61 +154,5 @@ public final class AStar implements PathFindingAlgorithm {
         int dMin = Math.min(dX, dY);
 
         return (int) (((dMax - dMin) + (dMin * 1.4142135623730951)) * 300);
-    }
-
-    @Nullable
-    @Override
-    public Path findPath(
-            @Nonnull MoveCostProvider costProvider,
-            @Nonnull ServerCoordinate start,
-            @Nonnull ServerCoordinate end,
-            int approachDistance, @Nonnull Collection<Direction> allowedDirections,
-            @Nonnull CharMovementMode movementMethod,
-            @Nonnull CharMovementMode... movementMethods) {
-        if (start.equals(end)) {
-            throw new IllegalArgumentException("Start and target location must not be equal.");
-        }
-        /* Pre-Checks */
-        if (approachDistance < 0) {
-            throw new IllegalArgumentException("The approach distance must not be negative.");
-        }
-        if (start.getZ() != end.getZ()) {
-            /* Different levels are not supported by this algorithm. */
-            return null;
-        }
-        if (start.getDistance(end) <= approachDistance) {
-            /* close enough */
-            return null;
-        }
-        log.debug("Searching path from {} to {} getting as close as {} tiles", start, end, approachDistance);
-        /* Setting up the data structures. */
-        /* Nodes that are in this set were yet not fully processed. */
-        NavigableSet<AStarPathNode> openNodes = new TreeSet<>();
-        /* The list of nodes and their corresponding locations. */
-        Map<ServerCoordinate, AStarPathNode> knownNodes = new HashMap<>();
-        /* The methods of movement that apply. */
-        EnumSet<CharMovementMode> movementOptions = EnumSet.of(movementMethod, movementMethods);
-
-        expandNode(costProvider, end, null, start, allowedDirections, movementOptions, openNodes);
-
-        while (!openNodes.isEmpty()) {
-            /* Take the unchecked node closest to the target. */
-            AStarPathNode currentNode = openNodes.pollFirst();
-            assert currentNode != null;
-
-            if (currentNode.getLocation().getStepDistance(end) <= approachDistance) {
-                Path createdPath = buildPath(currentNode);
-                log.debug("Current node is within range. Building path: {}", createdPath);
-                return createdPath;
-            }
-            AStarPathNode alternative = knownNodes.get(currentNode.getLocation());
-            if ((alternative == null) || (alternative.getCost() > currentNode.getCost())) {
-                knownNodes.put(currentNode.getLocation(), currentNode);
-                expandNode(costProvider, end, currentNode, currentNode.getLocation(), allowedDirections, movementOptions,
-                           openNodes);
-            }
-        }
-
-        return null;
     }
 }

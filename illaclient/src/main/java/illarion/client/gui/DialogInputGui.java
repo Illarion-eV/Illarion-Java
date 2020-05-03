@@ -15,9 +15,7 @@
  */
 package illarion.client.gui;
 
-import de.lessvoid.nifty.Nifty;
 import illarion.client.world.Char;
-import illarion.common.types.CharacterId;
 
 import javax.annotation.Nonnull;
 
@@ -38,6 +36,5 @@ public interface DialogInputGui {
      */
     void showInputDialog(int dialogId, String title, @Nonnull String message, int maxLength, boolean multiLine);
 
-    void showCharacterDialog(@Nonnull CharacterId charId, @Nonnull String lookAt);
-
+    void showNamingDialog(@Nonnull Char chara);
 }

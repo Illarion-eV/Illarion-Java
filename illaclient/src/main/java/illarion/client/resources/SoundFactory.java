@@ -15,9 +15,7 @@
  */
 package illarion.client.resources;
 
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
 import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Sound;
@@ -60,17 +58,10 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     private static final String SOUND_PATH = "sounds/";
 
     /**
-     * This is the builder of the storage collection. This variable is only used during the initialization and disposed
-     * of after.
-     */
-    @Nullable
-    private ImmutableMap.Builder<Integer, String> soundsBuilder;
-
-    /**
      * The hash map that stores all sound effects available.
      */
     @Nullable
-    private ImmutableMap<Integer, String> sounds;
+    private TIntObjectHashMap<String> sounds;
 
     /**
      * Get the singleton instance of the sound factory.
@@ -122,7 +113,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void init() {
-        soundsBuilder = new ImmutableMap.Builder<>();
+        sounds = new TIntObjectHashMap<>();
     }
 
     /**
@@ -130,11 +121,11 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void loadingFinished() {
-        if (soundsBuilder == null) {
+        if (sounds == null) {
             throw new IllegalStateException("Factory was not initialized yet.");
         }
 
-        sounds = soundsBuilder.build();
+        sounds.compact();
     }
 
     /**
@@ -143,12 +134,11 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void storeResource(@Nonnull IdWrapper<String> resource) {
-        if (soundsBuilder == null) {
+        if (sounds == null) {
             throw new IllegalStateException("Factory was not initialized yet.");
         }
-
         String sound = resource.getObject();
-        soundsBuilder.put(resource.getId(), SOUND_PATH + sound);
+        sounds.put(resource.getId(), SOUND_PATH + sound);
     }
 
     /**
@@ -158,12 +148,11 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Nonnull
     @Contract(pure = true)
-    public ImmutableCollection<String> getSoundNames() {
+    public List<String> getSoundNames() {
         if (sounds == null) {
             throw new IllegalStateException("Factory was not initialized yet.");
         }
-
-        return sounds.values();
+        return new ArrayList<>(sounds.valueCollection());
     }
 
     /**

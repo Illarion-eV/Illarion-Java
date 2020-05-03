@@ -15,10 +15,13 @@
  */
 package illarion.client.net;
 
+import illarion.client.IllaClient;
+import illarion.client.Servers;
 import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
 import illarion.client.util.ConnectionPerformanceClock;
+import javolution.text.TextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +42,6 @@ import java.util.concurrent.*;
  * by this class. It handles the sockets and the in and output queues.
  */
 public final class NetComm {
-    /**
-     * The version of the implemented protocol.
-     */
-    public static final int PROTOCOL_VERSION = 20;
-
     /**
      * This constant holds the encoding for strings that are received from and send to the server.
      */
@@ -112,6 +110,8 @@ public final class NetComm {
      * Default constructor that prepares all values of the NetComm.
      */
     public NetComm() {
+        ReplyFactory.getInstance();
+
         keepAliveExecutor = new ScheduledThreadPoolExecutor(1);
     }
 
@@ -157,8 +157,8 @@ public final class NetComm {
      * @param buffer The buffer that contains the values that shall be written
      */
     static void dump(String prefix, @Nonnull ByteBuffer buffer) {
-        StringBuilder builder = new StringBuilder();
-        StringBuilder builderText = new StringBuilder();
+        TextBuilder builder = new TextBuilder();
+        TextBuilder builderText = new TextBuilder();
 
         builder.append(prefix);
         builder.append(' ');
@@ -191,10 +191,23 @@ public final class NetComm {
      *
      * @return true in case the connection got established. False if not.
      */
-    public boolean connect(@Nonnull String serverHost, int serverPort) {
+    public boolean connect() {
         setLoginDone(false);
         try {
-            InetSocketAddress address = new InetSocketAddress(serverHost, serverPort);
+            Servers usedServer = IllaClient.getInstance().getUsedServer();
+
+            @Nonnull String serverAddress;
+            int serverPort;
+            if (usedServer == Servers.Customserver) {
+                String configServer = IllaClient.getCfg().getString("serverAddress");
+                serverAddress = (configServer == null) ? Servers.Customserver.getServerHost() : configServer;
+                serverPort = IllaClient.getCfg().getInteger("serverPort");
+            } else {
+                serverAddress = usedServer.getServerHost();
+                serverPort = usedServer.getServerPort();
+            }
+
+            InetSocketAddress address = new InetSocketAddress(serverAddress, serverPort);
             socket = SelectorProvider.provider().openSocketChannel();
             socket.configureBlocking(true);
             socket.socket().setPerformancePreferences(0, 2, 1);

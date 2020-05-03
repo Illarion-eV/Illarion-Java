@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,32 +32,35 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class IgeInputSystem implements InputSystem, InputListener {
-    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(IgeInputSystem.class);
-    /**
-     * The input implementation of the engine.
-     */
-    @Nonnull
-    private final Input input;
-    /**
-     * This is the listener that is supposed to receive the input data that was not processed by the Nifty-GUI.
-     */
-    @Nonnull
-    private final InputListener listener;
+
     /**
      * This value contains a key that was stalled as key down to properly detect typing events.
      */
     @Nullable
     private Key stalledKeyDownKey;
+
     /**
      * The amount of mouse click events that should be consumed by the Nifty-GUI.
      */
     private int consumeClicks;
     /**
+     * The input implementation of the engine.
+     */
+    @Nonnull
+    private final Input input;
+
+    /**
      * This is the consumer that receives the input data. This is {@code null} while Nifty is not expecting input data.
      */
     @Nullable
     private NiftyInputConsumer currentConsumer;
+
+    /**
+     * This is the listener that is supposed to receive the input data that was not processed by the Nifty-GUI.
+     */
+    @Nonnull
+    private final InputListener listener;
 
     /**
      * Create a new input device and set the input implementation that provides the input data.
@@ -69,6 +72,183 @@ public class IgeInputSystem implements InputSystem, InputListener {
         input.setListener(this);
         this.input = input;
         this.listener = listener;
+    }
+
+    @Override
+    public void keyDown(@Nonnull Key key) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (stalledKeyDownKey != null) {
+            listener.keyDown(stalledKeyDownKey);
+            stalledKeyDownKey = null;
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard) || input.isAnyKeyDown(Key.LeftAlt)) {
+            listener.keyDown(key);
+        } else {
+            int keyCode = getNiftyKeyId(key);
+            boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+            boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
+            KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true, shiftDown,
+                                                              controlDown);
+
+            if (!currentConsumer.processKeyboardEvent(event)) {
+                stalledKeyDownKey = key;
+            } else {
+                stalledKeyDownKey = null;
+            }
+        }
+    }
+
+    @Override
+    public void keyUp(@Nonnull Key key) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
+            listener.keyUp(key);
+        } else {
+            if (stalledKeyDownKey != null) {
+                listener.keyDown(stalledKeyDownKey);
+                stalledKeyDownKey = null;
+            }
+            int keyCode = getNiftyKeyId(key);
+            boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+            boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
+            KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, false, shiftDown,
+                                                              controlDown);
+
+            if (!currentConsumer.processKeyboardEvent(event)) {
+                listener.keyUp(key);
+            }
+        }
+    }
+
+    @Override
+    public void keyTyped(char character) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
+            listener.keyTyped(character);
+        } else {
+
+            if (Character.isDefined(character)) {
+                boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+                boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
+                KeyboardInputEvent event = new KeyboardInputEvent(KeyboardInputEvent.KEY_NONE, character, true,
+                                                                  shiftDown, controlDown);
+                if (!currentConsumer.processKeyboardEvent(event)) {
+                    if (stalledKeyDownKey != null) {
+                        listener.keyDown(stalledKeyDownKey);
+                    }
+                    listener.keyTyped(character);
+                }
+            } else {
+                if (stalledKeyDownKey != null) {
+                    listener.keyDown(stalledKeyDownKey);
+                }
+            }
+
+            stalledKeyDownKey = null;
+        }
+    }
+
+    @Override
+    public void buttonDown(int mouseX, int mouseY, @Nonnull Button button) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
+            listener.buttonDown(mouseX, mouseY, button);
+        } else {
+            int buttonKey = getNiftyButtonKey(button);
+            if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
+                log.debug("Nifty processed event. Consuming next click.");
+                consumeClicks++;
+            } else {
+                listener.buttonDown(mouseX, mouseY, button);
+            }
+        }
+    }
+
+    @Override
+    public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
+            listener.buttonUp(mouseX, mouseY, button);
+        } else {
+            int buttonKey = getNiftyButtonKey(button);
+            if (consumeClicks > 0) {
+                consumeClicks--;
+            }
+            if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
+                listener.buttonUp(mouseX, mouseY, button);
+            }
+        }
+    }
+
+    @Override
+    public void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if ((consumeClicks == 0) || input.isForwardingEnabled(ForwardingTarget.Mouse)) {
+            listener.buttonClicked(mouseX, mouseY, button, count);
+        } else {
+            consumeClicks--;
+            if (count > 1) {
+                buttonClicked(mouseX, mouseY, button, count - 1);
+            } else {
+                log.debug("Consumed one click.");
+            }
+        }
+    }
+
+    @Override
+    public void mouseMoved(int mouseX, int mouseY) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse) ||
+                !currentConsumer.processMouseEvent(mouseX, mouseY, 0, -1, false)) {
+            listener.mouseMoved(mouseX, mouseY);
+        }
+        consumeClicks = 0;
+    }
+
+    @Override
+    public void mouseDragged(
+            @Nonnull Button button, int fromX, int fromY, int toX, int toY) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
+            listener.mouseDragged(button, fromX, fromY, toX, toY);
+        } else {
+            int buttonKey = getNiftyButtonKey(button);
+            boolean startUsed = currentConsumer.processMouseEvent(fromX, fromY, 0, buttonKey, true);
+            boolean endUsed = currentConsumer.processMouseEvent(toX, toY, 0, buttonKey, true);
+            if (!startUsed && !endUsed) {
+                listener.mouseDragged(button, fromX, fromY, toX, toY);
+            }
+            consumeClicks = 0;
+        }
+    }
+
+    @Override
+    public void mouseWheelMoved(int mouseX, int mouseY, int delta) {
+        if (currentConsumer == null) {
+            throw new IllegalStateException("Receiving input data while none was requested");
+        }
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse) ||
+                !currentConsumer.processMouseEvent(mouseX, mouseY, delta, -1, false)) {
+            listener.mouseWheelMoved(mouseX, mouseY, delta);
+        }
+        consumeClicks = 0;
     }
 
     /**
@@ -238,194 +418,6 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 return KeyboardInputEvent.KEY_TAB;
         }
         return KeyboardInputEvent.KEY_NONE;
-    }
-
-    @Override
-    public void keyDown(@Nonnull Key key) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (stalledKeyDownKey != null) {
-            log.debug("Received key down why there is still a stalled key: {}", stalledKeyDownKey);
-            listener.keyDown(stalledKeyDownKey);
-            stalledKeyDownKey = null;
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Keyboard) || input.isAnyKeyDown(Key.LeftAlt)) {
-            log.debug("Directly sending key {} down to the listener. Alt is pressed or forwarding is enabled.", key);
-            listener.keyDown(key);
-        } else {
-            int keyCode = getNiftyKeyId(key);
-            boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
-            boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
-            KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true, shiftDown,
-                                                              controlDown);
-
-            if (!currentConsumer.processKeyboardEvent(event)) {
-                log.debug("Key down event was not consumed. Stalling the event for now: {}", key);
-                stalledKeyDownKey = key;
-            } else {
-                log.debug("Key down was handled by Nifty: {}", key);
-                stalledKeyDownKey = null;
-            }
-        }
-    }
-
-    @Override
-    public void keyUp(@Nonnull Key key) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
-            log.debug("Input forwarding is enabled Sending key up directly: {}", key);
-            listener.keyUp(key);
-        } else {
-            if (stalledKeyDownKey != null) {
-                log.debug("Stalled key down is present and is now send to the listener: {}", stalledKeyDownKey);
-                listener.keyDown(stalledKeyDownKey);
-                stalledKeyDownKey = null;
-            }
-            int keyCode = getNiftyKeyId(key);
-            boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
-            boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
-            KeyboardInputEvent event = new KeyboardInputEvent(
-                    keyCode, Character.MIN_VALUE, false, shiftDown, controlDown);
-
-            if (!currentConsumer.processKeyboardEvent(event)) {
-                log.debug("Key up was not handled by Nifty. Sending it directly: {}", key);
-                listener.keyUp(key);
-            }
-        }
-    }
-
-    @Override
-    public void keyTyped(char character) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-
-        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
-            log.debug("Key typed event directly send to the listener because forwarding is active: {}", character);
-            listener.keyTyped(character);
-        } else {
-
-            if (Character.isDefined(character)) {
-                boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
-                boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
-                KeyboardInputEvent event = new KeyboardInputEvent(KeyboardInputEvent.KEY_NONE, character, true,
-                                                                  shiftDown, controlDown);
-                if (!currentConsumer.processKeyboardEvent(event)) {
-                    if (stalledKeyDownKey != null) {
-                        log.debug("Stalled key down is present and is now send to the listener: {}", stalledKeyDownKey);
-                        listener.keyDown(stalledKeyDownKey);
-                    }
-                    log.debug("Key typed send to listener because Nifty did not use it: {}", character);
-                    listener.keyTyped(character);
-                }
-            } else {
-                if (stalledKeyDownKey != null) {
-                    listener.keyDown(stalledKeyDownKey);
-                    log.debug("Stalled key down is present and is now send to the listener: {}", stalledKeyDownKey);
-                }
-            }
-
-            stalledKeyDownKey = null;
-        }
-    }
-
-    @Override
-    public void buttonDown(int mouseX, int mouseY, @Nonnull Button button) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
-            listener.buttonDown(mouseX, mouseY, button);
-        } else {
-            int buttonKey = getNiftyButtonKey(button);
-            if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
-                log.debug("Nifty processed event. Consuming next click.");
-                consumeClicks++;
-            } else {
-                listener.buttonDown(mouseX, mouseY, button);
-            }
-        }
-    }
-
-    @Override
-    public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
-            listener.buttonUp(mouseX, mouseY, button);
-        } else {
-            int buttonKey = getNiftyButtonKey(button);
-            if (consumeClicks > 0) {
-                consumeClicks--;
-            }
-            if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
-                listener.buttonUp(mouseX, mouseY, button);
-            }
-        }
-    }
-
-    @Override
-    public void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if ((consumeClicks == 0) || input.isForwardingEnabled(ForwardingTarget.Mouse)) {
-            listener.buttonClicked(mouseX, mouseY, button, count);
-        } else {
-            consumeClicks--;
-            if (count > 1) {
-                buttonClicked(mouseX, mouseY, button, count - 1);
-            } else {
-                log.debug("Consumed one click.");
-            }
-        }
-    }
-
-    @Override
-    public void mouseMoved(int mouseX, int mouseY) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Mouse) ||
-                !currentConsumer.processMouseEvent(mouseX, mouseY, 0, -1, false)) {
-            listener.mouseMoved(mouseX, mouseY);
-        }
-        consumeClicks = 0;
-    }
-
-    @Override
-    public void mouseDragged(
-            @Nonnull Button button, int fromX, int fromY, int toX, int toY) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
-            listener.mouseDragged(button, fromX, fromY, toX, toY);
-        } else {
-            int buttonKey = getNiftyButtonKey(button);
-            boolean startUsed = currentConsumer.processMouseEvent(fromX, fromY, 0, buttonKey, true);
-            boolean endUsed = currentConsumer.processMouseEvent(toX, toY, 0, buttonKey, true);
-            if (!startUsed && !endUsed) {
-                listener.mouseDragged(button, fromX, fromY, toX, toY);
-            }
-            consumeClicks = 0;
-        }
-    }
-
-    @Override
-    public void mouseWheelMoved(int mouseX, int mouseY, int delta) {
-        if (currentConsumer == null) {
-            throw new IllegalStateException("Receiving input data while none was requested");
-        }
-        if (input.isForwardingEnabled(ForwardingTarget.Mouse) ||
-                !currentConsumer.processMouseEvent(mouseX, mouseY, delta, -1, false)) {
-            listener.mouseWheelMoved(mouseX, mouseY, delta);
-        }
-        consumeClicks = 0;
     }
 
     @Override

@@ -15,6 +15,8 @@
  */
 package illarion.mapedit.data;
 
+import javolution.text.TextBuilder;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -97,7 +99,7 @@ public class MapWarpPoint {
     @Nonnull
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        TextBuilder builder = new TextBuilder();
 
         builder.append(xTarget).append(';');
         builder.append(yTarget).append(';');

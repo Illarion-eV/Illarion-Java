@@ -62,8 +62,8 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
     }
 
     /**
-     * Create a new effect. This requests a new effect from the EffectFactory. So the effect returned by this function
-     * is either a newly created object or a unused one from the factory.
+     * Create a new effect. This requests a new effect from the EffectFactory. So the effect returned by this
+     * function is either a newly created object or a unused one from the factory.
      *
      * @param effectID the id of the effect that is needed
      * @return the instance of Effect that shall be used
@@ -100,8 +100,8 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
     }
 
     /**
-     * Show a effect on a specified location on the map. This creates the light of the effect on the map and starts the
-     * animation of the effect.
+     * Show a effect on a specified location on the map. This creates the light of the effect on the map and starts
+     * the animation of the effect.
      *
      * @param loc the location on the game map the effect shall be shown on
      */

@@ -16,6 +16,9 @@
 package illarion.easyquest.quest;
 
 import illarion.easyquest.Lang;
+import javolution.util.FastMap;
+import javolution.util.FastTable;
+import javolution.util.function.Equalities;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -23,30 +26,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class HandlerTemplates {
-    private static final HandlerTemplates INSTANCE = new HandlerTemplates();
-    @Nonnull
-    private final Map<String, HandlerTemplate> typeMap;
     /**
      * Internal storage for the templates.
      */
     private HandlerTemplate[] templates;
+
     /**
      * Templates array that gets exposed to the rest of the application.
      */
     private HandlerTemplate[] publicTemplates;
 
-    public HandlerTemplates() {
-        typeMap = new HashMap<>();
+    @Nonnull
+    private final Map<String, HandlerTemplate> typeMap;
 
-        load();
-    }
+    private static final HandlerTemplates INSTANCE = new HandlerTemplates();
 
     @Nonnull
     public static HandlerTemplates getInstance() {
         return INSTANCE;
+    }
+
+    public HandlerTemplates() {
+        typeMap = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
+
+        load();
     }
 
     private static InputStream getResource(String name) {
@@ -56,7 +64,7 @@ public class HandlerTemplates {
 
     @Nonnull
     private static List<String> loadFileList() {
-        List<String> result = new ArrayList<>();
+        List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
             bRead = new BufferedReader(new InputStreamReader(getResource("template/handler/filelist"), Charset.defaultCharset()));
@@ -82,7 +90,7 @@ public class HandlerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
-        Collection<HandlerTemplate> templateList = new ArrayList<>();
+        Collection<HandlerTemplate> templateList = new FastTable<>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Handler directory does not exist!");

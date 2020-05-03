@@ -18,7 +18,6 @@ package illarion.client.world;
 import illarion.client.net.client.AttackCmd;
 import illarion.client.net.client.StandDownCmd;
 import illarion.common.types.CharacterId;
-import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -118,12 +116,6 @@ public final class CombatHandler {
         if (localAttackedChat != null) {
             ignoreNextTargetLost.set(true);
             World.getNet().sendCommand(new StandDownCmd());
-        } else {
-            Char localUnconfirmed = unconfirmedChars.poll();
-            if (localUnconfirmed != null) {
-                ignoreNextTargetLost.set(true);
-                World.getNet().sendCommand(new StandDownCmd());
-            }
         }
     }
 
@@ -136,11 +128,8 @@ public final class CombatHandler {
             log.debug("Expected target lost received from server. No action taken.");
         } else {
             log.debug("Target lost received from server. Stopping attack.");
-            if (attackedChar == null) {
-                unconfirmedChars.poll();
-            } else {
-                attackedChar = null;
-            }
+            attackedChar = null;
+            unconfirmedChars.poll();
         }
     }
 
@@ -152,48 +141,12 @@ public final class CombatHandler {
         log.debug("Attack confirmed received from server. Now attacking: {}", attackedChar);
     }
 
-
-    /**
-     * Attack the nearest monster, using euclidean distance on same Z level.
-     */
-    public void attackNearestMonster() {
-        log.debug("Looking for nearest monster to atttack");
-        ServerCoordinate playerLoc = World.getPlayer().getLocation();
-        List<Char> allKnownChars = World.getPeople().getAllCharacters();
-        Char candidateChar = null;
-        double candidateDistance = Double.POSITIVE_INFINITY;
-        for (Char character : allKnownChars) {
-            if (!character.isMonster() || character.isPet())
-                continue;
-            ServerCoordinate loc = character.getLocation();
-            if (loc == null)
-                continue;
-            // only same z-level is considered
-            if (playerLoc.getZ() != loc.getZ())
-                continue;
-            double distance = ServerCoordinate.getDistance(loc, playerLoc);
-            if (distance < candidateDistance) {
-                // found a closer monster
-                candidateChar = character;
-                candidateDistance = distance;
-                if (candidateDistance <= 1)
-                    // good enough
-                    break;
-            }
-        }
-        if (candidateChar != null) {
-            setAttackTarget(candidateChar);
-        }
-    }
-
     /**
      * Set the character that is attacked from now in.
      *
      * @param character the character that is now attacked
      */
     public void setAttackTarget(@Nonnull Char character) {
-        // Disable chat box to allow proper movement. Does not clear input.
-        World.getGameGui().getChatGui().deactivateChatBox(false);
         if (isAttacking(character) || isGoingToAttack(character)) {
             return;
         }

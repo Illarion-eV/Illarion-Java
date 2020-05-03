@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ public class Song implements Comparable<Song> {
     /**
      * This logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Song.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OggPlayer.class);
     /**
      * Path to where songs are stored.
      */
@@ -79,11 +79,6 @@ public class Song implements Comparable<Song> {
     }
 
     @Override
-    public int hashCode() {
-        return clipID;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (super.equals(o)) {
             return true;
@@ -92,6 +87,11 @@ public class Song implements Comparable<Song> {
             return ((Song) o).clipID == clipID;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return clipID;
     }
 
     @Override

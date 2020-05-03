@@ -39,17 +39,6 @@ public final class CurrentMouseLocationEvent extends AbstractMouseLocationEvent 
 
     /**
      * Create and initialize such an event.
-     */
-    public CurrentMouseLocationEvent () {
-        super(0, 0);
-    }
-
-    public void set (int x, int y) {
-        super.set(x, y);
-    }
-
-    /**
-     * Create and initialize such an event.
      *
      * @param input the input handler supplying the data
      */
@@ -64,11 +53,4 @@ public final class CurrentMouseLocationEvent extends AbstractMouseLocationEvent 
     public void setHighlightHandled(boolean highlightHandled) {
         this.highlightHandled = highlightHandled;
     }
-
-    @Override
-    public void reset () {
-        super.reset();
-        highlightHandled = false;
-    }
-
 }

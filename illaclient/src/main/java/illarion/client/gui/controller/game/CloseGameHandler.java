@@ -16,7 +16,6 @@
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -68,16 +67,10 @@ public final class CloseGameHandler
 
     @Override
     public void onStartScreen() {
-        if (parentNifty != null) {
-            parentNifty.subscribeAnnotations(this);
-        }
     }
 
     @Override
     public void onEndScreen() {
-        if (parentNifty != null) {
-            parentNifty.unsubscribeAnnotations(this);
-        }
     }
 
     private void showExitDialog() {
@@ -97,11 +90,6 @@ public final class CloseGameHandler
 
             dialogActive = false;
         }
-    }
-
-    @NiftyEventSubscriber(id = "closeGameBtn")
-    public void onCloseGameButtonClicked(String topic, ButtonClickedEvent data) {
-        showClosingDialog();
     }
 
     public void subscribeButtonClick(@Nonnull String id) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package illarion.client.net;
 
-import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.common.net.NetCommWriter;
 import org.slf4j.Logger;
@@ -106,10 +105,6 @@ final class Sender implements NetCommWriter {
         commandExecutor.submit(() -> {
             try {
                 encodeCommand(cmd);
-            } catch (IOException e) {
-                log.error("Connection failure: {}", e.getMessage());
-                IllaClient.returnToLogin(e.getLocalizedMessage());
-                commandExecutor.shutdownNow();
             } catch (Exception e) {
                 log.error("Error while sending command.", e);
             }
@@ -155,7 +150,6 @@ final class Sender implements NetCommWriter {
     /**
      * Shutdown the sender.
      */
-    @Nonnull
     public Future<Boolean> saveShutdown() {
         commandExecutor.shutdown();
 

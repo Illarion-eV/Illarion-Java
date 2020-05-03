@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import illarion.common.util.FastMath;
 import org.illarion.engine.backend.shared.AbstractForwardingInput;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.InputListener;
@@ -39,7 +40,6 @@ import java.util.Queue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class GdxInput extends AbstractForwardingInput implements InputProcessor {
-    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(GdxInput.class);
 
     /**
@@ -57,21 +57,25 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * The time in milliseconds between two clicks to recognise them as a double click.
      */
     private final long doubleClickDelay;
-    /**
-     * The events received since the last polling.
-     */
-    @Nonnull
-    private final Queue<Runnable> events;
-    /**
-     * The libGDX input system that provides the updates.
-     */
-    @Nonnull
-    private final Input gdxInput;
+
     /**
      * The input listener that receives the input data when the polling function is called.
      */
     @Nullable
     private InputListener inputListener;
+
+    /**
+     * The events received since the last polling.
+     */
+    @Nonnull
+    private final Queue<Runnable> events;
+
+    /**
+     * The libGDX input system that provides the updates.
+     */
+    @Nonnull
+    private final Input gdxInput;
+
     /**
      * This variable stores the location where the mouse button was pressed down the last time.
      */
@@ -263,8 +267,6 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Key.Enter;
             case Keys.BACKSPACE:
                 return Key.Backspace;
-            case Keys.SPACE:
-                return Key.Space;
             case Keys.NUMPAD_0:
                 return Key.NumPad0;
             case Keys.NUMPAD_1:
@@ -417,8 +419,6 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Keys.ENTER;
             case Backspace:
                 return Keys.BACKSPACE;
-            case Space:
-                return Keys.SPACE;
             case NumPad0:
                 return Keys.NUMPAD_0;
             case NumPad1:
@@ -486,16 +486,16 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean keyDown(int keyCode) {
-        Key pressedKey = getEngineKey(keyCode);
+    public boolean keyDown(int keycode) {
+        Key pressedKey = getEngineKey(keycode);
         if (pressedKey == null) {
-            log.debug("Received key down with code: {} that failed to translate to a key.", keyCode);
+            log.debug("Received key down with code: {} that failed to translate to a key.", keycode);
             return true;
         }
         if (isAnyKeyDown(Key.LeftAlt, Key.RightAlt) && isNumPadNumber(pressedKey)) {
             addKeyToAltKeyCode(pressedKey);
         }
-        log.debug("Received key down with code: {} that translated to key: {}", keyCode, pressedKey);
+        log.debug("Received key down with code: {} that translated to key: {}", keycode, pressedKey);
         events.offer(() -> {
             assert inputListener != null;
             inputListener.keyDown(pressedKey);
@@ -503,14 +503,61 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         return true;
     }
 
+    private void addKeyToAltKeyCode(@Nonnull Key key) {
+        int newNumber;
+        switch (key) {
+            case NumPad0:
+                newNumber = 0;
+                break;
+            case NumPad1:
+                newNumber = 1;
+                break;
+            case NumPad2:
+                newNumber = 2;
+                break;
+            case NumPad3:
+                newNumber = 3;
+                break;
+            case NumPad4:
+                newNumber = 4;
+                break;
+            case NumPad5:
+                newNumber = 5;
+                break;
+            case NumPad6:
+                newNumber = 6;
+                break;
+            case NumPad7:
+                newNumber = 7;
+                break;
+            case NumPad8:
+                newNumber = 8;
+                break;
+            case NumPad9:
+                newNumber = 9;
+                break;
+            default:
+                throw new IllegalArgumentException("Key is not a valid Numpad key: " + key);
+        }
+
+        altKeyCode *= 10;
+        altKeyCode += newNumber;
+    }
+
+    private boolean isNumPadNumber(@Nonnull Key key) {
+        return (key == Key.NumPad0) || (key == Key.NumPad1) || (key == Key.NumPad2) || (key == Key.NumPad3) ||
+                (key == Key.NumPad4) || (key == Key.NumPad5) || (key == Key.NumPad6) || (key == Key.NumPad7) ||
+                (key == Key.NumPad8) || (key == Key.NumPad9);
+    }
+
     @Override
-    public boolean keyUp(int keyCode) {
-        Key releasedKey = getEngineKey(keyCode);
+    public boolean keyUp(int keycode) {
+        Key releasedKey = getEngineKey(keycode);
         if (releasedKey == null) {
-            log.debug("Received key up with code: {} that failed to translate to a key.", keyCode);
+            log.debug("Received key up with code: {} that failed to translate to a key.", keycode);
             return true;
         }
-        log.debug("Received key up with code: {} that translated to key: {}", keyCode, releasedKey);
+        log.debug("Received key up with code: {} that translated to key: {}", keycode, releasedKey);
         events.offer(() -> {
             assert inputListener != null;
             inputListener.keyUp(releasedKey);
@@ -570,7 +617,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             return true;
         }
         if ((touchDownButton == releasedButton) && (touchDownPointer == pointer) &&
-                (Math.abs(touchDownX - x) < CLICK_TOLERANCE) && (Math.abs(touchDownY - y) < CLICK_TOLERANCE)) {
+                (FastMath.abs(touchDownX - x) < CLICK_TOLERANCE) && (FastMath.abs(touchDownY - y) < CLICK_TOLERANCE)) {
             publishClick(x, y, releasedButton);
         }
         events.offer(() -> {
@@ -578,6 +625,30 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             inputListener.buttonUp(x, y, releasedButton);
         });
         return true;
+    }
+
+    /**
+     * Publish the event as mouse click event. This function also handles double clicks.
+     *
+     * @param x the x coordinate where the click happened
+     * @param y the y coordinate where the click happened
+     * @param button the button that was clicked
+     */
+    private void publishClick(int x, int y, @Nonnull Button button) {
+        if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() > clickTimeout)) {
+            clickButton = button;
+            clickTimeout = System.currentTimeMillis() + doubleClickDelay;
+            events.offer(() -> {
+                assert inputListener != null;
+                inputListener.buttonClicked(x, y, button, 1);
+            });
+        } else {
+            clickTimeout = 0;
+            events.offer(() -> {
+                assert inputListener != null;
+                inputListener.buttonClicked(x, y, button, 2);
+            });
+        }
     }
 
     @Override
@@ -619,77 +690,6 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             inputListener.mouseWheelMoved(getMouseX(), getMouseY(), -amount);
         });
         return true;
-    }
-
-    private void addKeyToAltKeyCode(@Nonnull Key key) {
-        int newNumber;
-        switch (key) {
-            case NumPad0:
-                newNumber = 0;
-                break;
-            case NumPad1:
-                newNumber = 1;
-                break;
-            case NumPad2:
-                newNumber = 2;
-                break;
-            case NumPad3:
-                newNumber = 3;
-                break;
-            case NumPad4:
-                newNumber = 4;
-                break;
-            case NumPad5:
-                newNumber = 5;
-                break;
-            case NumPad6:
-                newNumber = 6;
-                break;
-            case NumPad7:
-                newNumber = 7;
-                break;
-            case NumPad8:
-                newNumber = 8;
-                break;
-            case NumPad9:
-                newNumber = 9;
-                break;
-            default:
-                throw new IllegalArgumentException("Key is not a valid Numpad key: " + key);
-        }
-
-        altKeyCode *= 10;
-        altKeyCode += newNumber;
-    }
-
-    private boolean isNumPadNumber(@Nonnull Key key) {
-        return (key == Key.NumPad0) || (key == Key.NumPad1) || (key == Key.NumPad2) || (key == Key.NumPad3) ||
-                (key == Key.NumPad4) || (key == Key.NumPad5) || (key == Key.NumPad6) || (key == Key.NumPad7) ||
-                (key == Key.NumPad8) || (key == Key.NumPad9);
-    }
-
-    /**
-     * Publish the event as mouse click event. This function also handles double clicks.
-     *
-     * @param x the x coordinate where the click happened
-     * @param y the y coordinate where the click happened
-     * @param button the button that was clicked
-     */
-    private void publishClick(int x, int y, @Nonnull Button button) {
-        if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() > clickTimeout)) {
-            clickButton = button;
-            clickTimeout = System.currentTimeMillis() + doubleClickDelay;
-            events.offer(() -> {
-                assert inputListener != null;
-                inputListener.buttonClicked(x, y, button, 1);
-            });
-        } else {
-            clickTimeout = 0;
-            events.offer(() -> {
-                assert inputListener != null;
-                inputListener.buttonClicked(x, y, button, 2);
-            });
-        }
     }
 
     @Override

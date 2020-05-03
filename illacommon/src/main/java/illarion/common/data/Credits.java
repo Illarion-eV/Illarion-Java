@@ -17,8 +17,6 @@ package illarion.common.data;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,28 +43,26 @@ public final class Credits {
      * The singleton instance of this credits class.
      */
     @Nullable
-    private static Reference<Credits> instance = null;
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static volatile Credits instance = null;
 
     /**
      * Get the singleton instance of the credits class.
      * <p/>
-     * The instance is created once this function is called. It is also only stored weakly, so once there is on use for
-     * it anymore the instance is being disposed of.
+     * The class instance is created upon the first call of this function.
      *
      * @return the credits instance
      */
-    @Nonnull
+    @Nullable
     public static Credits getInstance() {
-        Reference<Credits> usedInstance = instance;
-        Credits usedCredits = null;
-        if (usedInstance != null) {
-            usedCredits = usedInstance.get();
+        if (instance == null) {
+            synchronized (Credits.class) {
+                if (instance == null) {
+                    instance = new Credits();
+                }
+            }
         }
-        if (usedCredits == null) {
-            usedCredits = new Credits();
-            instance = new SoftReference<>(usedCredits);
-        }
-        return usedCredits;
+        return instance;
     }
 
     /**
@@ -109,7 +105,7 @@ public final class Credits {
 
         CreditsPerson.create("Andreas", "Vilarion", "Grob",
                 projectManager, chiefServer, gameplay, client, website, easyNPC, easyQuest, server, qualityAssurance);
-        CreditsPerson.create("Lennart", "Estralis", "Lacroix", chiefContent, gameplay, content, website,
+        CreditsPerson.create("Lennart", "Estralis", "Stutz", chiefContent, gameplay, content, website,
                 qualityAssurance);
         CreditsPerson.create("Martin", "Nitram", "Karing",
                 chiefClient, gameplay, client, website, easyNPC, easyQuest, mapEditor, server, qualityAssurance);
@@ -119,8 +115,11 @@ public final class Credits {
         CreditsPerson.create("Marvin", "Kopp", chiefMusic);
         CreditsPerson.create("Zot", content, graphics, maps, qualityAssurance);
 
+        CreditsPerson.create("Teflon", gameMaster);
         CreditsPerson.create("Silverwing", qualityAssurance, gameMaster);
         CreditsPerson.create("Slightly", gameMaster);
+        CreditsPerson.create("Ruben", "Zephyrius", "Garza", gameMaster);
+        CreditsPerson.create("Kristen", "Obsydien", "Stewart", gameMaster);
 
         CreditsPerson.create("Djironnyma", communityManager);
         CreditsPerson.create("Achae Eanstray", communityManager, graphics);
@@ -133,7 +132,6 @@ public final class Credits {
         CreditsPerson.create("Wolfgang", "Müller", content);
         CreditsPerson.create("Thomas", "Messerschmidt", content);
         CreditsPerson.create("Faladron", content);
-        CreditsPerson.create("Allison", "Dantagon", "Geraci", content, qualityAssurance);
         CreditsPerson.create("Henry", "Mill", content, maps);
         CreditsPerson.create("Lisa", "Maletzki", gameplay, content, qualityAssurance);
         CreditsPerson.create("Marion", "Miriam", "Herstell", content, client, qualityAssurance);
@@ -168,7 +166,6 @@ public final class Credits {
         CreditsPerson.create("Oliver", "Herzog", maps);
         CreditsPerson.create("Evie", chiefMap, content, maps);
         CreditsPerson.create("Quirkily", content, maps);
-        CreditsPerson.create("Banduk", content);
         CreditsPerson.create("Arien Edhel", specialThanks);
         CreditsPerson.create("Jan", "Alatar", "Falke", specialThanks);
         CreditsPerson.create("Aragon ben Galwan", specialThanks);

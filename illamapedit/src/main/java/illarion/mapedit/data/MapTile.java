@@ -17,10 +17,11 @@ package illarion.mapedit.data;
 
 import illarion.common.graphics.TileInfo;
 import illarion.mapedit.resource.Overlay;
+import javolution.text.TextBuilder;
+import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,7 +77,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile copyAll(@Nonnull MapTile old) {
-            List<MapItem> items = new ArrayList<>();
+            List<MapItem> items = new FastTable<>();
             if (old.mapItems != null) {
                 for (MapItem item : old.mapItems) {
                     List<String> itemData = null;
@@ -134,7 +135,7 @@ public class MapTile {
         this.musicID = musicID;
         this.mapWarpPoint = mapWarpPoint;
         if (mapItems != null) {
-            this.mapItems = new ArrayList<>();
+            this.mapItems = new FastTable<>();
             this.mapItems.addAll(mapItems);
         }
     }
@@ -146,7 +147,7 @@ public class MapTile {
         musicID = org.musicID;
         mapWarpPoint = org.mapWarpPoint;
         if (org.mapItems != null) {
-            mapItems = new ArrayList<>();
+            mapItems = new FastTable<>();
             mapItems.addAll(org.mapItems.stream().map(MapItem::new).collect(Collectors.toList()));
         }
     }
@@ -192,7 +193,7 @@ public class MapTile {
 
     public void addMapItem(MapItem item) {
         if (mapItems == null) {
-            mapItems = new ArrayList<>();
+            mapItems = new FastTable<>();
         }
         mapItems.add(item);
     }
@@ -277,7 +278,7 @@ public class MapTile {
     @Nonnull
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        TextBuilder builder = new TextBuilder();
 
         if (shapeID == 0) {
             builder.append(tileId);

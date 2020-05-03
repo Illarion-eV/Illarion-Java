@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author Fredrik K
  */
-public final class DocuRoot implements DocuEntry {
+public class DocuRoot implements DocuEntry {
     @Nonnull
     private static final DocuRoot INSTANCE = new DocuRoot();
     @Nonnull

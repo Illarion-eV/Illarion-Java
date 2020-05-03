@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,14 +31,13 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * The logging instance of this class.
      */
-    @Nonnull
-    private static final Logger log = LoggerFactory.getLogger(AvatarMarker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarMarker.class);
 
     /**
      * The avatar that is the parent of this class.
      */
     @Nonnull
-    private final AbstractEntity<?> parent;
+    private final Avatar parent;
 
     /**
      * The default constructor of this avatar marker.
@@ -46,15 +45,14 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
      * @param markerId the image ID of this marker
      * @param parentAvatar the parent avatar
      */
-    public AvatarMarker(int markerId, @Nonnull AbstractEntity<?> parentAvatar) {
+    public AvatarMarker(int markerId, @Nonnull Avatar parentAvatar) {
         super(MiscImageFactory.getInstance().getTemplate(markerId));
         parent = parentAvatar;
     }
 
     @Override
-    public void setAlpha(int newAlpha) {
-        super.setAlpha(newAlpha);
-        setAlphaTarget(newAlpha);
+    protected boolean isShown() {
+        return parent.isShown();
     }
 
     @Override
@@ -63,12 +61,13 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     }
 
     @Override
-    public void show() {
-        log.warn("Show was called for a avatar marker. This shouldn't happen.");
+    public void setAlpha(int alpha) {
+        super.setAlpha(alpha);
+        setAlphaTarget(alpha);
     }
 
     @Override
-    protected boolean isShown() {
-        return parent.isShown();
+    public void show() {
+        LOGGER.warn("Show was called for a avatar marker. This shouldn't happen.");
     }
 }

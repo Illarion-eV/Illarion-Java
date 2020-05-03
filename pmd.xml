@@ -1,7 +1,7 @@
 <?xml version="1.0"?><!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2016 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -13,8 +13,8 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   -->
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Illarion Ruleset"
-         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+<ruleset name="Illarion Ruleset" xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
          xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
     <description>
@@ -25,6 +25,8 @@
     <rule ref="rulesets/java/braces.xml" />
     <rule ref="rulesets/java/controversial.xml/DontImportSun" />
     <rule ref="rulesets/java/controversial.xml/SuspiciousOctalEscape" />
+    <rule ref="rulesets/java/controversial.xml/DefaultPackage" />
+    <rule ref="rulesets/java/controversial.xml/BooleanInversion" />
     <rule ref="rulesets/java/design.xml">
         <exclude name="SwitchStmtsShouldHaveDefault" />
         <exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />

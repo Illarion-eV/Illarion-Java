@@ -18,7 +18,7 @@ package illarion.common.config;
 import javax.annotation.Nonnull;
 
 /**
- * This class defines the event that is sent to the application using the event bus once an entry of the
+ * This class defines the event that is send to the application using the event bus once a entry of the
  * configuration is altered.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;

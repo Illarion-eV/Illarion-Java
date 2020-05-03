@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2016 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +30,8 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
+import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.GameMapGui;
-import illarion.client.gui.TextureRenderImage;
 import illarion.client.gui.Tooltip;
 import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.input.*;
@@ -68,29 +68,67 @@ import javax.annotation.Nullable;
  */
 public final class GameMapHandler implements GameMapGui, ScreenController {
     /**
+     * This class is used as end operation to the dragging that started on the map. It takes care that the elements
+     * used
+     * to perform the dragging and cleaned up properly.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static final class GameMapDragEndOperation implements Runnable {
+        /**
+         * The element that is dragged around.
+         */
+        private final Element drag;
+
+        /**
+         * The element the dragged element needs to return to.
+         */
+        private final Element returnTo;
+
+        /**
+         * Create a new end of drag operation.
+         *
+         * @param draggedElement the dragged element
+         * @param returnToElement the element the dragged element needs to return to
+         */
+        GameMapDragEndOperation(Element draggedElement, Element returnToElement) {
+            drag = draggedElement;
+            returnTo = returnToElement;
+        }
+
+        /**
+         * Execute this operation.
+         */
+        @Override
+        public void run() {
+            drag.setVisible(false);
+            drag.markForMove(returnTo);
+        }
+    }
+
+    /**
      * The logging instance that handles the logging output of this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(GameMapHandler.class);
     @Nonnull
     private final Input input;
+
+    /**
+     * The Nifty-GUI instance that is handling the GUI display currently.
+     */
+    private Nifty activeNifty;
+
+    /**
+     * The screen that takes care for the display currently.
+     */
+    private Screen activeScreen;
+
     /**
      * This mouse event instance is used to initiate the dragging event.
      */
     @Nonnull
     private final NiftyMouseInputEvent mouseEvent;
-    /**
-     * The handler for the number selection popup.
-     */
-    private final NumberSelectPopupHandler numberSelect;
-    private final TooltipHandler tooltipHandler;
-    /**
-     * The Nifty-GUI instance that is handling the GUI display currently.
-     */
-    private Nifty activeNifty;
-    /**
-     * The screen that takes care for the display currently.
-     */
-    private Screen activeScreen;
+
     /**
      * The panel that is located on top of the game map. So this is the lowest located panel and the intended parent
      * for
@@ -98,21 +136,30 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      */
     @Nullable
     private Element gamePanel;
+
     /**
      * The element that is dragged around.
      */
     @Nullable
     private Element draggedGraphic;
+
     /**
      * The element that displays the image that is dragged around.
      */
-    @Nullable
     private Element draggedImage;
+
     /**
      * This operation is executed once a dragging operation is done.
      */
-    @Nullable
     private Runnable endOfDragOp;
+
+    /**
+     * The handler for the number selection popup.
+     */
+    private final NumberSelectPopupHandler numberSelect;
+
+    private final TooltipHandler tooltipHandler;
+
     private boolean followMouseWithPathFinding;
 
     /**
@@ -218,7 +265,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
 
             ImageRenderer imgRender = draggedImage.getRenderer(ImageRenderer.class);
             imgRender.setImage(
-                    new NiftyImage(activeNifty.getRenderEngine(), new TextureRenderImage(movedItem.getTemplate())));
+                    new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem.getTemplate())));
 
             gamePanel.layoutElements();
             input.disableForwarding(ForwardingTarget.Mouse);
@@ -329,52 +376,6 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         toggleRunMode();
     }
 
-    private boolean isShiftPressed() {
-        return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
-    }
-
-    @Override
-    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
-        activeNifty = nifty;
-        activeScreen = screen;
-        gamePanel = screen.findElementById("gamePanel");
-        draggedGraphic = gamePanel.findElementById("mapDragObject");
-        draggedImage = draggedGraphic.findElementById("mapDragImage");
-        endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
-    }
-
-    @Override
-    public void onStartScreen() {
-        activeNifty.subscribeAnnotations(this);
-        AnnotationProcessor.process(this);
-    }
-
-    @Override
-    public void onEndScreen() {
-        activeNifty.unsubscribeAnnotations(this);
-        AnnotationProcessor.unprocess(this);
-    }
-
-    @Override
-    public void showItemTooltip(@Nonnull ServerCoordinate location, int stackPosition, @Nonnull Tooltip tooltip) {
-        LOGGER.debug("Now showing tooltip for {} at stack position {}", location, stackPosition);
-        MapTile targetTile = World.getMap().getMapAt(location);
-        if (targetTile == null) {
-            return;
-        }
-
-        try {
-            Item targetItem = targetTile.getItem(stackPosition);
-
-            Rectangle originalDisplayRect = targetItem.getInteractionRect();
-            Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
-            fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
-            tooltipHandler.showToolTip(fixedRectangle, tooltip);
-        } catch (IndexOutOfBoundsException e) {
-            LOGGER.warn("Error while showing a tooltip: {}", e.getMessage());
-        }
-    }
-
     /**
      * Toggle the pulsing animation of the run button.
      */
@@ -401,42 +402,49 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         }
     }
 
-    /**
-     * This class is used as end operation to the dragging that started on the map. It takes care that the elements
-     * used
-     * to perform the dragging and cleaned up properly.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class GameMapDragEndOperation implements Runnable {
-        /**
-         * The element that is dragged around.
-         */
-        private final Element drag;
+    private boolean isShiftPressed() {
+        return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+    }
 
-        /**
-         * The element the dragged element needs to return to.
-         */
-        private final Element returnTo;
+    @Override
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
+        activeNifty = nifty;
+        activeScreen = screen;
+        gamePanel = screen.findElementById("gamePanel");
+        draggedGraphic = gamePanel.findElementById("mapDragObject");
+        draggedImage = draggedGraphic.findElementById("mapDragImage");
+        endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
+    }
 
-        /**
-         * Create a new end of drag operation.
-         *
-         * @param draggedElement the dragged element
-         * @param returnToElement the element the dragged element needs to return to
-         */
-        GameMapDragEndOperation(Element draggedElement, Element returnToElement) {
-            drag = draggedElement;
-            returnTo = returnToElement;
+    @Override
+    public void onEndScreen() {
+        activeNifty.unsubscribeAnnotations(this);
+        AnnotationProcessor.unprocess(this);
+    }
+
+    @Override
+    public void onStartScreen() {
+        activeNifty.subscribeAnnotations(this);
+        AnnotationProcessor.process(this);
+    }
+
+    @Override
+    public void showItemTooltip(@Nonnull ServerCoordinate location, int stackPosition, @Nonnull Tooltip tooltip) {
+        LOGGER.debug("Now showing tooltip for {} at stack position {}", location, stackPosition);
+        MapTile targetTile = World.getMap().getMapAt(location);
+        if (targetTile == null) {
+            return;
         }
 
-        /**
-         * Execute this operation.
-         */
-        @Override
-        public void run() {
-            drag.setVisible(false);
-            drag.markForMove(returnTo);
+        try {
+            Item targetItem = targetTile.getItem(stackPosition);
+
+            Rectangle originalDisplayRect = targetItem.getInteractionRect();
+            Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
+            fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
+            tooltipHandler.showToolTip(fixedRectangle, tooltip);
+        } catch (IndexOutOfBoundsException e) {
+            LOGGER.warn("Error while showing a tooltip: {}", e.getMessage());
         }
     }
 }

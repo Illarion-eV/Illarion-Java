@@ -54,12 +54,6 @@ public final class ConnectionPerformanceClock {
         reset();
     }
 
-    /**
-     * Private constructor to prevent instantiation
-     */
-    private ConnectionPerformanceClock(){
-    }
-
     public static boolean isReadyForNewPing() {
         if (lastSendToNetComm == -1) {
             return true;

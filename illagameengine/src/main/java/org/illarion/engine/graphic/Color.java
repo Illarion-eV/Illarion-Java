@@ -48,11 +48,6 @@ public class Color {
     public static final ImmutableColor RED = new ImmutableColor(1.f, 0.f, 0.f);
 
     /**
-     * A fully opaque blue color. This color is immutable.
-     */
-    public static final ImmutableColor Blue = new ImmutableColor(0.25f, 0.65f, 1.f);
-
-    /**
      * A fully opaque yellow color. This color is immutable.
      */
     public static final ImmutableColor YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
@@ -158,19 +153,6 @@ public class Color {
         green += color.green;
         blue += color.blue;
         alpha += color.alpha;
-    }
-
-    /**
-     * Get this color as a immutable copy.
-     * <p>
-     * The returned instance is not a wrapper that changes if this color is changed. It is a actual copy of the current
-     * value of the color.
-     *
-     * @return a immutable copy of this color.
-     */
-    @Nonnull
-    public ImmutableColor getImmutableCopy() {
-        return new ImmutableColor(this);
     }
 
     /**
@@ -381,10 +363,16 @@ public class Color {
         alpha = FastMath.clamp(alpha, 0, MAX_INT_VALUE);
     }
 
+    @Override
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof Color) && equals((Color) obj);
+    }
+
     @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable Color color) {
         return (color != null) && (red == color.red) && (green == color.green) && (blue == color.blue) &&
-               (alpha == color.alpha);
+                (alpha == color.alpha);
     }
 
     @Override
@@ -395,12 +383,6 @@ public class Color {
         result = (31 * result) + green;
         result = (31 * result) + red;
         return result;
-    }
-
-    @Override
-    @Contract(value = "null->false", pure = true)
-    public boolean equals(@Nullable Object obj) {
-        return (obj instanceof Color) && equals((Color) obj);
     }
 
     @Override

@@ -15,6 +15,8 @@
  */
 package illarion.client.world;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+import illarion.client.Login;
 import illarion.client.gui.DialogType;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.util.ChatLog;
@@ -38,7 +40,9 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -58,13 +62,13 @@ public final class Player {
      * The key in the configuration for the sound on/off flag.
      */
     @Nonnull
-    public static final String CFG_SOUND_ON = "soundOn"; //$NON-NLS-1$
+    private static final String CFG_SOUND_ON = "soundOn"; //$NON-NLS-1$
 
     /**
      * The key in the configuration for the sound volume value.
      */
     @Nonnull
-    public static final String CFG_SOUND_VOL = "soundVolume"; //$NON-NLS-1$
+    private static final String CFG_SOUND_VOL = "soundVolume"; //$NON-NLS-1$
 
     /**
      * Average value for the perception attribute.
@@ -93,58 +97,76 @@ public final class Player {
      */
     @Nonnull
     private final Inventory inventory;
-    /**
-     * The player movement handler that takes care that the player character is walking around.
-     */
-    @Nonnull
-    private final Movement movementHandler;
-    /**
-     * The path to the folder of character specific stuff, like the map or the names table.
-     */
-    @Nonnull
-    private final Path path;
-    /**
-     * The instance of the combat handler that maintains the attack targets of this player.
-     */
-    @Nonnull
-    private final CombatHandler combatHandler;
-    /**
-     * This map contains the containers that are known for the player.
-     */
-    @Nonnull
-    @GuardedBy("containerLock")
-    private final Map<Integer, ItemContainer> containers;
-    /**
-     * This lock is used to synchronize the access on the containers.
-     */
-    @Nonnull
-    private final ReadWriteLock containerLock;
-    /**
-     * The chat log instance that takes care for logging the text that is spoken in the game.
-     */
-    @Nonnull
-    private final ChatLog chatLog;
-    @Nonnull
-    private final CarryLoad carryLoad;
+
     /**
      * The current location of the server map for the player.
      */
     @Nullable
     private ServerCoordinate playerLocation;
+
+    /**
+     * The player movement handler that takes care that the player character is walking around.
+     */
+    @Nonnull
+    private final Movement movementHandler;
+
+    /**
+     * The path to the folder of character specific stuff, like the map or the names table.
+     */
+    @Nonnull
+    private final Path path;
+
     /**
      * The character ID of the player.
      */
     @Nullable
     private CharacterId playerId;
+
     /**
      * This flag is changed to {@code true} once the location of the player was set once.
      */
     private boolean validLocation;
+
+    /**
+     * The instance of the combat handler that maintains the attack targets of this player.
+     */
+    @Nonnull
+    private final CombatHandler combatHandler;
+
+    /**
+     * This map contains the containers that are known for the player.
+     */
+    @Nonnull
+    @GuardedBy("containerLock")
+    private final TIntObjectHashMap<ItemContainer> containers;
+
+    /**
+     * This lock is used to synchronize the access on the containers.
+     */
+    @Nonnull
+    private final ReadWriteLock containerLock;
+
     /**
      * The merchant dialog that is currently open.
      */
     @Nullable
     private MerchantList merchantDialog;
+
+    /**
+     * The chat log instance that takes care for logging the text that is spoken in the game.
+     */
+    @Nonnull
+    private final ChatLog chatLog;
+
+    @Nonnull
+    private final CarryLoad carryLoad;
+
+    /**
+     * Constructor for the player that receives the character name from the login data automatically.
+     */
+    public Player(@Nonnull Engine engine) {
+        this(engine, Login.getInstance().getLoginCharacter());
+    }
 
     /**
      * Default constructor for the player.
@@ -173,26 +195,22 @@ public final class Player {
         combatHandler = new CombatHandler();
         movementHandler = new Movement(this, engine.getInput(), World.getMapDisplay());
         inventory = new Inventory();
-        containers = new HashMap<>();
+        containers = new TIntObjectHashMap<>();
         containerLock = new ReentrantReadWriteLock();
     }
 
-    public void openMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Collection<MerchantItem> items) {
-        MerchantList list = new MerchantList(dialogId);
-        items.forEach(list::addItem);
-
-        MerchantList oldList = merchantDialog;
-        merchantDialog = list;
-
-        if (oldList != null) {
-            closeDialog(oldList.getId(), EnumSet.of(DialogType.Merchant));
+    /**
+     * Remove a container that is assigned to a specified key. This also removes the container from the GUI.
+     *
+     * @param id the key of the parameter to remove
+     */
+    public void removeContainer(int id) {
+        synchronized (containers) {
+            if (containers.containsKey(id)) {
+                containers.remove(id);
+            }
         }
-
-        if (World.getGameGui().isReady()) {
-            World.getGameGui().getDialogMerchantGui().showMerchantDialog(dialogId, title, items);
-            World.getGameGui().getContainerGui().updateMerchantOverlay();
-            World.getGameGui().getInventoryGui().updateMerchantOverlay();
-        }
+        World.getGameGui().getContainerGui().closeContainer(id);
     }
 
     public void closeDialog(int dialogId, @Nonnull Collection<DialogType> dialogTypes) {
@@ -210,6 +228,24 @@ public final class Player {
 
         if (World.getGameGui().isReady()) {
             World.getGameGui().getDialogGui().closeDialog(dialogId, dialogTypes);
+        }
+    }
+
+    public void openMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Collection<MerchantItem> items) {
+        MerchantList list = new MerchantList(dialogId);
+        items.forEach(list::addItem);
+
+        MerchantList oldList = merchantDialog;
+        merchantDialog = list;
+
+        if (oldList != null) {
+            closeDialog(oldList.getId(), EnumSet.of(DialogType.Merchant));
+        }
+
+        if (World.getGameGui().isReady()) {
+            World.getGameGui().getDialogMerchantGui().showMerchantDialog(dialogId, title, items);
+            World.getGameGui().getContainerGui().updateMerchantOverlay();
+            World.getGameGui().getInventoryGui().updateMerchantOverlay();
         }
     }
 
@@ -265,20 +301,6 @@ public final class Player {
     }
 
     /**
-     * Remove a container that is assigned to a specified key. This also removes the container from the GUI.
-     *
-     * @param id the key of the parameter to remove
-     */
-    public void removeContainer(int id) {
-        synchronized (containers) {
-            if (containers.containsKey(id)) {
-                containers.remove(id);
-            }
-        }
-        World.getGameGui().getContainerGui().closeContainer(id);
-    }
-
-    /**
      * Create a new item container instance.
      *
      * @param id the ID of the container
@@ -324,6 +346,17 @@ public final class Player {
     }
 
     /**
+     * Get the instance of the combat handler.
+     *
+     * @return the combat handler of this player
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public CombatHandler getCombatHandler() {
+        return combatHandler;
+    }
+
+    /**
      * Get the inventory of the player.
      *
      * @return the player inventory
@@ -346,6 +379,161 @@ public final class Player {
             throw new IllegalStateException("The location of the player is not yet set.");
         }
         return playerLocation;
+    }
+
+    /**
+     * Get the movement handler of the player character that allows controls the movement of the player.
+     *
+     * @return the movement handler
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public Movement getMovementHandler() {
+        return movementHandler;
+    }
+
+    /**
+     * Get the path to the player directory.
+     *
+     * @return The path to the player directory
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public Path getPath() {
+        return path;
+    }
+
+    /**
+     * Get the merchant list.
+     *
+     * @return the merchant list
+     */
+    @Nullable
+    @Contract(pure = true)
+    public MerchantList getMerchantList() {
+        return merchantDialog;
+    }
+
+    /**
+     * Get the current ID of the players character.
+     *
+     * @return The ID of the player character
+     */
+    @Nullable
+    @Contract(pure = true)
+    public CharacterId getPlayerId() {
+        return playerId;
+    }
+
+    /**
+     * Check if a location is at the same level as the player.
+     *
+     * @param checkLoc The location that shall be checked
+     * @return true if the location is at the same level as the player
+     */
+    @Contract(pure = true)
+    boolean isBaseLevel(@Nonnull ServerCoordinate checkLoc) {
+        return (playerLocation != null) && (playerLocation.getZ() == checkLoc.getZ());
+    }
+
+    /**
+     * Check how good the player character is able to see the target character.
+     *
+     * @param chara The character that is checked
+     * @return the visibility of the character in percent
+     */
+    @Contract(pure = true)
+    public float canSee(@Nonnull Char chara) {
+        if (isPlayer(chara.getCharId())) {
+            return Char.VISIBILITY_MAX;
+        }
+        MapTile tile = World.getMap().getMapAt(chara.getVisibleLocation());
+        if ((tile == null) || tile.isHidden()) {
+            return 0;
+        }
+        return Char.VISIBILITY_MAX;
+    }
+
+    /**
+     * Check if a ID is the ID of the player.
+     *
+     * @param checkId the ID to be checked
+     * @return true if it is the player, false if not
+     */
+    @Contract(value = "null -> false", pure = true)
+    public boolean isPlayer(@Nullable CharacterId checkId) {
+        return (playerId != null) && playerId.equals(checkId);
+    }
+
+    /**
+     * Check if the player is setup and ready.
+     * <p />
+     * As long as this returns {@code false}, the player did not receive it's ID yet.
+     *
+     * @return {@code true} in case the player is properly set up.
+     */
+    @Contract(pure = true)
+    public boolean isPlayerIdSet() {
+        return playerId != null;
+    }
+
+
+    /**
+     * Check if the location of the character is set.
+     *
+     * @return {@code true} in case the location is set.
+     */
+    @Contract(pure = true)
+    public boolean isLocationSet() {
+        return playerLocation != null;
+    }
+
+    /**
+     * Get the map level the player character is currently standing on.
+     *
+     * @return The level the player character is currently standing on
+     */
+    @Contract(pure = true)
+    public int getBaseLevel() {
+        return playerLocation == null ? 0 : playerLocation.getZ();
+    }
+
+    /**
+     * Check if there is currently a merchant list active.
+     *
+     * @return {@code true} in case a merchant list is active
+     */
+    @Contract(pure = true)
+    public boolean hasMerchantList() {
+        return merchantDialog != null;
+    }
+
+    @Contract(pure = true)
+    public boolean hasValidLocation() {
+        return validLocation;
+    }
+
+    /**
+     * Check of a position in server coordinates is on the screen of the player.
+     *
+     * @param testLoc The location that shall be checked.
+     * @param tolerance an additional tolerance added to the default clipping distance
+     * @return true if the position is within the clipping distance and the tolerance
+     */
+    @Contract(pure = true)
+    public boolean isOnScreen(@Nonnull ServerCoordinate testLoc, int tolerance) {
+        if (playerLocation == null) {
+            throw new IllegalStateException("The player location is not yet set.");
+        }
+        if (Math.abs(testLoc.getZ() - playerLocation.getZ()) > 2) {
+            return false;
+        }
+        int width = MapDimensions.getInstance().getStripesWidth() >> 1;
+        int height = MapDimensions.getInstance().getStripesHeight() >> 1;
+        int limit = (Math.max(width, height) + tolerance) - 2;
+
+        return (Math.abs(playerLocation.getX() - testLoc.getX()) +
+                Math.abs(playerLocation.getY() - testLoc.getY())) < limit;
     }
 
     /**
@@ -415,61 +603,6 @@ public final class Player {
     }
 
     /**
-     * Get the instance of the combat handler.
-     *
-     * @return the combat handler of this player
-     */
-    @Nonnull
-    @Contract(pure = true)
-    public CombatHandler getCombatHandler() {
-        return combatHandler;
-    }
-
-    /**
-     * Get the movement handler of the player character that allows controls the movement of the player.
-     *
-     * @return the movement handler
-     */
-    @Nonnull
-    @Contract(pure = true)
-    public Movement getMovementHandler() {
-        return movementHandler;
-    }
-
-    /**
-     * Get the path to the player directory.
-     *
-     * @return The path to the player directory
-     */
-    @Nonnull
-    @Contract(pure = true)
-    public Path getPath() {
-        return path;
-    }
-
-    /**
-     * Get the merchant list.
-     *
-     * @return the merchant list
-     */
-    @Nullable
-    @Contract(pure = true)
-    public MerchantList getMerchantList() {
-        return merchantDialog;
-    }
-
-    /**
-     * Get the current ID of the players character.
-     *
-     * @return The ID of the player character
-     */
-    @Nullable
-    @Contract(pure = true)
-    public CharacterId getPlayerId() {
-        return playerId;
-    }
-
-    /**
      * Set the ID of the players character. This also causes a introducing of the player character to the rest of the
      * client, so the Chat box for example is able to show the name of the character without additional affords.
      *
@@ -480,116 +613,6 @@ public final class Player {
         character.setCharId(playerId);
 
         World.getNet().sendCommand(new RequestAppearanceCmd(newPlayerId));
-    }
-
-    /**
-     * Check if a location is at the same level as the player.
-     *
-     * @param checkLoc The location that shall be checked
-     * @return true if the location is at the same level as the player
-     */
-    @Contract(pure = true)
-    boolean isBaseLevel(@Nonnull ServerCoordinate checkLoc) {
-        return (playerLocation != null) && (playerLocation.getZ() == checkLoc.getZ());
-    }
-
-    /**
-     * Check how good the player character is able to see the target character.
-     *
-     * @param chara The character that is checked
-     * @return the visibility of the character in percent
-     */
-    @Contract(pure = true)
-    public float canSee(@Nonnull Char chara) {
-        if (isPlayer(chara.getCharId())) {
-            return Char.VISIBILITY_MAX;
-        }
-        MapTile tile = World.getMap().getMapAt(chara.getVisibleLocation());
-        if ((tile == null) || tile.isHidden()) {
-            return 0;
-        }
-        return Char.VISIBILITY_MAX;
-    }
-
-    /**
-     * Check if a ID is the ID of the player.
-     *
-     * @param checkId the ID to be checked
-     * @return true if it is the player, false if not
-     */
-    @Contract(value = "null -> false", pure = true)
-    public boolean isPlayer(@Nullable CharacterId checkId) {
-        return (playerId != null) && playerId.equals(checkId);
-    }
-
-    /**
-     * Check if the player is setup and ready.
-     * <p />
-     * As long as this returns {@code false}, the player did not receive it's ID yet.
-     *
-     * @return {@code true} in case the player is properly set up.
-     */
-    @Contract(pure = true)
-    public boolean isPlayerIdSet() {
-        return playerId != null;
-    }
-
-    /**
-     * Check if the location of the character is set.
-     *
-     * @return {@code true} in case the location is set.
-     */
-    @Contract(pure = true)
-    public boolean isLocationSet() {
-        return playerLocation != null;
-    }
-
-    /**
-     * Get the map level the player character is currently standing on.
-     *
-     * @return The level the player character is currently standing on
-     */
-    @Contract(pure = true)
-    public int getBaseLevel() {
-        return playerLocation == null ? 0 : playerLocation.getZ();
-    }
-
-    /**
-     * Check if there is currently a merchant list active.
-     *
-     * @return {@code true} in case a merchant list is active
-     */
-    @Contract(pure = true)
-    public boolean hasMerchantList() {
-        return merchantDialog != null;
-    }
-
-    @Contract(pure = true)
-    public boolean hasValidLocation() {
-        return validLocation;
-    }
-
-    /**
-     * Check of a position in server coordinates is on the screen of the player.
-     *
-     * @param testLoc The location that shall be checked.
-     * @param tolerance an additional tolerance added to the default clipping distance
-     * @return true if the position is within the clipping distance and the tolerance
-     */
-    @Contract(pure = true)
-    public boolean isOnScreen(@Nonnull ServerCoordinate testLoc, int tolerance) {
-        if (playerLocation == null) {
-            throw new IllegalStateException("The player location is not yet set.");
-        }
-        if (Math.abs(testLoc.getZ() - playerLocation.getZ()) > 2) {
-            return false;
-        }
-        int width = MapDimensions.getInstance().getStripesWidth() >> 1;
-        int height = MapDimensions.getInstance().getStripesHeight() >> 1;
-        int limit = (Math.max(width, height) + tolerance) - 2;
-
-        return (Math.abs(playerLocation.getX() - testLoc.getX()) +
-                Math.abs(playerLocation.getY() - testLoc.getY())) < limit;
     }
 
     /**
