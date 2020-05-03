@@ -192,6 +192,8 @@ public final class CombatHandler {
      * @param character the character that is now attacked
      */
     public void setAttackTarget(@Nonnull Char character) {
+        // Disable chat box to allow proper movement. Does not clear input.
+        World.getGameGui().getChatGui().deactivateChatBox(false);
         if (isAttacking(character) || isGoingToAttack(character)) {
             return;
         }

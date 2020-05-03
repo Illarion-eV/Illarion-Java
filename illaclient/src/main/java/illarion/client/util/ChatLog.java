@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Class to handle the logging of the Chat in the game to the logfile.
@@ -95,7 +96,7 @@ public final class ChatLog {
         loggerWorking = true;
 
         // add a entry of the staring logging session to the logfile.
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
 
         logger.info("");
         logger.info("{} - {}", Lang.getMsg("log.newSession"), sdf.format(new Date()));

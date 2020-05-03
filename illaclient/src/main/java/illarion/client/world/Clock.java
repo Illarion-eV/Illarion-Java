@@ -84,11 +84,6 @@ public final class Clock {
         return getDay() + (getTotalHour() / 24.0) + ((month - 1) * 24);
     }
 
-    @Contract(pure = true)
-    public double getTotalDay() {
-        return getDay() + (getTotalHour() / 24.0);
-    }
-
     /**
      * Get the current day.
      *
@@ -97,26 +92,6 @@ public final class Clock {
     @Contract(pure = true)
     public int getDay() {
         return day;
-    }
-
-    /**
-     * Get the current month.
-     *
-     * @return the current month
-     */
-    @Contract(pure = true)
-    public int getMonth() {
-        return month;
-    }
-
-    /**
-     * Get the current year.
-     *
-     * @return the current year
-     */
-    @Contract(pure = true)
-    public int getYear() {
-        return year;
     }
 
     @Contract(pure = true)
@@ -141,6 +116,17 @@ public final class Clock {
     }
 
     /**
+     * Get the amount of seconds in Illarion Time that did pass since the last time the synchronization was applied.
+     *
+     * @return the elapsed time in Illarion seconds
+     */
+    @Contract(pure = true)
+    private long getIllaSecondPass() {
+        float secondsPass = (System.currentTimeMillis() - lastSync) / 1000.f;
+        return (long) (secondsPass * 3L);
+    }
+
+    /**
      * Get the current minute.
      *
      * @return the current minute
@@ -161,14 +147,35 @@ public final class Clock {
         return (int) (getIllaSecondPass() % 60);
     }
 
+    @Contract(pure = true)
+    public double getTotalDay() {
+        return getDay() + (getTotalHour() / 24.0);
+    }
+
+    @Override
+    @Contract(pure = true)
+    public String toString() {
+        return "Date: " + getDay() + ". " + getMonth() + ' ' + getYear() + " Time: " + getHour() + ':' + getMinute()
+                + ':' + getSecond();
+    }
+
     /**
-     * Get the amount of seconds in Illarion Time that did pass since the last time the synchronization was applied.
+     * Get the current month.
      *
-     * @return the elapsed time in Illarion seconds
+     * @return the current month
      */
     @Contract(pure = true)
-    private long getIllaSecondPass() {
-        float secondsPass = (System.currentTimeMillis() - lastSync) / 1000.f;
-        return (long) (secondsPass * 3L);
+    public int getMonth() {
+        return month;
+    }
+
+    /**
+     * Get the current year.
+     *
+     * @return the current year
+     */
+    @Contract(pure = true)
+    public int getYear() {
+        return year;
     }
 }

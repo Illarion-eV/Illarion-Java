@@ -43,6 +43,7 @@
     <useStyles filename="tab/illarion-tab.xml"/>
     <useStyles filename="dialog/illarion-dialog-crafting.xml"/>
     <useStyles filename="dialog/illarion-dialog-input.xml"/>
+    <useStyles filename="dialog/illarion-dialog-character.xml"/>
     <useStyles filename="dialog/illarion-dialog-merchant.xml"/>
     <useStyles filename="dialog/illarion-dialog-select.xml"/>
     <useStyles filename="tooltip/illarion-tooltip.xml"/>

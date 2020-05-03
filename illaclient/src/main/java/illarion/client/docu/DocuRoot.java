@@ -78,6 +78,7 @@ public final class DocuRoot implements Iterable<DocuEntry> {
         docu.addChild("ShiftF");
         docu.addChild("cKey");
         docu.addChild("iKey");
+        docu.addChild("mKey");
         docu.addChild("pKey");
         docu.addChild("qKey");
         docu.addChild("bKey");

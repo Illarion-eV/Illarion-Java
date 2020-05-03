@@ -15,9 +15,14 @@
  */
 package illarion.client.net.server;
 
+import de.lessvoid.nifty.Nifty;
+import illarion.client.gui.ChatGui;
+import illarion.client.gui.controller.game.DialogHandler;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +47,7 @@ public final class LookAtCharMsg implements ServerReply {
     /**
      * The ID of the character the look at text is related to.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The text that is the look at result.
@@ -52,14 +57,23 @@ public final class LookAtCharMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
         text = reader.readString();
     }
 
     @Nonnull
     @Override
     public ServerReplyResult execute() {
-        log.warn("Received a look at char message for some reason for {} with the text {}", charId, text);
+        log.warn("Executing a look at char message for {} with the text {}", charId, text);
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+        if (text.isEmpty()){
+            text = "No description received from the server.";
+        }
+        World.getUpdateTaskManager().addTaskForLater(
+                (container1, delta1) -> World.getGameGui().getDialogInputGui().showCharacterDialog(charId, text));
         return ServerReplyResult.Success;
     }
 

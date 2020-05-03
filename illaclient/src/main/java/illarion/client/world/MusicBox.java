@@ -15,20 +15,16 @@
  */
 package illarion.client.world;
 
-import illarion.client.IllaClient;
 import illarion.client.resources.SongFactory;
-import illarion.common.config.Config;
-import illarion.common.config.ConfigChangedEvent;
+import illarion.client.util.AudioPlayer;
 import illarion.common.util.Stoppable;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -39,7 +35,8 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public final class MusicBox implements Stoppable {
+public final class MusicBox implements Stoppable{
+
     /**
      * The ID of the combat music.
      */
@@ -70,6 +67,9 @@ public final class MusicBox implements Stoppable {
     @Nonnull
     private final Engine engine;
 
+    @Nonnull
+    private final AudioPlayer audioPlayer;
+
     /**
      * This is the constructor that prepares this class for proper operation.
      */
@@ -77,48 +77,12 @@ public final class MusicBox implements Stoppable {
         this.engine = engine;
         overrideSoundId = NO_TRACK;
         currentDefaultTrack = NO_TRACK;
-
+        audioPlayer = AudioPlayer.getInstance();
+        audioPlayer.initAudioPlayer(engine.getSounds());
         AnnotationProcessor.process(this);
-        updateSettings(null, IllaClient.getCfg());
     }
 
-    private void updateSettings(@Nullable String setting, @Nonnull Config cfg) {
-        if ((setting == null) || "musicOn".equals(setting)) {
-            boolean musicEnabled = cfg.getBoolean("musicOn");
-            if (musicEnabled) {
-                float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
-                engine.getSounds().setMusicVolume(musicVolume);
-            } else {
-                engine.getSounds().setMusicVolume(0.f);
-            }
-        }
-        if ((setting == null) || "musicVolume".equals(setting)) {
-            float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
-            if (IllaClient.getCfg().getBoolean("musicOn")) {
-                engine.getSounds().setMusicVolume(musicVolume);
-            }
-        }
-        if ((setting == null) || "soundOn".equals(setting)) {
-            boolean soundEnabled = cfg.getBoolean("soundOn");
-            if (soundEnabled) {
-                float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
-                engine.getSounds().setSoundVolume(soundVolume);
-            } else {
-                engine.getSounds().setSoundVolume(0.f);
-            }
-        }
-        if ((setting == null) || "soundVolume".equals(setting)) {
-            float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
-            if (IllaClient.getCfg().getBoolean("soundOn")) {
-                engine.getSounds().setSoundVolume(soundVolume);
-            }
-        }
-    }
 
-    @EventTopicPatternSubscriber(topicPattern = "((music)|(sound))((On)|(Volume))")
-    public void onUpdateSoundMusicConfig(@Nonnull String topic, @Nonnull ConfigChangedEvent data) {
-        updateSettings(topic, data.getConfig());
-    }
 
     /**
      * Play the default music now that is set by the tile the player is standing on.
@@ -141,7 +105,7 @@ public final class MusicBox implements Stoppable {
 
     @Override
     public void saveShutdown() {
-        engine.getSounds().stopMusic(0);
+        audioPlayer.stopMusic();
     }
 
     /**
@@ -159,7 +123,7 @@ public final class MusicBox implements Stoppable {
         currentMusicId = id;
 
         if (id == NO_TRACK) {
-            engine.getSounds().stopMusic(500);
+            audioPlayer.stopMusic();
             return;
         }
 
@@ -168,7 +132,7 @@ public final class MusicBox implements Stoppable {
             log.error("Requested music was not found: {}", id);
             return;
         }
-        engine.getSounds().playMusic(currentMusic, 250, 250);
+        audioPlayer.playMusic(currentMusic);
     }
 
     /**
