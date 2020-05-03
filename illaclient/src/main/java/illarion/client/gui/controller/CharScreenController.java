@@ -165,7 +165,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         }
 
         Login.getInstance().setLoginCharacter(listBox.getSelection().get(0));
-        game.enterState(Game.STATE_LOADING);
+        game.enterState(Game.STATE_PLAYING);
     }
 
     public void logout() {

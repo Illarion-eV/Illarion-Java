@@ -42,6 +42,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -92,7 +94,13 @@ public final class MapEditor {
      * @param args the argument of the system call
      */
     public static void main(String... args) {
-        initLogging();
+        try {
+            initLogging();
+        } catch (IOException e) {
+            System.err.println("Failed to setup logging system!");
+            e.printStackTrace(System.err);
+        }
+
         MapEditorConfig.getInstance().init();
         initExceptionHandler();
 
@@ -144,23 +152,40 @@ public final class MapEditor {
     /**
      * Prepare the proper output of the log files.
      */
-    private static void initLogging() {
-        System.out.println("Startup done.");
+    @SuppressWarnings("Duplicates")
+    private static void initLogging() throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
         Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
+        if (!Files.isDirectory(userDir)) {
+            if (Files.exists(userDir)) {
+                Files.delete(userDir);
+            }
+            Files.createDirectories(userDir);
+        }
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         ContextInitializer ci = new ContextInitializer(lc);
-        lc.reset();
         try {
-            ci.autoConfig();
-        } catch (JoranException e) {
-            e.printStackTrace();
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            URL resource = cl.getResource("logback-to-file.xml");
+            if (resource != null) {
+                ci.configureByResource(resource);
+            }
+        } catch (JoranException ignored) {
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+
+        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
+
+        //noinspection UseOfSystemOutOrSystemErr
+        System.out.println("Startup done.");
+        LOGGER.info("{} started.", APPLICATION.getApplicationIdentifier());
+        LOGGER.info("VM: {}", System.getProperty("java.version"));
+        LOGGER.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
+                System.getProperty("os.arch"));
     }
 }

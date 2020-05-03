@@ -40,7 +40,7 @@ public class MyMemoryProviderTest {
         }
         String translation = provider.getTranslation("Hallo!", TranslationDirection.GermanToEnglish);
 
-        assertEquals(translation, "Hello!", "Translation service is not yielding the expected result.");
+        assertEquals(translation, "Hi!", "Translation service is not yielding the expected result.");
     }
 
     @Test

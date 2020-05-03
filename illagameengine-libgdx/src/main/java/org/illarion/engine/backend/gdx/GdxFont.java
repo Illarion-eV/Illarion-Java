@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package org.illarion.engine.backend.gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.Glyph;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.utils.Pools;
 import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
@@ -61,7 +62,8 @@ class GdxFont implements Font {
 
     @Override
     public int getWidth(@Nonnull CharSequence text) {
-        GlyphLayout layout = new GlyphLayout();
+        if (text.length() == 0) { return 0; }
+        GlyphLayout layout = Pools.obtain(GlyphLayout.class);
         layout.setText(bitmapFont, text);
         float width = layout.width;
         BitmapFont outlineBitmapFont = getOutlineBitmapFont();
@@ -69,6 +71,7 @@ class GdxFont implements Font {
             layout.setText(outlineBitmapFont, text);
             width = Math.max(width, layout.width);
         }
+        Pools.free(layout);
         return (int) width;
     }
 
@@ -81,6 +84,14 @@ class GdxFont implements Font {
         return currentGlyph.getKerning(next) + currentGlyph.xadvance;
     }
 
+    @Nullable
+    BitmapFont getOutlineBitmapFont() {
+        if (outlineFont != null) {
+            return outlineFont.getBitmapFont();
+        }
+        return null;
+    }
+
     /**
      * Get the internal bitmap font.
      *
@@ -89,13 +100,5 @@ class GdxFont implements Font {
     @Nonnull
     BitmapFont getBitmapFont() {
         return bitmapFont;
-    }
-
-    @Nullable
-    BitmapFont getOutlineBitmapFont() {
-        if (outlineFont != null) {
-            return outlineFont.getBitmapFont();
-        }
-        return null;
     }
 }

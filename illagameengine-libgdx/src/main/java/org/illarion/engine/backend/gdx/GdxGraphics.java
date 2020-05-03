@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -38,89 +39,77 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class GdxGraphics implements Graphics {
+    @Nonnull
+    private static final float[] FLT_BUFFER = new float[20];
     /**
      * The libGDX graphics instance that is used to display the graphics.
      */
     @Nonnull
     private final com.badlogic.gdx.Graphics gdxGraphics;
-
     /**
      * The sprite batch used to perform the batch rendering.
      */
     @Nonnull
     private final SpriteBatch spriteBatch;
-
     /**
      * This is a temporary color that is used only to transfer data to the libGDX functions.
      */
     @Nonnull
     private final com.badlogic.gdx.graphics.Color tempColor1;
-
     /**
      * This is a temporary color that is used only to transfer data to the libGDX functions.
      */
     @Nonnull
     private final com.badlogic.gdx.graphics.Color tempColor2;
-
     /**
      * This is a temporary color that is used only to transfer data to the libGDX functions.
      */
     @Nonnull
     private final com.badlogic.gdx.graphics.Color tempColor3;
-
     /**
      * This is a temporary color that is used only to transfer data to the libGDX functions.
      */
     @Nonnull
     private final com.badlogic.gdx.graphics.Color tempColor4;
-
     /**
      * The shape renderer used to draw primitive shapes.
      */
     @Nonnull
     private final ShapeRenderer shapeRenderer;
-
     /**
      * This is a temporary texture region instance that is used for some calculations.
      */
     @Nonnull
     private final TextureRegion tempRegion;
-
     /**
      * A temporary rectangle used for some calculations.
      */
     @Nonnull
     private final Rectangle tempEngineRectangle;
-
     /**
      * The camera that views the scene.
      */
     @Nonnull
     private final OrthographicCamera camera;
-
-    /**
-     * The blank background texture used to render rectangles.
-     */
-    @Nullable
-    private Texture blankBackground;
-
     /**
      * The engine implementation used for the rendering.
      */
     @Nonnull
     private final GdxEngine engine;
-
+    /**
+     * The blank background texture used to render rectangles.
+     */
+    @Nullable
+    private Texture blankBackground;
     /**
      * This flag is set {@code true} in case the sprite batch rendering is currently activated.
      */
     private boolean spriteBatchActive;
-
     /**
      * The blending mode that was applied last.
      */
     @Nullable
     private BlendingMode lastBlendingMode;
-
     /**
      * This is set {@code true} in case the clipping is activated.
      */
@@ -153,6 +142,14 @@ class GdxGraphics implements Graphics {
         return spriteBatch;
     }
 
+    void setCursor(@Nullable GdxCursor cursor) {
+        if (cursor == null) {
+            gdxGraphics.setSystemCursor(SystemCursor.Arrow);
+        } else {
+            gdxGraphics.setCursor(cursor.getGdxCursor());
+        }
+    }
+
     /**
      * This function needs to be called before all rendering operations of a frame. It will setup the render system.
      */
@@ -169,61 +166,11 @@ class GdxGraphics implements Graphics {
         }
     }
 
-    private void activateSpriteBatch() {
-        if (spriteBatchActive) {
-            return;
-        }
-
-        if (shapeRenderer.getCurrentType() != null) {
-            shapeRenderer.end();
-        }
-        spriteBatch.begin();
-        spriteBatchActive = true;
-    }
-
-    private void activateShapeRenderer() {
-        if (shapeRenderer.getCurrentType() != null) {
-            return;
-        }
-        if (spriteBatchActive) {
-            spriteBatch.end();
-            spriteBatchActive = false;
-        }
-
-        GL20 gl20 = gdxGraphics.getGL20();
-        gl20.glEnable(GL20.GL_BLEND);
-        assert lastBlendingMode != null;
-        switch (lastBlendingMode) {
-            case AlphaBlend:
-                gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-                break;
-            case Multiply:
-                gl20.glBlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
-                break;
-        }
-        shapeRenderer.begin(ShapeType.Filled);
-    }
-
     /**
-     * This function needs to be called after rendering a frame.
+     * Reset any global offset applied.
      */
-    void endFrame() {
-        flushAll();
-        unsetClippingArea();
-    }
-
-    /**
-     * Stops the render operation of both the shape renderer and the sprite batch renderer to ensure that the
-     * buffered data is flushed to the screen.
-     */
-    public void flushAll() {
-        if (shapeRenderer.getCurrentType() != null) {
-            shapeRenderer.end();
-        }
-        if (spriteBatchActive) {
-            spriteBatch.end();
-            spriteBatchActive = false;
-        }
+    void resetOffset() {
+        applyOffset(0, 0);
     }
 
     @Override
@@ -284,8 +231,8 @@ class GdxGraphics implements Graphics {
                 usedEffect.activateEffect(spriteBatch);
             }
             spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(), (float) centerTransX,
-                             (float) centerTransY, tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(), 1.f,
-                             1.f, (float) rotation);
+                    (float) centerTransY, tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(), 1.f,
+                    1.f, (float) rotation);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
@@ -293,8 +240,16 @@ class GdxGraphics implements Graphics {
         }
     }
 
-    @Nonnull
-    private static final float[] FLT_BUFFER = new float[20];
+    /**
+     * Transfer the color values from a game engine color instance to a libGDX color instance.
+     *
+     * @param source the engine color instance that is the source of the color data
+     * @param target the libGDX color instance that is the target of the color data
+     */
+    static void transferColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color target) {
+        target.set(source.getRedf(), source.getGreenf(), source.getBluef(), source.getAlphaf());
+        target.clamp();
+    }
 
     @Override
     public void drawTileSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color topColor,
@@ -436,22 +391,6 @@ class GdxGraphics implements Graphics {
         drawText(font, text, color, x, y, 1.f, 1.f);
     }
 
-    /**
-     * Transfer the color values from a game engine color instance to a libGDX color instance.
-     *
-     * @param source the engine color instance that is the source of the color data
-     * @param target the libGDX color instance that is the target of the color data
-     */
-    static void transferColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color target) {
-        target.set(source.getRedf(), source.getGreenf(), source.getBluef(), source.getAlphaf());
-        target.clamp();
-    }
-
-    private float getFloatColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color workingInstance) {
-        transferColor(source, workingInstance);
-        return workingInstance.toFloatBits();
-    }
-
     @Override
     public void drawText(
             @Nonnull Font font,
@@ -485,9 +424,11 @@ class GdxGraphics implements Graphics {
                 float widthOffset = (layout.width - outlineLayout.width) / 2.f;
 
                 outlineFont.draw(spriteBatch, outlineLayout, x + widthOffset, y - outlineFont.getAscent());
+                Pools.free(outlineLayout);
             }
 
             bitmapFont.draw(spriteBatch, layout, x, y - bitmapFont.getAscent());
+            Pools.free(layout);
         }
     }
 
@@ -524,6 +465,41 @@ class GdxGraphics implements Graphics {
         shapeRenderer.rect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
         shapeRenderer.end();
         gdxGraphics.getGL20().glDisable(GL20.GL_BLEND);
+    }
+
+    private void activateSpriteBatch() {
+        if (spriteBatchActive) {
+            return;
+        }
+
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
+        spriteBatch.begin();
+        spriteBatchActive = true;
+    }
+
+    private void activateShapeRenderer() {
+        if (shapeRenderer.getCurrentType() != null) {
+            return;
+        }
+        if (spriteBatchActive) {
+            spriteBatch.end();
+            spriteBatchActive = false;
+        }
+
+        GL20 gl20 = gdxGraphics.getGL20();
+        gl20.glEnable(GL20.GL_BLEND);
+        assert lastBlendingMode != null;
+        switch (lastBlendingMode) {
+            case AlphaBlend:
+                gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case Multiply:
+                gl20.glBlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+                break;
+        }
+        shapeRenderer.begin(ShapeType.Filled);
     }
 
     @Override
@@ -669,7 +645,7 @@ class GdxGraphics implements Graphics {
 
         com.badlogic.gdx.math.Rectangle scissor = Pools.obtain(com.badlogic.gdx.math.Rectangle.class);
         ScissorStack.calculateScissors(camera, 0, 0, gdxGraphics.getWidth(), gdxGraphics.getHeight(),
-                                       spriteBatch.getTransformMatrix(), clippingRect, scissor);
+                spriteBatch.getTransformMatrix(), clippingRect, scissor);
         Pools.free(clippingRect);
 
         if (ScissorStack.pushScissors(scissor)) {
@@ -689,6 +665,25 @@ class GdxGraphics implements Graphics {
     }
 
     /**
+     * Stops the render operation of both the shape renderer and the sprite batch renderer to ensure that the
+     * buffered data is flushed to the screen.
+     */
+    public void flushAll() {
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
+        if (spriteBatchActive) {
+            spriteBatch.end();
+            spriteBatchActive = false;
+        }
+    }
+
+    private float getFloatColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color workingInstance) {
+        transferColor(source, workingInstance);
+        return workingInstance.toFloatBits();
+    }
+
+    /**
      * Apply a global offset to all following render operations.
      *
      * @param offsetX the x component of the offset
@@ -703,9 +698,10 @@ class GdxGraphics implements Graphics {
     }
 
     /**
-     * Reset any global offset applied.
+     * This function needs to be called after rendering a frame.
      */
-    void resetOffset() {
-        applyOffset(0, 0);
+    void endFrame() {
+        flushAll();
+        unsetClippingArea();
     }
 }

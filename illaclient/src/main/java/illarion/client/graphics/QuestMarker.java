@@ -35,14 +35,16 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
-    public enum QuestMarkerAvailability {
-        Available,
-        AvailableSoon
-    }
+    /**
+     * This is the map used to store the color values for the different availability states.
+     */
+    @Nonnull
+    private static final Map<QuestMarkerAvailability, Color> COLOR_MAP;
 
-    public enum QuestMarkerType {
-        Start,
-        Target
+    static {
+        COLOR_MAP = new EnumMap<>(QuestMarkerAvailability.class);
+        COLOR_MAP.put(QuestMarkerAvailability.Available, new ImmutableColor(1.f, .75f, 0.f, 1.f));
+        COLOR_MAP.put(QuestMarkerAvailability.AvailableSoon, new ImmutableColor(1.f, 1.f, 1.f, .8f));
     }
 
     /**
@@ -50,29 +52,15 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
      */
     @Nonnull
     private final MapTile parentTile;
-
     /**
      * The availability state of this quest marker.
      */
     @Nonnull
     private QuestMarkerAvailability availability;
-
-    /**
-     * This is the map used to store the color values for the different availability states.
-     */
-    @Nonnull
-    private static final Map<QuestMarkerAvailability, Color> COLOR_MAP;
-
     /**
      * The offset that is currently applied to the display coordinates.
      */
     private int appliedOffset;
-
-    static {
-        COLOR_MAP = new EnumMap<>(QuestMarkerAvailability.class);
-        COLOR_MAP.put(QuestMarkerAvailability.Available, new ImmutableColor(1.f, .75f, 0.f, 1.f));
-        COLOR_MAP.put(QuestMarkerAvailability.AvailableSoon, new ImmutableColor(1.f, 1.f, 1.f, .8f));
-    }
 
     /**
      * Create a new quest marker with the default image and with the reference to the tile its displayed on.
@@ -82,6 +70,21 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
      */
     public QuestMarker(@Nonnull QuestMarkerType type, @Nonnull MapTile parentTile) {
         this(getTemplateForType(type), parentTile);
+    }
+
+    /**
+     * Create a new quest marker with the required image and with the reference to the tile its displayed on.
+     *
+     * @param template the image template
+     * @param parentTile the parent tile
+     */
+    public QuestMarker(@Nonnull MiscImageTemplate template, @Nonnull MapTile parentTile) {
+        super(template);
+        this.parentTile = parentTile;
+
+        setBaseColor(null);
+        setFadingCorridorEffectEnabled(false);
+        availability = QuestMarkerAvailability.AvailableSoon;
     }
 
     @Nonnull
@@ -100,21 +103,6 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
         return MiscImageFactory.getInstance().getTemplate(templateId);
     }
 
-    /**
-     * Create a new quest marker with the required image and with the reference to the tile its displayed on.
-     *
-     * @param template the image template
-     * @param parentTile the parent tile
-     */
-    public QuestMarker(@Nonnull MiscImageTemplate template, @Nonnull MapTile parentTile) {
-        super(template);
-        this.parentTile = parentTile;
-
-        setBaseColor(null);
-        setFadingCorridorEffectEnabled(false);
-        availability = QuestMarkerAvailability.AvailableSoon;
-    }
-
     @Override
     public int getAlpha() {
         Tile parentTileGraphic = parentTile.getTile();
@@ -125,10 +113,26 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     }
 
     @Override
+    public void update(@Nonnull GameContainer container, int delta) {
+        if (appliedOffset != parentTile.getQuestMarkerElevation()) {
+            updateScreenPosition(delta);
+        }
+        super.update(container, delta);
+    }
+
+    @Override
     public void show() {
         updateScreenPosition(0);
 
         super.show();
+    }
+
+    @Nonnull
+    @Override
+    public Color getLocalLight() {
+        Color color = COLOR_MAP.get(availability);
+        assert color != null;
+        return color;
     }
 
     /**
@@ -144,14 +148,6 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
         setScreenPos(new DisplayCoordinate(displayX, displayY, displayLayer));
     }
 
-    @Override
-    public void update(@Nonnull GameContainer container, int delta) {
-        if (appliedOffset != parentTile.getQuestMarkerElevation()) {
-            updateScreenPosition(delta);
-        }
-        super.update(container, delta);
-    }
-
     /**
      * Get the availability state of this quest marker.
      *
@@ -160,12 +156,6 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     @Nonnull
     public QuestMarkerAvailability getAvailability() {
         return availability;
-    }
-
-    @Nonnull
-    @Override
-    public Color getLocalLight() {
-        return COLOR_MAP.get(availability);
     }
 
     /**

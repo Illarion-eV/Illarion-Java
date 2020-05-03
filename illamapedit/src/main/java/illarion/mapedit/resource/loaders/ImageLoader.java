@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,6 @@
 package illarion.mapedit.resource.loaders;
 
 import illarion.mapedit.resource.Resource;
-import javolution.util.FastMap;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +36,7 @@ import java.util.Map;
 public class ImageLoader implements Resource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageLoader.class);
     private static final ImageLoader INSTANCE = new ImageLoader();
-    private static final Map<String, Image> IMAGES = new FastMap<>();
+    private static final Map<String, Image> IMAGES = new HashMap<>();
 
     private static final String[] FILES = {"sound.png", "messagebox_critical.png", "singleSelect.png", "viewmag.png",
                                            "viewmag1.png", "viewmag-.png", "viewmag+.png", "mapedit64.png",
@@ -49,6 +49,35 @@ public class ImageLoader implements Resource {
 
     private ImageLoader() {
 
+    }
+
+    @Nonnull
+    public static ImageLoader getInstance() {
+        return INSTANCE;
+    }
+
+    public static Image getImage(String key) {
+        if (!IMAGES.containsKey(key)) {
+            LOGGER.warn("Image [{}] does not exist!", key);
+            throw new RuntimeException("Image [" + key + "] does not exist!");
+            //            return null;
+        }
+        return IMAGES.get(key);
+    }
+
+    @Nonnull
+    public static ResizableIcon getResizableIcon(String key) {
+        Image image = getImage(key);
+
+        int height = image.getHeight(null);
+        int width = image.getWidth(null);
+        ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
+        return resizeIcon;
+    }
+
+    @Nonnull
+    public static ImageIcon getImageIcon(String key) {
+        return new ImageIcon(getImage(key));
     }
 
     @Override
@@ -69,34 +98,5 @@ public class ImageLoader implements Resource {
     @Override
     public String getDescription() {
         return "Images";
-    }
-
-    @Nonnull
-    public static ImageLoader getInstance() {
-        return INSTANCE;
-    }
-
-    public static Image getImage(String key) {
-        if (!IMAGES.containsKey(key)) {
-            LOGGER.warn("Image [" + key + "] does not exist!");
-            throw new RuntimeException("Image [" + key + "] does not exist!");
-            //            return null;
-        }
-        return IMAGES.get(key);
-    }
-
-    @Nonnull
-    public static ResizableIcon getResizableIcon(String key) {
-        Image image = getImage(key);
-
-        int height = image.getHeight(null);
-        int width = image.getWidth(null);
-        ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
-        return resizeIcon;
-    }
-
-    @Nonnull
-    public static ImageIcon getImageIcon(String key) {
-        return new ImageIcon(getImage(key));
     }
 }

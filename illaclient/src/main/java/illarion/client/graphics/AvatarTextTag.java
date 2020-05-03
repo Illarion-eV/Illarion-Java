@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Font;
 import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.graphic.ImmutableColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,67 +35,64 @@ public final class AvatarTextTag {
     /**
      * The color of the background pane that is displayed behind the characterName.
      */
+    @Nonnull
     private static final Color BACK_COLOR = new Color(0.f, 0.f, 0.f, 0.58f);
 
     /**
      * The space in pixels between the lines.
      */
     private static final int LINE_SPACE = 0;
-
-    /**
-     * The color implementation that is used to render the characterName.
-     */
-    @Nullable
-    private Color charNameColor;
-
-    /**
-     * The color of the health state of the character.
-     */
-    @Nullable
-    private Color healthStateColor;
-
-    /**
-     * The height of the avatar that is applied as offset.
-     */
-    private int avatarHeight;
-
-    /**
-     * The coordinates where the tag is supposed to be displayed.
-     */
-    @Nullable
-    private DisplayCoordinate displayCoordinate;
-
-    /**
-     * The text displayed to show the health state of the character.
-     */
-    @Nullable
-    private String healthState;
-
-    /**
-     * The name of the character that is displayed in this text.
-     */
-    private String charName;
-
-    /**
-     * This flag is set {@code true} in case the dimensions got changed.
-     */
-    private boolean dimensionsDirty;
-
-    /**
-     * The width of this tag. This value is generated once the characterName is set.
-     */
-    private int width;
-
-    /**
-     * The height of this tag. This value is generated once the characterName is set.
-     */
-    private int height;
-
     /**
      * The font used to draw the text tag.
      */
     @Nonnull
     private final Font font;
+    @Nonnull
+    private final Rectangle displayRect = new Rectangle();
+    /**
+     * The color implementation that is used to render the characterName.
+     */
+    @Nullable
+    private Color charNameColor;
+    /**
+     * The color of the health state of the character.
+     */
+    @Nullable
+    private Color healthStateColor;
+    /**
+     * The height of the avatar that is applied as offset.
+     */
+    private int avatarHeight;
+    /**
+     * The coordinates where the tag is supposed to be displayed.
+     */
+    @Nullable
+    private DisplayCoordinate displayCoordinate;
+    /**
+     * The text displayed to show the health state of the character.
+     */
+    @Nullable
+    private String healthState;
+    /**
+     * The name of the character that is displayed in this text.
+     */
+    private String charName;
+    /**
+     * This flag is set {@code true} in case the dimensions got changed.
+     */
+    private boolean dimensionsDirty;
+    /**
+     * The width of this tag. This value is generated once the characterName is set.
+     */
+    private int width;
+    /**
+     * The height of this tag. This value is generated once the characterName is set.
+     */
+    private int height;
+    private int charNameOffsetX;
+    private int charNameOffsetY;
+    private int healthStateOffsetX;
+    private int healthStateOffsetY;
 
     /**
      * Default constructor.
@@ -135,12 +133,12 @@ public final class AvatarTextTag {
      *
      * @param newColor the color that is used to render the characterName tag.
      */
-    public void setCharNameColor(@Nullable Color newColor) {
-        if ((newColor == null) || newColor.equals(charNameColor)) {
-            return;
+    public void setCharNameColor(@Nonnull Color newColor) {
+        if (newColor instanceof ImmutableColor) {
+            charNameColor = newColor;
+        } else if ((charNameColor == null) || charNameColor.equals(newColor)) {
+            charNameColor = new ImmutableColor(newColor);
         }
-
-        charNameColor = newColor;
     }
 
     /**
@@ -148,12 +146,12 @@ public final class AvatarTextTag {
      *
      * @param newColor the color that is used to render the characterName tag.
      */
-    public void setHealthStateColor(@Nullable Color newColor) {
-        if ((newColor == null) || newColor.equals(healthStateColor)) {
-            return;
+    public void setHealthStateColor(@Nonnull Color newColor) {
+        if (newColor instanceof ImmutableColor) {
+            healthStateColor = newColor;
+        } else if ((healthStateColor == null) || healthStateColor.equals(newColor)) {
+            healthStateColor = new ImmutableColor(newColor);
         }
-
-        healthStateColor = newColor;
     }
 
     /**
@@ -201,7 +199,7 @@ public final class AvatarTextTag {
     }
 
     private void calculateTextLocations() {
-        if (!dimensionsDirty) {
+        if (!dimensionsDirty || (displayCoordinate == null)) {
             return;
         }
 
@@ -238,14 +236,8 @@ public final class AvatarTextTag {
         healthStateOffsetY = nameHeight;
 
         displayRect.set(displayCoordinate.getX() - (getWidth() / 2),
-                displayCoordinate.getY() - avatarHeight - getHeight() - 5,
-                width, height);
+                        displayCoordinate.getY() - avatarHeight - getHeight() - 5, width, height);
     }
-
-    private int charNameOffsetX;
-    private int charNameOffsetY;
-    private int healthStateOffsetX;
-    private int healthStateOffsetY;
 
     public boolean render(@Nonnull Graphics g) {
         if ((charName == null) && (healthState == null)) {
@@ -270,9 +262,6 @@ public final class AvatarTextTag {
 
         return true;
     }
-
-    private final Rectangle displayRect = new Rectangle();
-    private final Rectangle oldDisplayRect = new Rectangle();
 
     @Nonnull
     public Rectangle getDisplayRect() {

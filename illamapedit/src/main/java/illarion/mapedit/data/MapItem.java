@@ -15,8 +15,6 @@
  */
 package illarion.mapedit.data;
 
-import javolution.text.TextBuilder;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -206,7 +204,7 @@ public class MapItem {
     @Nonnull
     @Override
     public String toString() {
-        TextBuilder builder = new TextBuilder();
+        StringBuilder builder = new StringBuilder();
         builder.append(itemId).append(';');
         builder.append(qualityDurability);
 

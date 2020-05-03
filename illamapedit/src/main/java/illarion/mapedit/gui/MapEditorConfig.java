@@ -27,7 +27,6 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.mapedit.Lang;
-import javolution.util.FastTable;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
@@ -41,6 +40,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -127,8 +127,8 @@ public class MapEditorConfig {
         lookAndFeelPage
                 .addEntry(new Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
 
-        Collection<String> themeObject = new FastTable<>();
-        Collection<String> themeLabel = new FastTable<>();
+        Collection<String> themeObject = new ArrayList<>();
+        Collection<String> themeLabel = new ArrayList<>();
 
         for (Map.Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());

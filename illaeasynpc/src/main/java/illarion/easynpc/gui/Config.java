@@ -27,7 +27,6 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.easynpc.Lang;
-import javolution.util.FastTable;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
@@ -44,6 +43,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -270,8 +270,8 @@ public final class Config {
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.useWindowDecoLabel",
                                              new CheckEntry(USE_WINDOW_DECO)));
 
-        Collection<String> themeObject = new FastTable<>();
-        Collection<String> themeLabel = new FastTable<>();
+        Collection<String> themeObject = new ArrayList<>();
+        Collection<String> themeLabel = new ArrayList<>();
 
         for (Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
@@ -301,6 +301,20 @@ public final class Config {
     }
 
     /**
+     * Set the new value for the auto building flag.
+     *
+     * @param autobuild the new value for the auto building flag
+     */
+    public void setAutoBuild(boolean autobuild) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        cfg.set(AUTO_BUILD_KEY, autobuild);
+        autoBuildState = autobuild;
+    }
+
+    /**
      * Get the folder where to store the easyNPC scripts.
      *
      * @return the folder to store the easyNPC scripts
@@ -316,6 +330,19 @@ public final class Config {
             return Paths.get(System.getProperty("user.home")).toString();
         }
         return easyNpcFolderFile.toString();
+    }
+
+    /**
+     * Set the folder where to store the easyNPC scripts.
+     *
+     * @param newFolder the folder where to store the easyNPC scripts
+     */
+    public void setEasyNpcFolder(@Nonnull String newFolder) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        cfg.set(EASY_NPC_FOLDER, Paths.get(newFolder));
     }
 
     /**
@@ -456,6 +483,25 @@ public final class Config {
     }
 
     /**
+     * Set the class path of the look and feel that shall be used from the next
+     * start of the editor on.
+     *
+     * @param lookAndFeel the class path of the look and feel
+     */
+    public void setLookAndFeel(@Nonnull String lookAndFeel) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+
+        if (getLookAndFeel().equals(lookAndFeel)) {
+            return;
+        }
+
+        cfg.set(USED_LOOK_AND_FEEL, lookAndFeel);
+    }
+
+    /**
      * Get the folder where to store the luaNPC scripts.
      *
      * @return the folder to store the luaNPC scripts
@@ -470,6 +516,19 @@ public final class Config {
             return Paths.get(System.getProperty("user.home")).toString();
         }
         return luaNpcFolderFile.toString();
+    }
+
+    /**
+     * Set the folder where to store the luaNPC scripts.
+     *
+     * @param newFolder the folder where to store the easyNPC scripts
+     */
+    public void setLuaNpcFolder(@Nonnull Path newFolder) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        cfg.set(LUA_NPC_FOLDER, newFolder);
     }
 
     /**
@@ -492,6 +551,26 @@ public final class Config {
     }
 
     /**
+     * Set the list of files that shall be opened the next time the editor is
+     * started.
+     *
+     * @param files the files to open
+     */
+    public void setOldFiles(@Nonnull Iterable<Path> files) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        StringBuilder buffer = new StringBuilder();
+        for (Path file : files) {
+            buffer.append(file.toAbsolutePath());
+            buffer.append(File.pathSeparator);
+        }
+        buffer.setLength(buffer.length() - 1);
+        cfg.set(OPEN_FILES, buffer.toString());
+    }
+
+    /**
      * Get the state of the split pane in the editor view.
      *
      * @return the state of the split pane in the editor view
@@ -510,6 +589,20 @@ public final class Config {
     }
 
     /**
+     * Save the state of the split pane to the configuration so its restored the
+     * next time its load.
+     *
+     * @param state the state of the split pane
+     */
+    public void setSplitPaneState(double state) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        cfg.set(SPLIT_STATE, state);
+    }
+
+    /**
      * Get the amount of undo operations that are supposed to be stored.
      *
      * @return the amount of undo operations
@@ -520,6 +613,21 @@ public final class Config {
             return 200;
         }
         return cfg.getInteger(UNDO_COUNT_KEY);
+    }
+
+    /**
+     * Set the amount of undo operations that should be stored.
+     *
+     * @param count the amount of undo operations that should be stored
+     */
+    public void setUndoCount(int count) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        if (count >= 0) {
+            cfg.set(UNDO_COUNT_KEY, count);
+        }
     }
 
     /**
@@ -536,6 +644,25 @@ public final class Config {
     }
 
     /**
+     * Set the flag if the editor is expected to highlight the syntax.
+     *
+     * @param highlight {@code true} in case the editor is expected
+     * highlight the syntax.
+     */
+    public void setUseSyntaxHighlighting(boolean highlight) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        if (getUseSyntaxHighlighting() == highlight) {
+            return;
+        }
+
+        cfg.set(USE_SYNTAX_HIGHLIGHT, highlight);
+        requireRestart = true;
+    }
+
+    /**
      * Get the flag if the editor is supposed to decorate the windows.
      *
      * @return {@code true} in case the editor is expected to decorate the
@@ -547,6 +674,25 @@ public final class Config {
             return false;
         }
         return cfg.getBoolean(USE_WINDOW_DECO);
+    }
+
+    /**
+     * Set the flag if the editor is expected to decorate the window or not.
+     *
+     * @param deco {@code true} in case the editor is expected to decorate
+     * the window
+     */
+    public void setUseWindowDecoration(boolean deco) {
+        if (cfg == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return;
+        }
+        if (getUseWindowDecoration() == deco) {
+            return;
+        }
+
+        cfg.set(USE_WINDOW_DECO, deco);
+        requireRestart = true;
     }
 
     /**
@@ -592,33 +738,6 @@ public final class Config {
     }
 
     /**
-     * Set the new value for the auto building flag.
-     *
-     * @param autobuild the new value for the auto building flag
-     */
-    public void setAutoBuild(boolean autobuild) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        cfg.set(AUTO_BUILD_KEY, autobuild);
-        autoBuildState = autobuild;
-    }
-
-    /**
-     * Set the folder where to store the easyNPC scripts.
-     *
-     * @param newFolder the folder where to store the easyNPC scripts
-     */
-    public void setEasyNpcFolder(@Nonnull String newFolder) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        cfg.set(EASY_NPC_FOLDER, Paths.get(newFolder));
-    }
-
-    /**
      * Set the required values of a window into the properties so it can be
      * restored after the restart.
      *
@@ -634,125 +753,6 @@ public final class Config {
         cfg.set(LAST_WINDOW_W, comp.getBounds().width);
         cfg.set(LAST_WINDOW_H, comp.getBounds().height);
         cfg.set(LAST_WINDOW_STATE, comp.getExtendedState());
-    }
-
-    /**
-     * Set the class path of the look and feel that shall be used from the next
-     * start of the editor on.
-     *
-     * @param lookAndFeel the class path of the look and feel
-     */
-    public void setLookAndFeel(@Nonnull String lookAndFeel) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-
-        if (getLookAndFeel().equals(lookAndFeel)) {
-            return;
-        }
-
-        cfg.set(USED_LOOK_AND_FEEL, lookAndFeel);
-    }
-
-    /**
-     * Set the folder where to store the luaNPC scripts.
-     *
-     * @param newFolder the folder where to store the easyNPC scripts
-     */
-    public void setLuaNpcFolder(@Nonnull Path newFolder) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        cfg.set(LUA_NPC_FOLDER, newFolder);
-    }
-
-    /**
-     * Set the list of files that shall be opened the next time the editor is
-     * started.
-     *
-     * @param files the files to open
-     */
-    public void setOldFiles(@Nonnull Iterable<Path> files) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        StringBuilder buffer = new StringBuilder();
-        for (Path file : files) {
-            buffer.append(file.toAbsolutePath());
-            buffer.append(File.pathSeparator);
-        }
-        buffer.setLength(buffer.length() - 1);
-        cfg.set(OPEN_FILES, buffer.toString());
-    }
-
-    /**
-     * Save the state of the split pane to the configuration so its restored the
-     * next time its load.
-     *
-     * @param state the state of the split pane
-     */
-    public void setSplitPaneState(double state) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        cfg.set(SPLIT_STATE, state);
-    }
-
-    /**
-     * Set the amount of undo operations that should be stored.
-     *
-     * @param count the amount of undo operations that should be stored
-     */
-    public void setUndoCount(int count) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        if (count >= 0) {
-            cfg.set(UNDO_COUNT_KEY, count);
-        }
-    }
-
-    /**
-     * Set the flag if the editor is expected to highlight the syntax.
-     *
-     * @param highlight {@code true} in case the editor is expected
-     * highlight the syntax.
-     */
-    public void setUseSyntaxHighlighting(boolean highlight) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        if (getUseSyntaxHighlighting() == highlight) {
-            return;
-        }
-
-        cfg.set(USE_SYNTAX_HIGHLIGHT, highlight);
-        requireRestart = true;
-    }
-
-    /**
-     * Set the flag if the editor is expected to decorate the window or not.
-     *
-     * @param deco {@code true} in case the editor is expected to decorate
-     * the window
-     */
-    public void setUseWindowDecoration(boolean deco) {
-        if (cfg == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        if (getUseWindowDecoration() == deco) {
-            return;
-        }
-
-        cfg.set(USE_WINDOW_DECO, deco);
-        requireRestart = true;
     }
 
     /**

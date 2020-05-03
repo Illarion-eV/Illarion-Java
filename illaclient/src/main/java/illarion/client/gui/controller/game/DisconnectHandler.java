@@ -122,9 +122,7 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
 
     @Override
     public void onEvent(@Nonnull String topic, @Nonnull ButtonClickedEvent data) {
-        //if (tryToReconnect) {
-        //    //IllaClient.returnToLogin();
-        //}
-        IllaClient.returnToLogin();
+        popup.hide();
+        IllaClient.returnToLogin(null);
     }
 }

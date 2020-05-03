@@ -17,11 +17,11 @@ package illarion.common.config;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.util.MessageSource;
-import javolution.util.FastTable;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -114,7 +114,7 @@ public final class ConfigDialog {
          * @param pageTitle the title of the page that is displayed in the tab
          */
         public Page(@Nonnull String pageTitle) {
-            lines = new FastTable<>();
+            lines = new ArrayList<>();
             title = pageTitle;
         }
 
@@ -196,7 +196,7 @@ public final class ConfigDialog {
      * Initialize a configuration dialog. This prepares all required values.
      */
     public ConfigDialog() {
-        pages = new FastTable<>();
+        pages = new ArrayList<>();
     }
 
     /**

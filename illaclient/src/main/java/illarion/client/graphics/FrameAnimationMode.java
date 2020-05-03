@@ -13,26 +13,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.gui;
-
-import illarion.client.resources.data.ItemTemplate;
-import org.illarion.engine.nifty.IgeTextureRenderImage;
-
-import javax.annotation.Nonnull;
+package illarion.client.graphics;
 
 /**
- * This implementation of a slick render image is used to show a image that is usually used in the game graphics,
- * inside the elements of the GUI.
- *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class EntitySlickRenderImage extends IgeTextureRenderImage {
+public enum FrameAnimationMode {
     /**
-     * Create this render image that refers to a specified entity.
-     *
-     * @param entity the entity the image refers to
+     * Run animation backwards.
      */
-    public EntitySlickRenderImage(@Nonnull ItemTemplate entity) {
-        super(entity.getGuiTexture());
-    }
+    Backwards,
+
+    /**
+     * End animation with same frame as it started.
+     */
+    Cyclic,
+
+    /**
+     * Keep running in an endless loop.
+     */
+    Looped
 }

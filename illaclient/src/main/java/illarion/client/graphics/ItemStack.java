@@ -38,19 +38,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ItemStack implements DisplayItem, List<Item> {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(ItemStack.class);
-    private boolean shown;
     @Nonnull
     private final List<Item> items;
-
-    private boolean rectangleDirty;
     @Nonnull
     private final Rectangle interactiveRectangle;
-
     @Nonnull
     private final DisplayCoordinate stackLocation;
-
     @Nonnull
     private final ReadWriteLock lock;
+    private boolean shown;
+    private boolean rectangleDirty;
 
     public ItemStack(@Nonnull DisplayCoordinate location) {
         shown = false;
@@ -266,6 +263,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         try {
             for (int i = items.size() - 1; i >= 0; i--) {
                 Item item = items.get(i);
+                assert item != null;
                 if (item.isEventProcessed(container, delta, event)) {
                     return true;
                 }
