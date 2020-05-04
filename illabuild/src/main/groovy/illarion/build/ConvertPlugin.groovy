@@ -20,7 +20,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
-import org.gradle.api.internal.java.JavaLibrary
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
@@ -44,7 +43,7 @@ class ConvertPlugin implements Plugin<Project> {
     private final Instantiator instantiator
 
     @Inject
-    public ConvertPlugin(Instantiator instantiator) {
+    ConvertPlugin(Instantiator instantiator) {
         this.instantiator = instantiator
     }
 
@@ -101,7 +100,7 @@ class ConvertPlugin implements Plugin<Project> {
 
         compileConfiguration.artifacts.add(jarArtifact)
         project.extensions.getByType(DefaultArtifactPublicationSet).addCandidate(jarArtifact)
-        project.components.add(new JavaLibrary(jarArtifact, compileConfiguration.allDependencies));
+        project.artifacts.add(COMPILE_CONFIGURATION_NAME, jar);
     }
 
     static void configureConfigurations(Project project) {

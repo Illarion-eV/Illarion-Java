@@ -31,43 +31,43 @@ rootProject.name = "illarion"
 rootProject.children.each {
     switch (it.name) {
         case "illabuild":
-            it.name = "build";
-            break;
+            it.name = "build"
+            break
         case "illaclient":
-            it.name = "client";
-            break;
+            it.name = "client"
+            break
         case "illacommon":
-            it.name = "common";
-            break;
+            it.name = "common"
+            break
         case "illacompiler":
-            it.name = "compiler";
-            break;
+            it.name = "compiler"
+            break
         case "illadownload":
-            it.name = "download";
-            break;
+            it.name = "download"
+            break
         case "illaeasynpc":
-            it.name = "easynpc";
-            break;
+            it.name = "easynpc"
+            break
         case "illaeasyquest":
-            it.name = "easyquest";
-            break;
+            it.name = "easyquest"
+            break
         case "illagameengine":
-            it.name = "engine";
-            break;
+            it.name = "engine"
+            break
         case "illagameengine-libgdx":
-            it.name = "engine-libgdx";
-            break;
+            it.name = "engine-libgdx"
+            break
         case "illagameengine-nifty":
-            it.name = "engine-nifty";
-            break;
+            it.name = "engine-nifty"
+            break
         case "illamapedit":
-            it.name = "mapeditor";
-            break;
+            it.name = "mapeditor"
+            break
         case "nifty-controls-illarion":
-            it.name = "nifty-controls";
-            break;
+            it.name = "nifty-controls"
+            break
         case "nifty-style-illarion":
-            it.name = "nifty-style";
-            break;
+            it.name = "nifty-style"
+            break
     }
 }

@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 apply from: '../versions.gradle'
@@ -21,24 +21,25 @@ apply from: '../versions.gradle'
 archivesBaseName = 'nifty-controls-illarion'
 
 dependencies {
-    compile project(':common')
-    compile group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
-    compile group: 'com.github.nifty-gui', name: 'nifty-default-controls', version: project.ext.niftyGuiVersion
+    api project(':common')
+    api group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
+    api group: 'com.github.nifty-gui', name: 'nifty-default-controls', version: project.ext.niftyGuiVersion
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes        \
-               'Permissions': 'all-permissions',       \
-               'Codebase': 'illarion.org',       \
-               'Trusted-Library': true,       \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
-               'Built-By': System.getProperty('user.name'),        \
-               'Built-JDK': System.getProperty('java.version'),        \
-               'Implementation-Title': 'Illarion Nifty-GUI Controls',        \
-               'Implementation-Vendor': 'Illarion e.V.',       \
-               'Implementation-Version': project.ext.fullVersion
+        attributes(
+                'Permissions': 'all-permissions',
+                'Codebase': 'illarion.org',
+                'Trusted-Library': true,
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Implementation-Title': 'Illarion Nifty-GUI Controls',
+                'Implementation-Vendor': 'Illarion e.V.',
+                'Implementation-Version': project.ext.fullVersion
+        )
     }
 }
 

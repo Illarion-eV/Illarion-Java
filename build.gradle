@@ -14,15 +14,33 @@
  * GNU General Public License for more details.
  */
 
-apply plugin: 'idea'
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://maven.ej-technologies.com/repository'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath group: 'de.undercouch', name: 'gradle-download-task', version: '4.0.4'
+        classpath group: 'com.install4j', name: 'install4j-gradle', version: '7.0.12'
+    }
+}
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+plugins {
+    id "idea"
+}
+
+wrapper {
+    gradleVersion = '6.3'
 }
 
 idea {
     project {
-        languageLevel = '1.8'
+        languageLevel = '1.14'
     }
 }
 
@@ -36,7 +54,7 @@ allprojects {
     task gitVersion { task ->
         def gitVersion = 'unknown'
         def branch = 'develop'
-        def File rootDir = project.rootDir
+        File rootDir = project.rootDir
         for (def gitCmd in ['git', 'git.cmd']) {
             try {
                 def procBranch = "$gitCmd rev-parse --abbrev-ref HEAD".execute(null as List, rootDir)
@@ -55,7 +73,7 @@ allprojects {
             }
         }
 
-        def String mainVersion
+        String mainVersion
         def indexOfSeparator = gitVersion.indexOf('-')
         if (indexOfSeparator == -1) {
             mainVersion = gitVersion
@@ -86,35 +104,25 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url 'http://illarion.org/media/java/maven'
+            url 'https://illarion.org/media/java/maven'
         }
         maven {
-            url 'http://oss.sonatype.org/content/repositories/releases'
+            url 'https://oss.sonatype.org/content/repositories/releases'
         }
-    }
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
         maven {
-            url 'http://maven.ej-technologies.com/repository'
+            url 'https://dl.bintray.com/flowtick/jgraphx'
         }
-    }
-    dependencies {
-        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '5.2.1'
-        classpath group: 'de.undercouch', name: 'gradle-download-task', version: '2.1.0'
-        classpath group: 'com.install4j', name: 'install4j-gradle', version: '6.0.4'
     }
 }
 
 subprojects {
     group = 'org.illarion'
 
-    plugins.withType(JavaPlugin) {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+    apply plugin: 'java'
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
 
+    plugins.withType(JavaPlugin) {
         tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
         }
@@ -136,30 +144,23 @@ subprojects {
             test.runtimeClasspath += configurations.provided
         }
         dependencies {
-            testCompile group: 'org.testng', name: 'testng', version: '6.9.10'
-            testCompile group: 'org.easymock', name: 'easymock', version: '3.4'
-            testCompile group: 'org.powermock', name: 'powermock-module-testng', version: '1.6.4'
-            testCompile group: 'org.powermock', name: 'powermock-api-easymock', version: '1.6.4'
-            testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-            compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
-            compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+            testImplementation group: 'org.testng', name: 'testng', version: '7.1.0'
+            testImplementation group: 'org.easymock', name: 'easymock', version: '4.2'
+            testImplementation group: 'org.powermock', name: 'powermock-module-testng', version: '2.0.7'
+            testImplementation group: 'org.powermock', name: 'powermock-api-easymock', version: '2.0.7'
+            testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+            implementation group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
         }
     }
 
     apply plugin: 'idea'
-    apply plugin: 'findbugs'
     apply plugin: 'pmd'
-    findbugs {
-        ignoreFailures = true
-        effort = "max"
-        reportLevel = "high"
-    }
+
     pmd {
         ignoreFailures = true
         ruleSetFiles = files(new File(rootDir, 'pmd.xml'))
         ruleSets = []
-        toolVersion = '5.4.1'
-        targetJdk = '1.7'
+        toolVersion = '6.21.0'
     }
     idea {
         module {

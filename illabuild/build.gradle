@@ -20,25 +20,26 @@ apply plugin: 'maven-publish'
 archivesBaseName = 'illarion_build'
 
 dependencies {
-    compile project(':common')
-    compile group: 'org.l33tlabs.twl', name: 'pngdecoder', version: '1.0'
-    compile gradleApi()
-    compile localGroovy()
+    implementation project(':common')
+    implementation group: 'org.l33tlabs.twl', name: 'pngdecoder', version: '1.0'
+    implementation gradleApi()
+    implementation localGroovy()
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes         \
-                'Permissions': 'all-permissions',       \
-                'Codebase': 'illarion.org',       \
-                'Trusted-Library': true,       \
-                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),         \
-                'Built-By': System.getProperty('user.name'),         \
-                'Built-JDK': System.getProperty('java.version'),         \
-                'Implementation-Title': 'Illarion Build Utility',         \
-                'Implementation-Vendor': 'Illarion e.V.',         \
+        attributes(
+                'Permissions': 'all-permissions',
+                'Codebase': 'illarion.org',
+                'Trusted-Library': true,
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Implementation-Title': 'Illarion Build Utility',
+                'Implementation-Vendor': 'Illarion e.V.',
                 'Implementation-Version': project.ext.fullVersion
+        )
     }
 }
 

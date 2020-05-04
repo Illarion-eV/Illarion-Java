@@ -23,30 +23,33 @@ archivesBaseName = 'illarion_client'
 mainClassName = 'illarion.client.IllaClient'
 
 dependencies {
-    compile project(':common')
-    compile project(':engine')
-    runtime project(':engine-libgdx')
-    compile project(':engine-nifty')
-    compile project(':nifty-controls')
-    runtime project(':nifty-style')
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
-    compile group: 'com.google.guava', name: 'guava', version: '21.0'
-    compile group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
-    runtime group: 'org.illarion', name: 'rsc_books', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_chars', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_effects', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_gui', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_items', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_music', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_sounds', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
-    runtime group: 'org.illarion', name: 'rsc_tiles', version: project.ext.illarionResourcesVersion
+    implementation project(':common')
+    implementation project(':engine')
+    runtimeOnly project(':engine-libgdx')
+    implementation project(':engine-nifty')
+    implementation project(':nifty-controls')
+    runtimeOnly project(':nifty-style')
+    implementation group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
+    implementation group: 'com.github.nifty-gui', name: 'nifty-default-controls', version: project.ext.niftyGuiVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
+    implementation group: 'org.bushe', name: 'eventbus', version: '1.4'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+    implementation group: 'com.google.guava', name: 'guava', version: '21.0'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_books', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_chars', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_effects', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_gui', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_items', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_music', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_sounds', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_tiles', version: project.ext.illarionResourcesVersion
 }
 
 jar {
