@@ -69,10 +69,6 @@ public class MainViewController extends AbstractController implements MavenDownl
     @FXML
     public Label progressDescription;
     @FXML
-    public Button launchEasyNpcButton;
-    @FXML
-    public Button launchEasyQuestButton;
-    @FXML
     public Button launchMapEditButton;
     @FXML
     public Button launchClientButton;
@@ -103,8 +99,6 @@ public class MainViewController extends AbstractController implements MavenDownl
             }
             event.consume();
         };
-        launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
-        launchEasyQuestButton.setOnKeyReleased(eventEventHandler);
         launchMapEditButton.setOnKeyReleased(eventEventHandler);
         launchClientButton.requestFocus();
     }
@@ -323,53 +317,33 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @FXML
-    public void startEasyNpc(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, false, true, false, false);
-        launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame", "channelEasyNpc");
-    }
-
-    @FXML
-    public void startEasyQuest(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, false, false, true, false);
-        launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame", "channelEasyQuest");
-    }
-
-    @FXML
     public void startMapEdit(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, false, false, false, true);
+        updateLaunchButtons(false, false, true);
         launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor", "channelMapEditor");
     }
 
     @FXML
     public void launchClient(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, true, false, false, false);
+        updateLaunchButtons(false, true, false);
         launch("org.illarion", "client", "illarion.client.IllaClient", "channelClient");
     }
 
     private void updateLaunchButtons(
             boolean enabled,
             boolean client,
-            boolean easyNpc,
-            boolean easyQuest,
             boolean mapEdit) {
         if (Platform.isFxApplicationThread()) {
             launchClientButton.setDisable(!enabled);
             launchMapEditButton.setDisable(!enabled);
-            launchEasyQuestButton.setDisable(!enabled);
-            launchEasyNpcButton.setDisable(!enabled);
             if (enabled) {
                 launchClientButton.setText(resourceBundle.getString("launchClient"));
                 launchMapEditButton.setText(resourceBundle.getString("launchMapEdit"));
-                launchEasyQuestButton.setText(resourceBundle.getString("launchEasyQuest"));
-                launchEasyNpcButton.setText(resourceBundle.getString("launchEasyNpc"));
             } else {
                 launchClientButton.setText(resourceBundle.getString(client ? "starting" : "launchClient"));
                 launchMapEditButton.setText(resourceBundle.getString(mapEdit ? "starting" : "launchMapEdit"));
-                launchEasyQuestButton.setText(resourceBundle.getString(easyQuest ? "starting" : "launchEasyQuest"));
-                launchEasyNpcButton.setText(resourceBundle.getString(easyNpc ? "starting" : "launchEasyNpc"));
             }
         } else {
-            Platform.runLater(() -> updateLaunchButtons(enabled, client, easyNpc, easyQuest, mapEdit));
+            Platform.runLater(() -> updateLaunchButtons(enabled, client, mapEdit));
         }
     }
 
@@ -511,7 +485,7 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private void cancelLaunch() {
-        updateLaunchButtons(true, false, false, false, false);
+        updateLaunchButtons(true, false, false);
     }
 
     @FXML

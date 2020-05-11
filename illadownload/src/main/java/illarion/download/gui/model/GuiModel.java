@@ -76,8 +76,6 @@ public class GuiModel {
         DirectoryManager dm = DirectoryManager.getInstance();
         ConfigSystem cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
         cfg.setDefault("channelClient", 0);
-        cfg.setDefault("channelEasyNpc", 1);
-        cfg.setDefault("channelEasyQuest", 1);
         cfg.setDefault("channelMapEditor", 1);
         cfg.setDefault("launchAggressive", false);
         cfg.setDefault("stayOpenAfterLaunch", true);

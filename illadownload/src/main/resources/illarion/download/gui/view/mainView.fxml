@@ -84,20 +84,6 @@
                     <Insets fx:id="x2"/>
                 </BorderPane.margin>
                 <AnchorPane>
-                    <Button alignment="TOP_LEFT" mnemonicParsing="false" text="%launchEasyNpc"
-                            textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                            AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="32.0"
-                            onAction="#startEasyNpc" fx:id="launchEasyNpcButton"/>
-                </AnchorPane>
-                <AnchorPane>
-                    <Button mnemonicParsing="false" text="%launchEasyQuest" textAlignment="CENTER"
-                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                            styleClass="button-gray" prefHeight="32.0" onAction="#startEasyQuest"
-                            fx:id="launchEasyQuestButton"/>
-                </AnchorPane>
-                <AnchorPane>
                     <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
                             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
