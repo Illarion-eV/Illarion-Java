@@ -20,30 +20,6 @@
     <BorderPane fx:id="content">
         <top>
             <BorderPane minHeight="111.0" prefHeight="139.0" prefWidth="554.0">
-                <center>
-                    <VBox alignment="CENTER" maxWidth="130.0" padding="$x1" prefWidth="130.0" spacing="10.0">
-                        <BorderPane.margin>
-                            <Insets bottom="35.0"/>
-                        </BorderPane.margin>
-                        <AnchorPane>
-                            <VBox.margin>
-                                <Insets fx:id="x1"/>
-                            </VBox.margin>
-                            <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                    prefHeight="30.0" styleClass="button-gray" text="%account"
-                                    textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                    AnchorPane.topAnchor="0.0" onAction="#goToAccount"/>
-                        </AnchorPane>
-                        <AnchorPane>
-                            <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                    prefHeight="30.0" styleClass="button-gray" text="%options"
-                                    textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                    AnchorPane.topAnchor="0.0" onAction="#showOptions"/>
-                        </AnchorPane>
-                    </VBox>
-                </center>
                 <left>
                     <ImageView id="logo" mouseTransparent="true"/>
                 </left>
@@ -83,6 +59,23 @@
                 <BorderPane.margin>
                     <Insets fx:id="x2"/>
                 </BorderPane.margin>
+                <AnchorPane>
+                    <VBox.margin>
+                        <Insets fx:id="x1"/>
+                    </VBox.margin>
+                    <Button mnemonicParsing="false"
+                            prefHeight="32.0" styleClass="button-gray" text="%account"
+                            textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="0.0" onAction="#goToAccount"/>
+                </AnchorPane>
+                <AnchorPane>
+                    <Button mnemonicParsing="false"
+                            prefHeight="32.0" styleClass="button-gray" text="%options"
+                            textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="0.0" onAction="#showOptions"/>
+                </AnchorPane>
                 <AnchorPane>
                     <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
                             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
