@@ -17,6 +17,7 @@ package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
 import illarion.client.Game;
+import illarion.client.IllaClient;
 import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.CreditsStartScreenController;
 import illarion.client.gui.controller.LoginScreenController;
@@ -76,7 +77,8 @@ public class LoginState implements GameState {
 
     @Override
     public boolean isClosingGame() {
-        return true;
+        IllaClient.ensureExit();
+        return false;
     }
 
     @Override
