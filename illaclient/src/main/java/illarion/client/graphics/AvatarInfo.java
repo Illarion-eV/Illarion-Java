@@ -93,20 +93,22 @@ public final class AvatarInfo {
      */
     @Nonnull
     public static AvatarInfo getInstance(int appearance, int visibilityMod) {
-        if (buffer != null) {
-            AvatarInfo result = buffer.get(appearance);
-            if (result != null) {
-                return result;
+        synchronized (AvatarInfo.class) {
+            if (buffer != null) {
+                AvatarInfo result = buffer.get(appearance);
+                if (result != null) {
+                    return result;
+                }
+            } else {
+                log.error("Requested new avatar information after setup was done. Efficiency degrading!");
             }
-        } else {
-            log.error("Requested new avatar information after setup was done. Efficiency degrading!");
-        }
 
-        AvatarInfo newInfo = new AvatarInfo(visibilityMod);
-        if (buffer != null) {
-            buffer.put(appearance, newInfo);
+            AvatarInfo newInfo = new AvatarInfo(visibilityMod);
+            if (buffer != null) {
+                buffer.put(appearance, newInfo);
+            }
+            return newInfo;
         }
-        return newInfo;
     }
 
     /**

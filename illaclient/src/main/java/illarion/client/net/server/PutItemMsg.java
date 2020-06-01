@@ -64,7 +64,7 @@ public final class PutItemMsg implements ServerReply {
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = new ServerCoordinate(reader);
         itemId = new ItemId(reader);
-        number = ItemCount.getInstance(reader);
+        number = ItemCount.getInstance(reader.readUShort());
         newTileMovePoints = reader.readUByte();
     }
 

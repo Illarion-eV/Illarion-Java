@@ -143,15 +143,16 @@ public class Md5Crypto {
     /**
      * Convert a 64bit integer value to a string character.
      *
-     * @param v the long value
-     * @param size the size of the resulting text in characters
+     * @param value the long value to convert
+     * @param length the length of the resulting text in characters
      * @return the generated text
      */
     @Nonnull
     @Contract(pure = true)
-    private static String to64(long v, int size) {
+    private static String to64(long value, int length) {
+        long v = value;
+        int size = length;
         StringBuilder result = new StringBuilder(size);
-
         while (--size >= 0) {
             result.append(ITOA_64.charAt((int) (v & 0x3f)));
             v >>>= 6;

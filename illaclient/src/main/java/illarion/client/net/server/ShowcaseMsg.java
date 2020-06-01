@@ -94,7 +94,7 @@ public final class ShowcaseMsg implements ServerReply {
         for (int i = 0; i < itemAmount; i++) {
             int itemPos = reader.readUShort();
             ItemId itemId = new ItemId(reader);
-            ItemCount itemCount = ItemCount.getInstance(reader);
+            ItemCount itemCount = ItemCount.getInstance(reader.readUShort());
 
             slots[i] = itemPos;
             itemIds[i] = itemId;

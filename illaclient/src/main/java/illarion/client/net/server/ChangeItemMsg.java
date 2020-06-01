@@ -76,7 +76,7 @@ public final class ChangeItemMsg implements ServerReply {
         location = new ServerCoordinate(reader);
         oldItem = new ItemId(reader);
         newItem = new ItemId(reader);
-        count = ItemCount.getInstance(reader);
+        count = ItemCount.getInstance(reader.readUShort());
         newTileMovePoints = reader.readUByte();
     }
 

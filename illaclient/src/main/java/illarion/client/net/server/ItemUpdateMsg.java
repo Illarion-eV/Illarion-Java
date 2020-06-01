@@ -80,7 +80,7 @@ public final class ItemUpdateMsg implements ServerReply {
         itemCount = Arrays.asList(new ItemCount[itemNumber]);
         for (int i = 0; i < itemNumber; ++i) {
             itemId.set(i, new ItemId(reader));
-            itemCount.set(i, ItemCount.getInstance(reader));
+            itemCount.set(i, ItemCount.getInstance(reader.readUShort()));
         }
         newTileMovePoints = reader.readUByte();
     }

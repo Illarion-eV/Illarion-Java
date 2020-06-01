@@ -412,7 +412,7 @@ public final class MapTransitions {
      *
      * @param loc the location where a transition could be placed
      */
-    private void placeTransition(@Nonnull Map map, @Nonnull ServerCoordinate loc/*, final GroupAction history*/) {
+    private void placeTransition(@Nonnull Map map, @Nonnull ServerCoordinate loc) {
         MapTile centerTile = map.getTileAt(loc);
         if (centerTile == null) {
             return;
@@ -432,16 +432,13 @@ public final class MapTransitions {
             int testId = findAndRemoveHighestLayer();
             int mask = buildMask(testId);
             int maskId = findMask(mask);
-            if (maskId == -1) {
-                continue;
+            if (maskId != -1) {
+                MapTile newTile = MapTileFactory.setOverlay(centerTileId, testId, maskId + 1, centerTile);
+                map.setTileAt(loc, newTile);
+                return;
             }
-            MapTile newTile = MapTileFactory.setOverlay(centerTileId, testId, maskId + 1, centerTile);
-            //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
-            map.setTileAt(loc, newTile);
-            return;
         }
         MapTile newTile = MapTileFactory.setId(centerTileId, centerTile);
-        //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
         map.setTileAt(loc, newTile);
     }
 

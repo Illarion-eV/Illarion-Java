@@ -97,7 +97,7 @@ public final class TileUpdate {
 
         for (int i = 0; i < itemNumber; ++i) {
             itemId.set(i, new ItemId(reader));
-            itemCount.set(i, ItemCount.getInstance(reader));
+            itemCount.set(i, ItemCount.getInstance(reader.readUShort()));
         }
     }
 

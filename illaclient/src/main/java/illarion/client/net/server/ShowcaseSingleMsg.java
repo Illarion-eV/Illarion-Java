@@ -62,7 +62,7 @@ public final class ShowcaseSingleMsg implements ServerReply {
         containerId = reader.readUByte();
         containerSlot = reader.readUShort();
         slotItem = new ItemId(reader);
-        slotItemCount = ItemCount.getInstance(reader);
+        slotItemCount = ItemCount.getInstance(reader.readUShort());
     }
 
     @Nonnull

@@ -56,7 +56,7 @@ public final class InventoryMsg implements ServerReply {
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         location = reader.readUByte();
         itemId = new ItemId(reader);
-        count = ItemCount.getInstance(reader);
+        count = ItemCount.getInstance(reader.readUShort());
     }
 
     @Nonnull

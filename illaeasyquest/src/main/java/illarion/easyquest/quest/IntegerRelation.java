@@ -18,7 +18,7 @@ package illarion.easyquest.quest;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class IntegerRelation implements Serializable {
+public final class IntegerRelation implements Serializable {
 
     private Relation relation;
     private long integer;

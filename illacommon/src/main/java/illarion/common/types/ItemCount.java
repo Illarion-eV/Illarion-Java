@@ -83,19 +83,6 @@ public final class ItemCount implements Comparable<ItemCount> {
         }
     }
 
-    /**
-     * Get a new instance from item count.
-     *
-     * @param reader the network reader that is used to fetch the value
-     * @return the new instance of the item count representing the value
-     * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
-     * {@link #MAX_VALUE}.
-     * @throws IOException in case the reading operation fails
-     */
-    @Nonnull
-    public static ItemCount getInstance(@Nonnull NetCommReader reader) throws IOException {
-        return getInstance(reader.readUShort());
-    }
 
     /**
      * Constructor of this class used to set.

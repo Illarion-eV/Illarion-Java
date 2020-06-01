@@ -23,7 +23,7 @@ import javax.swing.text.NumberFormatter;
 import java.text.NumberFormat;
 
 @SuppressWarnings("serial")
-public class IntegerParameter extends JFormattedTextField implements Parameter {
+public final class IntegerParameter extends JFormattedTextField implements Parameter {
 
     public IntegerParameter() {
         NumberFormat format = NumberFormat.getIntegerInstance();

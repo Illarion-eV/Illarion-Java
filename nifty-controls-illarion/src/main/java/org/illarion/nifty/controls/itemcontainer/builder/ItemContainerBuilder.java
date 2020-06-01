@@ -19,7 +19,7 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerBuilder extends ControlBuilder {
+public final class ItemContainerBuilder extends ControlBuilder {
     public ItemContainerBuilder(@Nonnull String id, @Nonnull String title) {
         super(id, "itemcontainer");
 

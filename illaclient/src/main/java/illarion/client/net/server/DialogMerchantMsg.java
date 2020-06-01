@@ -62,7 +62,7 @@ public final class DialogMerchantMsg implements ServerReply {
             ItemId itemId = new ItemId(reader);
             String name = reader.readString();
             long itemValue = reader.readUInt();
-            ItemCount bundleSize = ItemCount.getInstance(reader);
+            ItemCount bundleSize = ItemCount.getInstance(reader.readUShort());
 
             items.add(new MerchantItem(i, MerchantItemType.SellingItem, itemId, name, itemValue,
                                        bundleSize));
