@@ -46,7 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @SuppressWarnings("serial")
-public class MainFrame extends JRibbonFrame {
+public final class MainFrame extends JRibbonFrame {
     /**
      * The identification of this application.
      */

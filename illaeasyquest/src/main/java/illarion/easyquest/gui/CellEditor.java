@@ -30,7 +30,7 @@ import java.util.EventObject;
  * To control this editor, use mxGraph.invokesStopCellEditing, mxGraph.
  * enterStopsCellEditing and mxGraph.escapeEnabled.
  */
-public class CellEditor implements mxICellEditor {
+public final class CellEditor implements mxICellEditor {
     protected mxGraphComponent graphComponent;
 
     @Nullable
