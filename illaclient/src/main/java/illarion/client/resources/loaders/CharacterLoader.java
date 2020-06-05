@@ -104,7 +104,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
         int skinGreen = loader.getSkinColorGreen();
         int skinBlue = loader.getSkinColorBlue();
 
-        AvatarInfo info = AvatarInfo.getInstance(appearance, visibleMod);
+        AvatarInfo info = ItemCount.create(appearance, visibleMod);
         info.reportAnimation(animationID);
 
         Color defaultColor = new Color(skinRed, skinGreen, skinBlue);

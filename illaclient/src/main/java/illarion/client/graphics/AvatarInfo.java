@@ -92,7 +92,7 @@ public final class AvatarInfo {
      * @return the newly created instance of AvatarInfo or a already created one from the cache
      */
     @Nonnull
-    public static AvatarInfo getInstance(int appearance, int visibilityMod) {
+    public static AvatarInfo create(int appearance, int visibilityMod) {
         synchronized (AvatarInfo.class) {
             if (buffer != null) {
                 AvatarInfo result = buffer.get(appearance);
