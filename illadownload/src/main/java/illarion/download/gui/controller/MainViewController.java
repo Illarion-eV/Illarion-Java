@@ -384,7 +384,8 @@ public class MainViewController extends AbstractController implements MavenDownl
         useSnapshots = cfg.getInteger(configKey) == 1;
         new Thread(() -> {
             int attempt = 0;
-            while (attempt < 10) {
+            boolean isResolved = false;
+            while (attempt < 10 && !isResolved) {
                 attempt++;
                 try {
                     MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt, cfg);
@@ -393,11 +394,11 @@ public class MainViewController extends AbstractController implements MavenDownl
                     //noinspection ThrowableResultOfMethodCallIgnored
                     if (getInnerExceptionOfType(SocketTimeoutException.class, e) != null) {
                         log.warn("Timeout detected. Restarting download with longer timeout.");
-                        continue;
+                    } else {
+                        log.error("Error while resolving.", e);
                     }
-                    log.error("Error while resolving.", e);
                 }
-                break;
+                isResolved = true;
             }
         }).start();
     }

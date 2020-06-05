@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * The item info class stores some general information about the items that are shared by all instances of the same
@@ -62,7 +62,7 @@ public final class ItemInfo {
      * time so a minimal amount of instances is created.
      */
     @Nonnull
-    private static final Collection<ItemInfo> BUFFER = new ArrayList<>();
+    private static final List<ItemInfo> BUFFER = new ArrayList<>();
 
     /**
      * The special item value in case the item is a container.
@@ -192,36 +192,13 @@ public final class ItemInfo {
     public static ItemInfo create(int facing, boolean movable, int special, boolean obstacle, int variance, int opacity,
                                   int level, int lightSource) {
         float prepVariance = variance / VARIANCE_MOD;
-        for (ItemInfo testItemInfo : BUFFER) {
-            if (testItemInfo.face != facing) {
-                continue;
-            }
-            if (testItemInfo.movable != movable) {
-                continue;
-            }
-            if (testItemInfo.special != special) {
-                continue;
-            }
-            if (testItemInfo.obstacle != obstacle) {
-                continue;
-            }
-            if (!FastMath.equals(testItemInfo.variance, prepVariance, FastMath.FLT_EPSILON)) {
-                continue;
-            }
-            if (testItemInfo.opacity != opacity) {
-                continue;
-            }
-            if (testItemInfo.level != level) {
-                continue;
-            }
-            if (testItemInfo.light != lightSource) {
-                continue;
-            }
-            return testItemInfo;
-        }
-
         ItemInfo retInfo = new ItemInfo(facing, movable, special, obstacle, prepVariance, opacity, level, lightSource);
-        BUFFER.add(retInfo);
+        int index = BUFFER.indexOf(retInfo);
+        if (index == -1) {
+            BUFFER.add(retInfo);
+        } else{
+            retInfo = BUFFER.get(index);
+        }
         return retInfo;
     }
 
@@ -248,6 +225,17 @@ public final class ItemInfo {
     @Contract(pure = true)
     public int getLevel() {
         return level;
+    }
+
+    public boolean equals(ItemInfo testItemInfo){
+        return (testItemInfo.face == this.face)
+            && (testItemInfo.movable == this.movable)
+            && (testItemInfo.special == this.special)
+            && (testItemInfo.obstacle == this.obstacle)
+            && (FastMath.equals(testItemInfo.variance, this.variance, FastMath.FLT_EPSILON))
+            && (testItemInfo.opacity == this.opacity)
+            && (testItemInfo.level == this.level)
+            && (testItemInfo.light == this.light);
     }
 
     /**
