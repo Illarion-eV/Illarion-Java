@@ -16,11 +16,11 @@
 import com.install4j.gradle.Install4jTask
 
 plugins {
+    id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 apply plugin: 'java'
-apply plugin: 'application'
 apply plugin: 'maven-publish'
 apply from: '../versions.gradle'
 apply plugin: 'install4j'
@@ -52,7 +52,7 @@ jar {
     dependsOn { gitVersion }
     manifest {
         attributes(
-                'Main-Class': 'illarion.download.gui.GuiApplication',
+                'Main-Class': 'illarion.download.Application',
                 'JavaFX-Feature-Proxy': 'None',
                 'Permissions': 'all-permissions',
                 'Codebase': 'illarion.org',
@@ -65,6 +65,9 @@ jar {
                 'Implementation-Vendor': 'Illarion e.V.',
                 'Implementation-Version': project.ext.fullVersion
         )
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
@@ -82,11 +85,7 @@ if (hasInstall4jTargetDir) {
 }
 
 javafx {
-    version = '12'
     modules = [ 'javafx.controls', 'javafx.fxml' ]
-    configuration = 'compileOnly'
-
-    description = 'This is the downloader and launcher of Illarion.'
 }
 
 if (hasTargetDistDir) {
