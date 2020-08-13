@@ -3,6 +3,7 @@ package illarion.common.memory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -26,8 +27,8 @@ public class MemoryPool<T> {
         if (obj == null) {
             // There is no free object in queue --> allocate a new one
             try {
-                obj = cls.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
+                obj = cls.getDeclaredConstructor().newInstance();
+            } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException e) {
                 throw new MemoryAllocatorException(cls, e);
             }
         }
