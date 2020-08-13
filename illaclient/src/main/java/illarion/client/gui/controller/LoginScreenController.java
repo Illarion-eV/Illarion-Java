@@ -260,7 +260,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * This function triggers the login process. It will request the character list of the player from the server.
      */
     private void login() {
-        nifty.showPopup(screen, popupReceiveChars.getId(), null);
         Login login = Login.getInstance();
         login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
 
@@ -273,11 +272,14 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.storeData(savePassword.isChecked());
 
         if (login.isCharacterListRequired()) {
+            String receiveCharsPopupId = popupReceiveChars.getId();
+
+            nifty.showPopup(screen, receiveCharsPopupId, null);
+
             login.requestCharacterList(errorCode -> {
                 lastErrorCode = errorCode;
                 receivedLoginResponse = true;
-
-                nifty.closePopup(popupReceiveChars.getId());
+                nifty.closePopup(receiveCharsPopupId);
             });
         } else {
             engine.getSounds().stopMusic(15);
