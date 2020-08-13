@@ -111,9 +111,9 @@ public final class JavaLauncher {
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
 
-                Pattern versionRegex = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)");
+                Pattern versionRegex = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
                 Optional<Matcher> versionMatcher = reader.lines()
-                        .filter(s -> s.startsWith("java version"))
+                        .filter(s -> s.contains("version"))
                         .map(versionRegex::matcher)
                         .filter(Matcher::find)
                         .findFirst();
@@ -123,12 +123,10 @@ public final class JavaLauncher {
                     int mainVersion = Integer.parseInt(matcher.group(1));
                     int majorVersion = Integer.parseInt(matcher.group(2));
                     int minorVersion = Integer.parseInt(matcher.group(3));
-                    int buildNumber = Integer.parseInt(matcher.group(4));
 
-                    log.info("Matched Java version to {}.{}.{}_b{}",
-                            mainVersion, majorVersion, minorVersion, buildNumber);
+                    log.info("Matched Java version to {}.{}.{}", mainVersion, majorVersion, minorVersion);
 
-                    return (mainVersion >= 1) && (majorVersion >= 8) && (buildNumber >= 0);
+                    return (mainVersion >= 14) && (majorVersion >= 0);
                 }
             } finally {
                 process.destroy();
