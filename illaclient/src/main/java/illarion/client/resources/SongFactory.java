@@ -136,7 +136,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
         int clipID = resource.getId();
         String music = resource.getObject();
 
-        songsBuilder.put(clipID, music);
+        songsBuilder.put(clipID, SONG_DIR + music);
     }
 
     /**
