@@ -173,9 +173,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
         audioPlayer.setLastMusic(illarionTheme);
         if (IllaClient.getCfg().getBoolean("musicOn")) {
-            if (illarionTheme != null) {
+            if (illarionTheme != null) {  // may be null in case OpenAL is not working
                 if (!audioPlayer.isCurrentMusic(illarionTheme)) {
-                    // may be null in case OpenAL is not working
                     audioPlayer.playMusic(illarionTheme);
                 }
             }
