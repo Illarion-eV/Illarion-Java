@@ -48,21 +48,19 @@ public class ApplicationController extends AbstractController {
     @Override
     public void setModel(@Nonnull GuiModel model) {
         super.setModel(model);
-        if (getModel().getHostServices().getWebContext() == null) {
-            rootPane.setOnMousePressed(me -> {
-                if (me.getButton() != MouseButton.MIDDLE) {
-                    initialX = me.getSceneX();
-                    initialY = me.getSceneY();
-                }
-            });
+        rootPane.setOnMousePressed(me -> {
+            if (me.getButton() != MouseButton.MIDDLE) {
+                initialX = me.getSceneX();
+                initialY = me.getSceneY();
+            }
+        });
 
-            rootPane.setOnMouseDragged(me -> {
-                if (me.getButton() != MouseButton.MIDDLE) {
-                    getModel().getStage().setX(me.getScreenX() - initialX);
-                    getModel().getStage().setY(me.getScreenY() - initialY);
-                }
-            });
-        }
+        rootPane.setOnMouseDragged(me -> {
+            if (me.getButton() != MouseButton.MIDDLE) {
+                getModel().getStage().setX(me.getScreenX() - initialX);
+                getModel().getStage().setY(me.getScreenY() - initialY);
+            }
+        });
     }
 
     @FXML

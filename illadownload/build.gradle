@@ -15,10 +15,13 @@
  */
 import com.install4j.gradle.Install4jTask
 
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
 apply plugin: 'java'
-apply plugin: 'application'
 apply plugin: 'maven-publish'
-apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
 apply plugin: 'install4j'
 
@@ -30,37 +33,41 @@ archivesBaseName = 'illarion_download'
 mainClassName = 'illarion.download.Application'
 
 dependencies {
-    compile project(':common')
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'org.ogce', name: 'xpp3', version: '1.1.6'
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.google.guava', name: 'guava', version: '21.0'
-    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
-    compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
-    compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
-    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
+    implementation project(':common')
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
+    implementation group: 'org.ogce', name: 'xpp3', version: '1.1.6'
+    implementation group: 'org.bushe', name: 'eventbus', version: '1.4'
+    implementation group: 'com.google.guava', name: 'guava', version: '21.0'
+    implementation group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
+    implementation group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
+    implementation group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
+    implementation group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes \
-                 'Main-Class': 'illarion.download.gui.GuiApplication', \
-                 'JavaFX-Feature-Proxy': 'None', \
-                 'Permissions': 'all-permissions', \
-                 'Codebase': 'illarion.org', \
-                 'Application-Name': 'Illarion Launcher', \
-                 'Application-Library-Allowable-Codebase': 'illarion.org', \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'), \
-                 'Built-By': System.getProperty('user.name'), \
-                 'Built-JDK': System.getProperty('java.version'), \
-                 'Implementation-Title': 'Illarion Launcher', \
-                 'Implementation-Vendor': 'Illarion e.V.',\
-                  'Implementation-Version': project.ext.fullVersion
+        attributes(
+                'Main-Class': 'illarion.download.Application',
+                'JavaFX-Feature-Proxy': 'None',
+                'Permissions': 'all-permissions',
+                'Codebase': 'illarion.org',
+                'Application-Name': 'Illarion Launcher',
+                'Application-Library-Allowable-Codebase': 'illarion.org',
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Implementation-Title': 'Illarion Launcher',
+                'Implementation-Vendor': 'Illarion e.V.',
+                'Implementation-Version': project.ext.fullVersion
+        )
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
@@ -77,55 +84,8 @@ if (hasInstall4jTargetDir) {
     }
 }
 
-startScripts.dependsOn {
-    jfxJar
-}
-
 javafx {
-    id 'IllaLauncher'
-    appID 'IllaLauncher'
-    appName 'Illarion-Launcher'
-    mainClass project.mainClassName
-
-    embedLauncher = true
-
-    category = 'Games'
-    copyright = 'Copyright (c) 2013 Illarion e.V.'
-    description = 'This is the downloader and launcher of Illarion.'
-    licenseType = 'AGPLv3'
-    vendor = 'Illarion e.V.'
-    installSystemWide = false
-    menu = true
-    shortcut = true
-
-    if (project.hasProperty('keyFile')) {
-        apply from: project.keyFile
-        releaseKey {
-            alias = project.ext.storealias
-            keyStore = project.ext.keystore
-            storePass = project.ext.storepass
-            storeType = project.ext.storetype
-        }
-        signingMode 'release'
-    }
-    packaging 'none'
-
-    profiles {
-        windows {
-            javaRuntime = '<NO RUNTIME>'
-        }
-        macosx {
-            javaRuntime = '<NO RUNTIME>'
-        }
-        linux {
-            javaRuntime = '<NO RUNTIME>'
-        }
-    }
-
-    width = 620
-    height = 410
-    embedJNLP = true
-    codebase = 'https://illarion.org/media/java/launcher'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 if (hasTargetDistDir) {

@@ -272,7 +272,7 @@ public class MavenDownloader {
     }
 
     private void setupRepositories() {
-        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/",
+        repositories.add(setupRepository("central", "https://repo1.maven.org/maven2/",
                 setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/"),
                 setupRepository("antelink", ".com/content/repositories/central/"),
                 setupRepository("exist", "http://repo.exist.com/maven2/"),

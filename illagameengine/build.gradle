@@ -13,27 +13,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 archivesBaseName = 'illarion_engine'
 dependencies {
-    compile project(':common')
+    api project(':common')
+    implementation group: 'xmlpull', name: 'xmlpull', version: '1.1.3.1'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes        \
-               'Permissions': 'all-permissions',       \
-               'Codebase': 'illarion.org',       \
-               'Trusted-Library': true,       \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
-               'Built-By': System.getProperty('user.name'),        \
-               'Built-JDK': System.getProperty('java.version'),        \
-               'Implementation-Title': 'Illarion Game Engine',        \
-               'Implementation-Vendor': 'Illarion e.V.',       \
-               'Implementation-Version': project.ext.fullVersion
+        attributes(
+                'Permissions': 'all-permissions',
+                'Codebase': 'illarion.org',
+                'Trusted-Library': true,
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Implementation-Title': 'Illarion Game Engine',
+                'Implementation-Vendor': 'Illarion e.V.',
+                'Implementation-Version': project.ext.fullVersion
+        )
     }
 }
 

@@ -42,22 +42,22 @@ configurations {
 }
 
 dependencies {
-    compile project(':common')
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.github.insubstantial', name: 'substance', version: project.ext.insubstantialVersion
-    compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.1'
-    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.6.1'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7'
+    implementation project(':common')
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
+    implementation group: 'org.bushe', name: 'eventbus', version: '1.4'
+    implementation group: 'com.github.insubstantial', name: 'substance', version: project.ext.insubstantialVersion
+    implementation group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
+    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.1'
+    implementation group: 'com.fifesoft', name: 'autocomplete', version: '2.6.1'
+    implementation group: 'org.antlr', name: 'antlr4-runtime', version: '4.7'
 
     antlr4 group: 'org.antlr', name: 'antlr4', version: '4.7'
 
-    runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
+    runtimeOnly group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
 }
 
 task antlrOutputDir {
@@ -83,11 +83,6 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
 
 }
 
-tasks.withType(FindBugs) {
-    exclude '**/illarion/easynpc/grammar/*'
-    excludeFilter = file("$projectDir/findbugs-exclude.xml")
-}
-
 tasks.withType(Pmd) {
     exclude '**/illarion/easynpc/grammar/*'
 }
@@ -100,18 +95,19 @@ compileJava {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes          \
-                 'Main-Class': 'illarion.easynpc.gui.MainFrame',         \
-                 'Permissions': 'all-permissions',         \
-                 'Codebase': 'illarion.org',         \
-                 'Application-Name': 'Illarion easyNPC editor',         \
-                 'Application-Library-Allowable-Codebase': 'illarion.org',         \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),         \
-                 'Built-By': System.getProperty('user.name'),          \
-                 'Built-JDK': System.getProperty('java.version'),          \
-                 'Implementation-Title': 'Illarion easyNPC Editor',          \
-                 'Implementation-Vendor': 'Illarion e.V.',         \
+        attributes(
+                 'Main-Class': 'illarion.easynpc.gui.MainFrame',
+                 'Permissions': 'all-permissions',
+                 'Codebase': 'illarion.org',
+                 'Application-Name': 'Illarion easyNPC editor',
+                 'Application-Library-Allowable-Codebase': 'illarion.org',
+                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                 'Built-By': System.getProperty('user.name'),
+                 'Built-JDK': System.getProperty('java.version'),
+                 'Implementation-Title': 'Illarion easyNPC Editor',
+                 'Implementation-Vendor': 'Illarion e.V.',
                  'Implementation-Version': project.ext.fullVersion
+        )
     }
 }
 

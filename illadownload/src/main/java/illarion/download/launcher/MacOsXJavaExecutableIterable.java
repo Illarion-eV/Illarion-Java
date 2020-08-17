@@ -144,7 +144,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
         javaHomeDirectoryFetched = true;
         LOGGER.warn("Platform independent locating tries for java executable failed. Entering MacOS mode.");
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("/usr/libexec/java_home", "-v", "1.7");
+            ProcessBuilder processBuilder = new ProcessBuilder("/usr/libexec/java_home", "-v", "14");
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
             //noinspection resource

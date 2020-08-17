@@ -13,30 +13,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
+apply from: '../versions.gradle'
 
 archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
-    compile project(':engine')
-    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.10'
-    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.10'
-    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.10', classifier: 'natives-desktop'
+    api project(':engine')
+    api group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.10'
+    api group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.10'
+    runtimeOnly group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.10', classifier: 'natives-desktop'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes          \
-                 'Permissions': 'all-permissions',         \
-                 'Codebase': 'illarion.org',         \
-                 'Trusted-Library': true,         \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),         \
-                 'Built-By': System.getProperty('user.name'),          \
-                 'Built-JDK': System.getProperty('java.version'),          \
-                 'Implementation-Title': 'Illarion Game Engine - libGDX Backend',          \
-                 'Implementation-Vendor': 'Illarion e.V.',         \
-                 'Implementation-Version': project.ext.fullVersion
+        attributes(
+                'Permissions': 'all-permissions',
+                'Codebase': 'illarion.org',
+                'Trusted-Library': true,
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Implementation-Title': 'Illarion Game Engine - libGDX Backend',
+                'Implementation-Vendor': 'Illarion e.V.',
+                'Implementation-Version': project.ext.fullVersion
+        )
     }
 }
 
