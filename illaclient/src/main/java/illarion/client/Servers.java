@@ -35,7 +35,7 @@ public enum Servers {
     /**
      * The Testserver of Illarion. Testers and developers need a client that is allowed to connect to this server.
      */
-    Testserver(1, "testserver", Illarionserver.serverHostName, 3011, 20),
+    Localserver(1, "localserver", "localhost", 13000, 20),
 
     /**
      * The development server of Illarion. Developers need a client that is allowed to connect to this server.
