@@ -143,7 +143,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             server = screen.findNiftyControl("server", DropDown.class);
             if (server != null) {
                 server.addItem("${login-bundle.server.develop}");
-                server.addItem("${login-bundle.server.test}");
+                server.addItem("${login-bundle.server.local}");
                 server.addItem("${login-bundle.server.game}");
                 server.addItem("${login-bundle.server.custom}");
                 server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
