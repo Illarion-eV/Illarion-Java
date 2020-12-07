@@ -20,9 +20,9 @@ apply from: '../versions.gradle'
 archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
     api project(':engine')
-    api group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.10'
-    api group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.10'
-    runtimeOnly group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.10', classifier: 'natives-desktop'
+    api group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.9.12'
+    api group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.9.12'
+    runtimeOnly group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.9.12', classifier: 'natives-desktop'
 }
 
 jar {

@@ -41,7 +41,7 @@ dependencies {
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
     implementation group: 'org.ogce', name: 'xpp3', version: '1.1.6'
     implementation group: 'org.bushe', name: 'eventbus', version: '1.4'
-    implementation group: 'com.google.guava', name: 'guava', version: '21.0'
+    implementation group: 'com.google.guava', name: 'guava', version: '30.0-jre'
     implementation group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
     implementation group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
     implementation group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
