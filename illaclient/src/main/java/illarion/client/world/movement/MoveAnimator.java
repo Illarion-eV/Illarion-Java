@@ -95,14 +95,30 @@ class MoveAnimator implements AnimatedMove {
 
     void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         if (uncomfirmedMoveTask != null) {
-            log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
+            log.warn(marker,
+                    "Scheduling another early move is not possible as there is already one set. Scheduled Move: {}, NewTarget: {}. Try repairing by canceling all pending moves.",
+                    uncomfirmedMoveTask,
+                    target);
+
+            boolean hasRequestedTurn = lastRequestedTurn != null;
+
+            int lastTurnId = 0;
+            if (hasRequestedTurn) {
+                lastTurnId = lastRequestedTurn.getServerId();
+            }
+
+            cancelAll();
+
+            if (hasRequestedTurn) {
+                scheduleTurn(Direction.fromServerId(lastTurnId));
+            }
         } else {
-            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode,
-                      target, duration);
-            MovingTask task = new MovingTask(this, mode, target, duration);
-            uncomfirmedMoveTask = task;
-            scheduleTask(task);
+            log.debug(marker, "Scheduling an early move. Mode: {}, Target: {}, Duration: {}ms", mode, target, duration);
         }
+
+        MovingTask task = new MovingTask(this, mode, target, duration);
+        uncomfirmedMoveTask = task;
+        scheduleTask(task);
     }
 
     /**

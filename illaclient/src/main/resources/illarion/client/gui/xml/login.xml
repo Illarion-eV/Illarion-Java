@@ -20,8 +20,8 @@
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
         <layer childLayout="vertical" visibleToMouse="false">
             <effect>
-                <onStartScreen name="fade" start="#00" end="#ff" length="500" inherit="true"/>
-                <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
+                <onStartScreen name="fade" start="#00" end="#ff" length="200" inherit="true"/>
+                <onEndScreen name="fade" start="#ff" end="#00" length="200" inherit="true"/>
             </effect>
 
             <panel height="422px" width="*" backgroundImage="gui/window_background.png"
@@ -30,8 +30,8 @@
 
         <layer id="layer" childLayout="center">
             <effect>
-                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
-                <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
+                <onStartScreen name="fade" start="#00" end="#ff" length="200" inherit="true"/>
+                <onEndScreen name="fade" start="#ff" end="#00" length="200" inherit="true"/>
             </effect>
 
             <panel width="400px" childLayout="vertical">
