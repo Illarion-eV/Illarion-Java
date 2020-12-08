@@ -80,17 +80,6 @@ allprojects {
         resolutionStrategy {
             cacheDynamicVersionsFor 10 * 60, 'seconds'
             cacheChangingModulesFor 0, 'seconds'
-
-            componentSelection {
-                all { ComponentSelection selection ->
-                    if (selection.candidate.group == 'org.illarion' &&
-                            selection.candidate.module.startsWith('rsc_') &&
-                            !selection.candidate.version.endsWith('-SNAPSHOT') &&
-                            project.ext.branch != 'master') {
-                        selection.reject("only snapshot versions on dev")
-                    }
-                }
-            }
         }
     }
 
