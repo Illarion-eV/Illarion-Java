@@ -56,6 +56,9 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
+import org.eclipse.aether.util.graph.version.ChainedVersionFilter;
+import org.eclipse.aether.util.graph.version.HighestVersionFilter;
+import org.eclipse.aether.util.graph.version.SnapshotVersionFilter;
 import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
 import org.slf4j.Logger;
@@ -168,6 +171,12 @@ public class MavenDownloader {
         session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeOut);
         session.setUpdatePolicy(UPDATE_POLICY_ALWAYS);
         session.setChecksumPolicy(CHECKSUM_POLICY_FAIL);
+
+        if (snapshot) {
+            session.setVersionFilter(ChainedVersionFilter.newInstance(new OnlySnapshotVersionFilter(), new HighestVersionFilter()));
+        } else {
+            session.setVersionFilter(ChainedVersionFilter.newInstance(new SnapshotVersionFilter(), new HighestVersionFilter()));
+        }
 
         log.info("Used request timeout: {}ms", requestTimeOut);
 
