@@ -36,10 +36,6 @@ public class ChannelSelectionController extends AbstractController {
     @FXML
     public ComboBox<String> targetClient;
     @FXML
-    public ComboBox<String> targetEasyNpc;
-    @FXML
-    public ComboBox<String> targetEasyQuest;
-    @FXML
     public ComboBox<String> targetMapEditor;
 
     @Override
@@ -48,8 +44,6 @@ public class ChannelSelectionController extends AbstractController {
                 .observableArrayList(resources.getString("optionRelease"),
                         resources.getString("optionSnapshot"));
         targetClient.setItems(targets);
-        targetEasyNpc.setItems(targets);
-        targetEasyQuest.setItems(targets);
         targetMapEditor.setItems(targets);
     }
 
@@ -60,8 +54,6 @@ public class ChannelSelectionController extends AbstractController {
         Config cfg = getModel().getConfig();
 
         targetClient.setValue(targetClient.getItems().get(cfg.getInteger("channelClient")));
-        targetEasyNpc.setValue(targetEasyNpc.getItems().get(cfg.getInteger("channelEasyNpc")));
-        targetEasyQuest.setValue(targetEasyQuest.getItems().get(cfg.getInteger("channelEasyQuest")));
         targetMapEditor.setValue(targetMapEditor.getItems().get(cfg.getInteger("channelMapEditor")));
     }
 
@@ -69,8 +61,6 @@ public class ChannelSelectionController extends AbstractController {
     public void nextStep(@Nonnull ActionEvent actionEvent) {
         Config cfg = getModel().getConfig();
         cfg.set("channelClient", targetClient.getItems().indexOf(targetClient.getValue()));
-        cfg.set("channelEasyNpc", targetEasyNpc.getItems().indexOf(targetEasyNpc.getValue()));
-        cfg.set("channelEasyQuest", targetEasyQuest.getItems().indexOf(targetEasyQuest.getValue()));
         cfg.set("channelMapEditor", targetMapEditor.getItems().indexOf(targetMapEditor.getValue()));
 
         cfg.save();

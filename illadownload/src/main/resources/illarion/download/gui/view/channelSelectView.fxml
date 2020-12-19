@@ -62,16 +62,10 @@
                 </rowConstraints>
                 <ComboBox fx:id="targetClient" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0"
                           GridPane.vgrow="NEVER" />
-                <ComboBox fx:id="targetEasyNpc" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
-                          GridPane.vgrow="NEVER" />
-                <ComboBox fx:id="targetEasyQuest" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2"
-                          GridPane.vgrow="NEVER" />
-                <ComboBox fx:id="targetMapEditor" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3"
+                <ComboBox fx:id="targetMapEditor" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
                           GridPane.vgrow="NEVER" />
                 <Label text="%labelClient" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Label text="%labelEasyNPC" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Label text="%labelEasyQuest" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Label text="%labelMapEditor" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Label text="%labelMapEditor" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             </GridPane>
         </right>
         <top>
