@@ -76,7 +76,7 @@ public final class Tooltip {
         type = reader.readString();
         level = reader.readUByte();
         usable = reader.readUByte() == 1;
-        weight = reader.readUShort();
+        weight = (int) reader.readUInt();
         worth = new Money(reader.readUInt());
         qualityText = reader.readString();
         durabilityText = reader.readString();
