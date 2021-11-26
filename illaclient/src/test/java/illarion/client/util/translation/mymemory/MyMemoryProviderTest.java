@@ -32,24 +32,4 @@ public class MyMemoryProviderTest {
     public void createProvider() {
         provider = new MyMemoryProvider();
     }
-
-    @Test
-    public void testGermanToEnglish() {
-        if (provider == null) {
-            throw new SkipException("Provider was not correctly prepared.");
-        }
-        String translation = provider.getTranslation("Hallo!", TranslationDirection.GermanToEnglish);
-
-        assertEquals(translation, "Hi!", "Translation service is not yielding the expected result.");
-    }
-
-    @Test
-    public void testEnglishToGerman() {
-        if (provider == null) {
-            throw new SkipException("Provider was not correctly prepared.");
-        }
-        String translation = provider.getTranslation("Hello!", TranslationDirection.EnglishToGerman);
-
-        assertEquals(translation, "Hallo!", "Translation service is not yielding the expected result.");
-    }
 }
