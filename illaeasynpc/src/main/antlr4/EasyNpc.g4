@@ -87,6 +87,7 @@ consequence
     | 'trade'
     | 'treasure' '(' advancedNumber ')'
     | 'warp' '(' location ')'
+    | 'showcase'
     ;
 
 configuration

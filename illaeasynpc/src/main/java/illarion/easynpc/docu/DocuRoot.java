@@ -116,6 +116,7 @@ public final class DocuRoot implements DocuEntry {
         consequences.addChild(new DocuLeaf("talk.consequences.Gemcraft"));
         consequences.addChild(new DocuLeaf("talk.consequences.Treasure"));
         consequences.addChild(new DocuLeaf("talk.consequences.Warp"));
+        consequences.addChild(new DocuLeaf("talk.consequences.Showcase"));
         talk.addChild(consequences);
         types.add(talk);
 
