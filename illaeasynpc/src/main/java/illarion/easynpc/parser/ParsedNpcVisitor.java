@@ -254,6 +254,9 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
             case "showcase":
                 currentTalkingLine.addConsequence(new ConsequenceShowcase());
                 break;
+            case "hairdresser":
+                currentTalkingLine.addConsequence(new ConsequenceHairdresser());
+                break;
             default:
                 return super.visitConsequence(ctx);
         }

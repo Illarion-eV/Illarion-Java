@@ -88,6 +88,7 @@ consequence
     | 'treasure' '(' advancedNumber ')'
     | 'warp' '(' location ')'
     | 'showcase'
+    | 'hairdresser'
     ;
 
 configuration
