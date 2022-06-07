@@ -89,6 +89,7 @@ consequence
     | 'warp' '(' location ')'
     | 'showcase'
     | 'hairdresser'
+    | 'attribtrainer'
     ;
 
 configuration
