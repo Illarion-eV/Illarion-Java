@@ -60,7 +60,7 @@ public final class Tooltip {
     private final int amethystLevel;
     private final int obsidianLevel;
     private final int topazLevel;
-    private final int bonus;
+    private final double bonus;
 
     /**
      * Decode look at data from server receive buffer. And store the data for later execution.
@@ -174,7 +174,7 @@ public final class Tooltip {
         return topazLevel;
     }
 
-    public int getBonus() {
+    public double getBonus() {
         return bonus;
     }
 
