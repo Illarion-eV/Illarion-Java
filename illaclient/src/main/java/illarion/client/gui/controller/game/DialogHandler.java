@@ -233,6 +233,7 @@ public final class DialogHandler
         }
         selectedWidth += 10; // padding to make it look good (some space on the right side of the text entries)
         selectedWidth += 20; // magical additional width of unknown origin (determined by testing)
+        selectedWidth += 40; // Attempt to make it allow for wider text without requiring 1920x1080 res
 
         selectedWidth = Math.max(selectedWidth, 270); // width required to display the buttons properly
 
