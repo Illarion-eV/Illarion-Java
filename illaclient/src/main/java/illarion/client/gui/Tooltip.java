@@ -60,7 +60,7 @@ public final class Tooltip {
     private final int amethystLevel;
     private final int obsidianLevel;
     private final int topazLevel;
-    private final int bonus;
+    private final double bonus;
 
     /**
      * Decode look at data from server receive buffer. And store the data for later execution.
@@ -174,8 +174,8 @@ public final class Tooltip {
         return topazLevel;
     }
 
-    public int getBonus() {
-        return bonus;
+    public double getBonus() {
+        return bonus/100; //divided by 100 because it could only be stored as a integer, likely due to something server-side. Script side it is multiplied by 100.
     }
 
     @Override

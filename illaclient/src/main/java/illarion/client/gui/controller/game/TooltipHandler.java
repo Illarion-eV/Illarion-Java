@@ -209,8 +209,9 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.rubyLevel(tooltip.getRubyLevel());
         builder.topazLevel(tooltip.getTopazLevel());
 
-        if (tooltip.getBonus() > 0) {
-            builder.gemBonus(Integer.toString(tooltip.getBonus()));
+        if (tooltip.getBonus() > 0.0) {
+            String gemBonusString = Double.toString(tooltip.getBonus());
+            builder.gemBonus(gemBonusString);
         }
 
         Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
