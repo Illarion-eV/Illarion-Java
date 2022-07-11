@@ -388,7 +388,11 @@ public class DialogCraftingControl extends WindowControl
 
     @Override
     public int getAmount() {
-        return Integer.parseInt(getAmountTextField().getDisplayedText());
+        int amount = Integer.parseInt(getAmountTextField().getDisplayedText());
+        if (amount > 250) {
+            amount = 250;
+        }
+        return amount;
     }
 
     @Override
