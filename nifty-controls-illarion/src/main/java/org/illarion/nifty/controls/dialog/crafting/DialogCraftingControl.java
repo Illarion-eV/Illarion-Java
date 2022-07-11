@@ -142,7 +142,12 @@ public class DialogCraftingControl extends WindowControl
     private final class IncreaseAmountButtonEventSubscriber implements EventTopicSubscriber<ButtonClickedEvent> {
         @Override
         public void onEvent(String topic, ButtonClickedEvent data) {
-            getAmountTextField().setText(Integer.toString(getAmount() + 1));
+            int amount = getAmount();
+            int increase = 1;
+            if (amount == 250) {
+                increase = 0;
+            }
+            getAmountTextField().setText(Integer.toString(amount + increase));
         }
     }
 
