@@ -175,7 +175,7 @@ public final class Tooltip {
     }
 
     public double getBonus() {
-        return bonus/100; //divided by 100 because it could only be stored as a integer, likely due to something server-side. Script side it is multiplied by 100.
+        return bonus/2; //divided by 2 because it could only be stored as a integer and fighting gem bonus is calculated in 0.5 per gem, while the server protocol does not allow for floating points
     }
 
     @Override
