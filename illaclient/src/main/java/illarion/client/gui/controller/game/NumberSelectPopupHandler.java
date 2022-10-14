@@ -115,8 +115,8 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     public void requestNewPopup(
-            int minValue, int maxValue, @Nonnull Callback callback) {
-        World.getUpdateTaskManager().addTask((container, delta) -> internalCreateNewPopup(minValue, maxValue, callback));
+            int minValue, int maxValue, boolean usePreviousValue, @Nonnull Callback callback) {
+        World.getUpdateTaskManager().addTask((container, delta) -> internalCreateNewPopup(minValue, maxValue, usePreviousValue, callback));
     }
 
     /**
@@ -126,8 +126,11 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param maxValue the maximal value that is allowed to be selected by this number select popup
      * @param callback the callback that is called in case the user interacts with the popup
      */
+    
+    public static int inputFromLastTime;
+
     private void internalCreateNewPopup(
-            int minValue, int maxValue, @Nonnull Callback callback) {
+            int minValue, int maxValue, boolean usePreviousValue, @Nonnull Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -148,9 +151,13 @@ public final class NumberSelectPopupHandler implements ScreenController {
             public CharSequence getDisplaySequence(
                     @Nonnull CharSequence original, int start, int end) {
                 if (original.length() == 0) {
+                    if (inputFromLastTime != 0 && usePreviousValue == true) {
+                        return Integer.toString(inputFromLastTime);
+                    }
                     return Integer.toString(minValue);
-                }
+                } else {
                 return original.subSequence(start, end);
+                }
             }
         });
 
@@ -322,6 +329,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
             if (activeCallback == null) {
                 LOGGER.error("Number select Callback gone missing!");
             } else {
+                inputFromLastTime = getCurrentValue();
                 activeCallback.popupConfirmed(getCurrentValue());
             }
             parentNifty.closePopup(activePopup.getId());

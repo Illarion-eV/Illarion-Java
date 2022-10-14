@@ -324,7 +324,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             return;
         }
         if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount.getValue(), new Callback() {
+            numberSelect.requestNewPopup(1, amount.getValue(), true, new Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing

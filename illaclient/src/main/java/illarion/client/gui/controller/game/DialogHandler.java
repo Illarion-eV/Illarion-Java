@@ -803,7 +803,7 @@ public final class DialogHandler
             list.buyItem(index);
         } else {
             if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
-                numberSelect.requestNewPopup(1, 250, new Callback() {
+                numberSelect.requestNewPopup(1, 250, false, new Callback() {
                     @Override
                     public void popupCanceled() {
                         // nothing
