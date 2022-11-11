@@ -25,16 +25,18 @@
                         <BorderPane.margin>
                             <Insets bottom="35.0"/>
                         </BorderPane.margin>
+
                         <AnchorPane>
-                            <VBox.margin>
-                                <Insets fx:id="x1"/>
-                            </VBox.margin>
-                            <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                    prefHeight="30.0" styleClass="button-gray" text="%account"
-                                    textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                    AnchorPane.topAnchor="0.0" onAction="#goToAccount"/>
+                        <VBox.margin>
+                            <Insets fx:id="x1"/>
+                        </VBox.margin>
+                            <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                styleClass="button-gray" prefHeight="32.0" onAction="#startMapEdit"
+                                fx:id="launchMapEditButton"/>
                         </AnchorPane>
+
                         <AnchorPane>
                             <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
                                     prefHeight="30.0" styleClass="button-gray" text="%options"
@@ -45,7 +47,11 @@
                     </VBox>
                 </center>
                 <left>
-                    <ImageView id="logo" mouseTransparent="true"/>
+                    <Button onAction="#goToStartPage" styleClass="button-transparent">
+                        <graphic>
+                            <ImageView id="logo" mouseTransparent="true"/>
+                        </graphic>
+                    </Button>
                 </left>
                 <padding>
                     <Insets top="15.0"/>
@@ -83,27 +89,39 @@
                 <BorderPane.margin>
                     <Insets fx:id="x2"/>
                 </BorderPane.margin>
+    
                 <AnchorPane>
-                    <Button alignment="TOP_LEFT" mnemonicParsing="false" text="%launchEasyNpc"
-                            textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                            AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="32.0"
-                            onAction="#startEasyNpc" fx:id="launchEasyNpcButton"/>
+                    <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                        prefHeight="30.0" styleClass="button-gray" text="%account"
+                        textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                        AnchorPane.topAnchor="0.0" onAction="#goToAccount"/>
                 </AnchorPane>
+
                 <AnchorPane>
-                    <Button mnemonicParsing="false" text="%launchEasyQuest" textAlignment="CENTER"
-                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                            styleClass="button-gray" prefHeight="32.0" onAction="#startEasyQuest"
-                            fx:id="launchEasyQuestButton"/>
+                    <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                        prefHeight="30.0" styleClass="button-gray" text="%character"
+                        textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                        AnchorPane.topAnchor="0.0" onAction="#goToCharacter"/>
                 </AnchorPane>
+
                 <AnchorPane>
-                    <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
-                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                            styleClass="button-gray" prefHeight="32.0" onAction="#startMapEdit"
-                            fx:id="launchMapEditButton"/>
+                    <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                        prefHeight="30.0" styleClass="button-gray" text="%discord"
+                        textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                        AnchorPane.topAnchor="0.0" onAction="#goToDiscord"/>
                 </AnchorPane>
+
+                <AnchorPane>
+                    <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                        prefHeight="30.0" styleClass="button-gray" text="%forum"
+                        textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                        AnchorPane.topAnchor="0.0" onAction="#goToForum"/>
+                </AnchorPane>
+
             </VBox>
         </left>
         <padding>

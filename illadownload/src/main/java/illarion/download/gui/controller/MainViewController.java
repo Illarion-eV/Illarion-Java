@@ -59,6 +59,7 @@ import java.util.*;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+
 public class MainViewController extends AbstractController implements MavenDownloaderCallback, ProgressMonitorCallback {
     @FXML
     public AnchorPane newsPane;
@@ -69,15 +70,33 @@ public class MainViewController extends AbstractController implements MavenDownl
     @FXML
     public Label progressDescription;
     @FXML
-    public Button launchEasyNpcButton;
-    @FXML
-    public Button launchEasyQuestButton;
-    @FXML
     public Button launchMapEditButton;
     @FXML
     public Button launchClientButton;
 
     private ResourceBundle resourceBundle;
+
+    public static String getLinkInCorrectLanguage(boolean isGerman, String typeOfLink) {
+        String account = "https://illarion.org/community/account/us_register.php";
+        String start = "https://illarion.org/general/us_startpage.php";
+        String character = "https://illarion.org/community/account/us_newchar.php";
+
+        if (isGerman) {
+            account = "https://illarion.org/community/account/de_register.php";
+            start = "https://illarion.org/general/de_startpage.php";
+            character = "https://illarion.org/community/account/us_newchar.php";
+        }
+
+        if (typeOfLink == "account"){
+            return account;
+        }else if (typeOfLink == "start"){
+            return start;
+        }else if (typeOfLink == "character"){
+            return character;
+        }
+
+        return "";
+    }
 
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MainViewController.class);
@@ -103,8 +122,6 @@ public class MainViewController extends AbstractController implements MavenDownl
             }
             event.consume();
         };
-        launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
-        launchEasyQuestButton.setOnKeyReleased(eventEventHandler);
         launchMapEditButton.setOnKeyReleased(eventEventHandler);
         launchClientButton.requestFocus();
     }
@@ -195,10 +212,12 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
     }
 
+    private static boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+
     private static void parserEntryXml(
             @Nonnull XmlPullParser parser, @Nonnull List<NewsQuestEntry> list)
             throws IOException, XmlPullParserException, ParseException {
-        boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+        
 
         String title = null;
         Date timestamp = null;
@@ -215,7 +234,6 @@ public class MainViewController extends AbstractController implements MavenDownl
                 case XmlPullParser.END_TAG:
                     switch (parser.getName()) {
                         case "quests":
-                            Collections.sort(list);
                             return;
                         case "news":
                             Collections.sort(list);
@@ -258,6 +276,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             }
         }
     }
+
 
     @Contract(value = "null -> true", pure = true)
     private static boolean isNullOrEmpty(@Nullable String testString) {
@@ -319,57 +338,57 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @FXML
     public void goToAccount(@Nonnull ActionEvent actionEvent) {
-        getModel().getHostServices().showDocument("https://illarion.org/community/account/index.php");
+        getModel().getHostServices().showDocument(getLinkInCorrectLanguage(useGerman, "account"));
     }
 
     @FXML
-    public void startEasyNpc(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, false, true, false, false);
-        launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame", "channelEasyNpc");
+    public void goToCharacter(@Nonnull ActionEvent actionEvent) {
+        getModel().getHostServices().showDocument(getLinkInCorrectLanguage(useGerman, "character"));
     }
 
     @FXML
-    public void startEasyQuest(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, false, false, true, false);
-        launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame", "channelEasyQuest");
+    public void goToForum(@Nonnull ActionEvent actionEvent) {
+        getModel().getHostServices().showDocument("https://illarion.org/community/forums/index.php");
+    }
+
+    @FXML
+    public void goToStartPage(@Nonnull ActionEvent actionEvent) {
+        getModel().getHostServices().showDocument(getLinkInCorrectLanguage(useGerman, "start"));
+    }
+
+    @FXML
+    public void goToDiscord(@Nonnull ActionEvent actionEvent) {
+        getModel().getHostServices().showDocument("https://discord.gg/yj3htPN");
     }
 
     @FXML
     public void startMapEdit(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, false, false, false, true);
+        updateLaunchButtons(false, false, true);
         launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor", "channelMapEditor");
     }
 
     @FXML
     public void launchClient(@Nonnull ActionEvent actionEvent) {
-        updateLaunchButtons(false, true, false, false, false);
+        updateLaunchButtons(false, true, false);
         launch("org.illarion", "client", "illarion.client.IllaClient", "channelClient");
     }
 
     private void updateLaunchButtons(
             boolean enabled,
             boolean client,
-            boolean easyNpc,
-            boolean easyQuest,
             boolean mapEdit) {
         if (Platform.isFxApplicationThread()) {
             launchClientButton.setDisable(!enabled);
             launchMapEditButton.setDisable(!enabled);
-            launchEasyQuestButton.setDisable(!enabled);
-            launchEasyNpcButton.setDisable(!enabled);
             if (enabled) {
                 launchClientButton.setText(resourceBundle.getString("launchClient"));
                 launchMapEditButton.setText(resourceBundle.getString("launchMapEdit"));
-                launchEasyQuestButton.setText(resourceBundle.getString("launchEasyQuest"));
-                launchEasyNpcButton.setText(resourceBundle.getString("launchEasyNpc"));
             } else {
                 launchClientButton.setText(resourceBundle.getString(client ? "starting" : "launchClient"));
                 launchMapEditButton.setText(resourceBundle.getString(mapEdit ? "starting" : "launchMapEdit"));
-                launchEasyQuestButton.setText(resourceBundle.getString(easyQuest ? "starting" : "launchEasyQuest"));
-                launchEasyNpcButton.setText(resourceBundle.getString(easyNpc ? "starting" : "launchEasyNpc"));
             }
         } else {
-            Platform.runLater(() -> updateLaunchButtons(enabled, client, easyNpc, easyQuest, mapEdit));
+            Platform.runLater(() -> updateLaunchButtons(enabled, client, mapEdit));
         }
     }
 
@@ -511,7 +530,7 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private void cancelLaunch() {
-        updateLaunchButtons(true, false, false, false, false);
+        updateLaunchButtons(true, false, false);
     }
 
     @FXML
