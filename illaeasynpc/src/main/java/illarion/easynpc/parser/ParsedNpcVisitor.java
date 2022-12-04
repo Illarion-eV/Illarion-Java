@@ -260,6 +260,12 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
             case "attribtrainer":
                 currentTalkingLine.addConsequence(new ConsequenceAttribtrainer());
                 break;
+            case "blackmarket":
+                currentTalkingLine.addConsequence(new ConsequenceBlackmarket());
+                break;
+            case "pets":
+                currentTalkingLine.addConsequence(new ConsequencePets());
+                break;
             default:
                 return super.visitConsequence(ctx);
         }

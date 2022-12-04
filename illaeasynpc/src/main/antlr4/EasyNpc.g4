@@ -90,6 +90,8 @@ consequence
     | 'showcase'
     | 'hairdresser'
     | 'attribtrainer'
+    | 'blackmarket'
+    | 'pets'
     ;
 
 configuration
