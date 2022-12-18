@@ -76,11 +76,9 @@
                         <control name="button" id="openHelpBtn" style="nifty-button-help" valign="bottom"
                                  focusable="false"/>
                     </panel>
-                    <control name="progress" style="illarion-health-bar" width="100%" id="healthBar"/>
-                    <panel width="100%" childLayout="horizontal">
-                        <control name="progress" style="illarion-mana-bar" width="50%" id="manaBar"/>
-                        <control name="progress" style="illarion-food-bar" width="50%" id="foodBar"/>
-                    </panel>
+                        <control align="right" name="progress" style="illarion-mana-bar" width="25%" id="manaBar"/>
+                        <control align="right" name="progress" style="illarion-food-bar" width="25%" id="foodBar"/>
+                        <control align="right" name="progress" style="illarion-health-bar" width="25%" id="healthBar"/>
                 </panel>
                 <panel width="10px"/>
             </panel>
