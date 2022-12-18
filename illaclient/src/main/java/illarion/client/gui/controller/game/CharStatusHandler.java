@@ -92,6 +92,8 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
 
     private Element manaPointElement;
 
+    private boolean isMage;
+
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         hitPointBar = screen.findNiftyControl("healthBar", Progress.class);
@@ -109,6 +111,7 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
         hitPoints = playerChar.getAttribute(CharacterAttribute.HitPoints);
         foodPoints = playerChar.getAttribute(CharacterAttribute.FoodPoints);
         manaPoints = playerChar.getAttribute(CharacterAttribute.ManaPoints);
+        isMage = false;
     }
 
     @Override
@@ -121,11 +124,12 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
 
         boolean manaIsVisible = manaPointElement.isVisible();
 
-        if ((manaPoints == 0) && manaIsVisible){
+        if ((manaPoints == 0) && manaIsVisible && !isMage){
             manaPointElement.hide();
         }
         if ((manaPoints >= 1) && !manaIsVisible){
             manaPointElement.show();
+            isMage = true;
         }
 
         if ((hitPoints != currentHitPoints) && (hitPointBar != null)) {
