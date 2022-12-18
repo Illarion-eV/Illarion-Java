@@ -18,6 +18,7 @@ package illarion.client.gui.controller.game;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.elements.Element;
 import illarion.client.graphics.AnimationUtility;
 import illarion.client.gui.PlayerStatusGui;
 import illarion.client.world.Char;
@@ -27,6 +28,8 @@ import illarion.client.world.characters.CharacterAttribute;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +43,8 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     /**
      * The progress bar that shows the hit points.
      */
+    private static final Logger log = LoggerFactory.getLogger(CharStatusHandler.class);
+    
     @Nullable
     private Progress hitPointBar;
 
@@ -85,11 +90,14 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
      */
     private int currentManaPoints;
 
+    private Element manaPointElement;
+
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         hitPointBar = screen.findNiftyControl("healthBar", Progress.class);
         manaPointBar = screen.findNiftyControl("manaBar", Progress.class);
         foodPointBar = screen.findNiftyControl("foodBar", Progress.class);
+        manaPointElement = screen.findElementById("manaBar");
     }
 
     @Override
@@ -110,6 +118,16 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
 
     @Override
     public void update(GameContainer container, int delta) {
+
+        boolean manaIsEnabled = manaPointElement.isVisible();
+
+        if ((manaPoints == 0) && manaIsEnabled){
+            manaPointElement.hide();
+        }
+        if ((manaPoints >= 1) && !manaIsEnabled){
+            manaPointElement.show();
+        }
+
         if ((hitPoints != currentHitPoints) && (hitPointBar != null)) {
             currentHitPoints = AnimationUtility.approach(currentHitPoints, hitPoints, 0, 10000, delta);
             hitPointBar.setProgress(currentHitPoints / 10000.f);
