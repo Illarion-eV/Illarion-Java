@@ -47,27 +47,27 @@
                 </panel>
 
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
-                    <panel align="right" marginBottom="3px" childLayout="horizontal">
+                    <panel align="right" marginBottom="3px" childLayout="vertical">
                         <control name="button" id="openMiniMapBtn" style="nifty-button-minimap" valign="bottom"
-                                 focusable="false" marginRight="10px"/>
+                                 focusable="false" marginBottom="10px"/>
                         <control name="button" id="openSkillsBtn" style="nifty-button-skills" valign="bottom"
-                                 focusable="false" marginRight="10px">
+                                 focusable="false" marginBottom="10px">
                             <effect>
                                 <onCustom name="imageOverlayPulsate" customKey="pulse" startDelay="0" length="10000"
                                           filename="gui/button/skills_highlight.png" post="true"/>
                             </effect>
                         </control>
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
-                                 focusable="false" marginRight="10px"/>
+                                 focusable="false" marginBottom="10px"/>
                         <control name="button" id="openQuestBtn" style="nifty-button-quest-log" valign="bottom"
-                                 focusable="false" marginRight="10px">
+                                 focusable="false" marginBottom="10px">
                             <effect>
                                 <onCustom name="imageOverlayPulsate" customKey="pulse" startDelay="0" length="10000"
                                           filename="gui/button/questlog_highlight.png" post="true"/>
                             </effect>
                         </control>
                         <control name="button" id="toggleRunBtn" style="nifty-button-toggle-run" valign="bottom"
-                                 focusable="false" marginRight="10px">
+                                 focusable="false" marginBottom="10px">
                             <effect>
                                 <onCustom name="imageOverlayPulsate" customKey="pulse" timeType="infinite"
                                           filename="gui/button/toggle_run_highlight.png" post="true"/>
