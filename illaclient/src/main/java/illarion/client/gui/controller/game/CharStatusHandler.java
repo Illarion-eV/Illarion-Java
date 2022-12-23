@@ -122,14 +122,17 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     @Override
     public void update(GameContainer container, int delta) {
 
-        boolean manaIsVisible = manaPointElement.isVisible();
+        if (manaPointElement != null){
 
-        if ((manaPoints == 0) && manaIsVisible && !isMage){
-            manaPointElement.hide();
-        }
-        if ((manaPoints >= 1) && !manaIsVisible){
-            manaPointElement.show();
-            isMage = true;
+            boolean manaIsVisible = manaPointElement.isVisible();
+
+            if ((manaPoints == 0) && manaIsVisible && !isMage){
+                manaPointElement.hide();
+            }
+            if ((manaPoints >= 1) && !manaIsVisible){
+                manaPointElement.show();
+                isMage = true;
+            }
         }
 
         if ((hitPoints != currentHitPoints) && (hitPointBar != null)) {
