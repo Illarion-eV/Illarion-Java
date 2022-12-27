@@ -206,33 +206,7 @@ final class AmbientLight {
         double daylightTimeSpan = getDaylightSpan(phaseOfTheSun);
         double sunRiseSetSpan = getSunRiseSetTime(phaseOfTheSun);
 
-        /* Light of the sun. */
-        if (secondOfDay < middleOfDay) {
-            /* Before noon. So there may be a sunrise at hand. */
-            double middleOfSunrise = middleOfDay - (daylightTimeSpan / 2.0);
-            double beginOfSunrise = middleOfSunrise - (sunRiseSetSpan / 2.0);
-            double endOfSunrise = middleOfSunrise + (sunRiseSetSpan / 2.0);
-            if ((secondOfDay > beginOfSunrise) && (secondOfDay < endOfSunrise)) {
-                /* We are currently within the time span of a sunrise. */
-                double riseProgress = getProgressInRange(beginOfSunrise, endOfSunrise, secondOfDay);
-                return getColorFromGradient(riseProgress, SUN_RISE_GRADIENT);
-            } else {
-                return (secondOfDay >= endOfSunrise) ? Color.WHITE : Color.BLACK;
-            }
-        } else {
-            /* Before noon. So there may be a sunset at hand. */
-            double middleOfSunset = middleOfDay + (daylightTimeSpan / 2.0);
-            double beginOfSunset = middleOfSunset - (sunRiseSetSpan / 2.0);
-            double endOfSunset = middleOfSunset + (sunRiseSetSpan / 2.0);
-            if ((secondOfDay > beginOfSunset) && (secondOfDay < endOfSunset)) {
-                /* We are currently within the time span of a sunset. */
-                double setProgress = getProgressInRange(beginOfSunset, endOfSunset, secondOfDay);
-                /* Follow the gradient inverse. */
-                return getColorFromGradient(1.0 - setProgress, SUN_RISE_GRADIENT);
-            } else {
-                return (secondOfDay >= endOfSunset) ? Color.BLACK : Color.WHITE;
-            }
-        }
+        return (true) ? Color.WHITE : Color.BLACK;
     }
 
     public void shutdown() {
