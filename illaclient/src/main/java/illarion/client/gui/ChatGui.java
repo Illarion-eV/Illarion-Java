@@ -58,6 +58,18 @@ public interface ChatGui {
     Color COLOR_HIGH_INFORM = new Color("#FF8080");
 
     /**
+     * Color for (talkto = !tt) admin messages.
+     */
+    Color COLOR_TT_INFORM = new Color("#FF9933");
+
+    /**
+     * Color for (!bc) broadcasts.
+     */
+    Color COLOR_BC_INFORM = new Color("#8080FF");
+
+
+
+    /**
      * Activate the chat input line. All keyboard input will be forwarded to the chat line once its activated.
      */
     void activateChatBox();

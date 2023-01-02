@@ -87,11 +87,13 @@ public final class InformMsg implements ServerReply {
             case BROADCAST:
                 gui.getInformGui().showBroadcastInform(informText);
                 gui.getChatGui()
-                        .addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText, ChatGui.COLOR_DEFAULT);
+                        .addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText, ChatGui.COLOR_BC_INFORM);
+                World.getPlayer().getChatLog().logText(Lang.getMsg("chat.broadcast") + ": " + informText);
                 break;
             case GM:
                 gui.getInformGui().showTextToInform(informText);
-                gui.getChatGui().addChatMessage(Lang.getMsg("chat.textto") + ": " + informText, ChatGui.COLOR_DEFAULT);
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.textto") + ": " + informText, ChatGui.COLOR_TT_INFORM);
+                World.getPlayer().getChatLog().logText(Lang.getMsg("chat.textto") + ": " + informText);
                 break;
             case SCRIPT_LOW_PRIORITY:
                 gui.getInformGui().showScriptInform(0, informText);
