@@ -26,46 +26,71 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+
+ /** 
+  * Colour Palette: (An image of all the colours can be found in the same folder as this file, named "gui_palette.png")
+  *.turquoise { color: #1abc9c; } - N/A
+  *.green-sea { color: #16a085; } - !tt
+  *.emerald { color: #2ecc71; } - N/A
+  *.nephritis { color: #27ae60; } - N/A
+  *.peter-river { color: #3498db; } - Inform
+  *.belize-hole { color: #2980b9; } - N/A
+  *.amethyst { color: #9b59b6; } - !bc
+  *.wisteria { color: #8e44ad; } - N/A
+  *.wet-asphalt { color: #34495e; } - N/A
+  *.midnight-blue { color: #2c3e50; } - N/A
+  *.sunflower { color: #f1c40f; } - #me
+  *.orange { color: #f39c12; } - N/A
+  *.carrot { color: #e67e22; } - N/A
+  *.pumpkin { color: #d35400; } - High Inform
+  *.alizarin { color: #e74c3c; } - N/A
+  *.pomegranate { color: #c0392b; } - #s
+  *.clouds { color: #ecf0f1; } - Default
+  *.silver { color: #bdc3c7; } - N/A
+  *.concrete { color: #95a5a6; } - N/A
+  *.asbestos { color: #7f8c8d; } - #w
+  */
+
 public interface ChatGui {
     /**
      * The default color of text entries.
      */
-    Color COLOR_DEFAULT = new Color("#FFFFFF");
+    Color COLOR_DEFAULT = new Color("#ECF0F1");
 
     /**
      * The color of shouted or important messages
      */
-    Color COLOR_SHOUT = new Color("#FF0000");
+    Color COLOR_SHOUT = new Color("#C0392B");
 
     /**
      * The color of whispered text.
      */
-    Color COLOR_WHISPER = new Color("#C0C0C0");
+    Color COLOR_WHISPER = new Color("#7F8C8D");
 
     /**
      * The color of emoted.
      */
-    Color COLOR_EMOTE = new Color("#FFCC33");
+    Color COLOR_EMOTE = new Color("#F1C40F");
 
     /**
      * The color of inform.
      */
-    Color COLOR_INFORM = new Color("#9298D1");
+    Color COLOR_INFORM = new Color("#3498DB");
 
     /**
      * The color of high inform.
      */
-    Color COLOR_HIGH_INFORM = new Color("#FF8080");
+    Color COLOR_HIGH_INFORM = new Color("#D35400");
 
     /**
      * Color for (talkto = !tt) admin messages.
      */
-    Color COLOR_TT_INFORM = new Color("#FF9933");
+    Color COLOR_TT_INFORM = new Color("#16A085");
 
     /**
      * Color for (!bc) broadcasts.
      */
-    Color COLOR_BC_INFORM = new Color("#8080FF");
+    Color COLOR_BC_INFORM = new Color("#9B59B6");
 
 
 
