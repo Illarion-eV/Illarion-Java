@@ -71,7 +71,7 @@ public class CarryLoad {
                 String finalMessageToSend = messageToSend;
                 World.getUpdateTaskManager().addTask((container, delta) -> {
                     World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
-                    World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, Color.WHITE);
+                    World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, new Color(0.93f, 0.94f, 0.95f, 1.0f));
                 });
             }
         }
