@@ -320,7 +320,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         // write number to text for display
         if (ItemCount.isGreaterOne(count)) {
-            number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
+            number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.sunflower);
         } else {
             number = null;
         }
