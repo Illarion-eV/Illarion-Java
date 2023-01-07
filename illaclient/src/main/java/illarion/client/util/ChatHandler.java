@@ -44,27 +44,27 @@ public final class ChatHandler {
         /**
          * Speech mode for emotes.
          */
-        Emote(Color.WHITE, "^\\s*[/#]me(.*)\\s*$", "$1"),
+        Emote(Color.sunflower, "^\\s*[/#]me(.*)\\s*$", "$1"),
 
         /**
          * Speech mode for normal spoken text.
          */
-        Normal(Color.WHITE, null, null),
+        Normal(Color.clouds, null, null),
 
         /**
          * Speech mode for OOC messages.
          */
-        Ooc(Color.GRAY, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
+        Ooc(Color.asbestos, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for shouted text.
          */
-        Shout(Color.RED, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
+        Shout(Color.pomegranate, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for whispered text.
          */
-        Whisper(Color.GRAY, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
+        Whisper(Color.asbestos, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
 
         /**
          * The color of this speech mode.
