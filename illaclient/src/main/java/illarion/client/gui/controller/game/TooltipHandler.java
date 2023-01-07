@@ -170,17 +170,17 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
         switch (tooltip.getRareness()) {
             case Tooltip.RARENESS_UNCOMMON:
-                builder.titleColor("#00a500ff");
+                builder.titleColor(new Color(0.15f, 0.68f, 0.38f, 1.0f));
                 break;
             case Tooltip.RARENESS_RARE:
-                builder.titleColor("#003fbfff");
+                builder.titleColor(new Color(0.16f, 0.50f, 0.73f, 1.0f));
                 break;
             case Tooltip.RARENESS_EPIC:
-                builder.titleColor("#bb00ffff");
+                builder.titleColor(new Color(0.56f, 0.27f, 0.68f, 1.0f));
                 break;
             case Tooltip.RARENESS_COMMON:
             default:
-                builder.titleColor(Color.WHITE);
+                builder.titleColor(new Color(0.93f, 0.94f, 0.95f, 1.0f));
                 break;
         }
 
@@ -190,9 +190,9 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.level(tooltip.getLevel());
 
         if (tooltip.isUsable()) {
-            builder.levelColor(Color.WHITE);
+            builder.levelColor(new Color(0.93f, 0.94f, 0.95f, 1.0f));
         } else {
-            builder.levelColor("#ff0000ff");
+            builder.levelColor(new Color(0.75f, 0.22f, 0.17f, 1.0f));
         }
 
         builder.worth(tooltip.getWorth().getTotalCopper() / 20);
