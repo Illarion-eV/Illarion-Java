@@ -236,6 +236,7 @@ public final class InformHandler implements InformGui, ScreenController {
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.label(message);
         labelBuilder.font(FontLoader.BUBBLE_FONT);
+        labelBuilder.color(new Color(0.61f, 0.35f, 0.71f, 1.0f));
         labelBuilder.invisibleToMouse();
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");
@@ -297,13 +298,13 @@ public final class InformHandler implements InformGui, ScreenController {
         labelBuilder.font(FontLoader.BUBBLE_FONT);
         switch (priority) {
             case 1:
-                labelBuilder.color(Color.WHITE);
+                labelBuilder.color(new Color(0.93f, 0.94f, 0.95f, 1.0f));
                 break;
             case 2:
-                labelBuilder.color(new Color(1.0f, 0.5f, 0.5f, 1.0f));
+                labelBuilder.color(new Color(0.83f, 0.33f, 0.0f, 1.0f));
                 break;
             default:
-                labelBuilder.color(new Color(0.9f, 0.9f, 0.9f, 1.0f));
+                labelBuilder.color(new Color(0.93f, 0.94f, 0.95f, 1.0f));
         }
         labelBuilder.invisibleToMouse();
         labelBuilder.valignCenter();
@@ -388,6 +389,7 @@ public final class InformHandler implements InformGui, ScreenController {
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.label(message);
         labelBuilder.font(FontLoader.BUBBLE_FONT);
+        labelBuilder.color(new Color(0.09f, 0.63f, 0.52f, 1.0f));
         labelBuilder.invisibleToMouse();
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");
