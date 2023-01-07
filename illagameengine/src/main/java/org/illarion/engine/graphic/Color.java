@@ -43,24 +43,61 @@ public class Color {
     public static final ImmutableColor WHITE = new ImmutableColor(1.f, 1.f, 1.f);
 
     /**
-     * A fully opaque red color. This color is immutable.
+     * The default color of text entries.
      */
-    public static final ImmutableColor RED = new ImmutableColor(1.f, 0.f, 0.f);
+    public static final ImmutableColor clouds = new ImmutableColor(0.93f, 0.94f, 0.95f);
 
     /**
-     * A fully opaque blue color. This color is immutable.
+     * The color of shouted messages
      */
-    public static final ImmutableColor Blue = new ImmutableColor(0.25f, 0.65f, 1.f);
+    public static final ImmutableColor pomegranate = new ImmutableColor(0.75f, 0.22f, 0.17f);
 
     /**
-     * A fully opaque yellow color. This color is immutable.
+     * The color of whispered text, OOC text, dead status bar
      */
-    public static final ImmutableColor YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
+    public static final ImmutableColor asbestos = new ImmutableColor(0.5f, 0.55f, 0.55f);
 
     /**
-     * A fully opaque gray color. This color is immutable.
+     * The color of emotes, the item number of stacked items, player character names
      */
-    public static final ImmutableColor GRAY = new ImmutableColor(0.5f, 0.5f, 0.5f);
+    public static final ImmutableColor sunflower = new ImmutableColor(0.95f, 0.77f, 0.06f);
+
+    /**
+     * The color of inform.
+     */
+    public static final ImmutableColor peterRiver = new ImmutableColor(0.2f, 0.6f, 0.86f);
+
+    /**
+     * The color of high inform.
+     */
+    public static final ImmutableColor pumpkin = new ImmutableColor(0.83f, 0.33f, 0.0f);
+
+    /**
+     * Color for (talkto = !tt) admin messages.
+     */
+    public static final ImmutableColor greenSea = new ImmutableColor(0.09f, 0.63f, 0.52f);
+
+    /**
+     * Color for (!bc) broadcasts.
+     */
+    public static final ImmutableColor amethyst = new ImmutableColor(0.61f, 0.35f, 0.71f);
+
+    /**
+     * Other colours in our palette
+     */
+    public static final ImmutableColor turquoise = new ImmutableColor(26, 188, 156);
+    public static final ImmutableColor emerald = new ImmutableColor(46, 204, 113);
+    public static final ImmutableColor nephritis = new ImmutableColor(39, 174, 96);
+    public static final ImmutableColor belizeHole = new ImmutableColor(41, 128, 185);
+    public static final ImmutableColor wisteria = new ImmutableColor(142, 68, 173);
+    public static final ImmutableColor wetAsphalt = new ImmutableColor(52, 73, 94);
+    public static final ImmutableColor midnightBlue = new ImmutableColor(44, 62, 80);
+    public static final ImmutableColor orange = new ImmutableColor(243, 156, 18);
+    public static final ImmutableColor carrot = new ImmutableColor(230, 126, 34);
+    public static final ImmutableColor alizarin = new ImmutableColor(231, 76, 60);
+    public static final ImmutableColor silver = new ImmutableColor(189, 195, 199);
+    public static final ImmutableColor concrete = new ImmutableColor(149, 165, 166);
+
 
     /**
      * The alpha component of the color.
