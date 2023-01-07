@@ -94,29 +94,29 @@ public final class Char implements AnimatedMove {
      * This color is used to display the name in case the character is a player character.
      */
     @Nonnull
-    private static final Color NAME_COLOR_HUMAN = Color.YELLOW;
+    private static final Color NAME_COLOR_HUMAN = Color.sunflower;
 
     /**
      * This color is used to display the name in case the character is a monster.
      */
     @Nonnull
-    private static final Color NAME_COLOR_MONSTER = Color.RED;
+    private static final Color NAME_COLOR_MONSTER = Color.alizarin;
 
 
     /**
      * This color is used to display the name in case the character is a monster.
      */
     @Nonnull
-    private static final Color NAME_COLOR_PET = Color.Blue;
+    private static final Color NAME_COLOR_PET = Color.peterRiver;
 
     /**
      * This color is used to display the name in case the character is a NPC.
      */
     @Nonnull
-    private static final Color NAME_COLOR_NPC = new Color(128, 179, 255);
+    private static final Color NAME_COLOR_NPC = Color.greenSea;
 
     static {
-        DEAD_COLOR = new Color(1.f, 1.f, 1.f, 0.45f);
+        DEAD_COLOR = Color.asbestos;
     }
 
     /**
