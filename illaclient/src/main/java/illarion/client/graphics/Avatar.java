@@ -66,17 +66,17 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     private static final int HIDE_NAME_ALPHA = 127;
     @Nonnull
-    private static final Color COLOR_UNHARMED = new ImmutableColor(0, 255, 0);
+    private static final Color COLOR_UNHARMED = Color.emerald;
     @Nonnull
-    private static final Color COLOR_SLIGHTLY_HARMED = new ImmutableColor(127, 255, 0);
+    private static final Color COLOR_SLIGHTLY_HARMED = Color.nephritis;
     @Nonnull
-    private static final Color COLOR_HARMED = new ImmutableColor(255, 255, 0);
+    private static final Color COLOR_HARMED = Color.orange;
     @Nonnull
-    private static final Color COLOR_BADLY_HARMED = new ImmutableColor(255, 127, 0);
+    private static final Color COLOR_BADLY_HARMED = Color.pumpkin;
     @Nonnull
-    private static final Color COLOR_NEAR_DEATH = new ImmutableColor(255, 0, 0);
+    private static final Color COLOR_NEAR_DEATH = Color.pomegranate;
     @Nonnull
-    private static final Color COLOR_DEAD = new ImmutableColor(173, 173, 173);
+    private static final Color COLOR_DEAD = Color.asbestos;
     /**
      * The frame animation that handles the animation of this avatar.
      */
@@ -640,7 +640,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         } else {
             avatarTextTag.setCharacterName(charName);
         }
-        avatarTextTag.setCharNameColor(Color.YELLOW);
+        avatarTextTag.setCharNameColor(Color.sunflower);
     }
 
     /**
