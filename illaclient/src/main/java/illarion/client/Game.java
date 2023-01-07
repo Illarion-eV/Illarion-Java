@@ -340,12 +340,12 @@ public final class Game implements GameListener {
                 int renderLine = 10;
                 if (showFPS) {
                     container.getEngine().getGraphics()
-                            .drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10, renderLine);
+                            .drawText(fpsFont, "FPS: " + container.getFPS(), Color.clouds, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
 
                     if (showRenderDiagnostic) {
                         for (CharSequence line : container.getDiagnosticLines()) {
-                            container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
+                            container.getEngine().getGraphics().drawText(fpsFont, line, Color.clouds, 10, renderLine);
                             renderLine += fpsFont.getLineHeight();
                         }
                     }
@@ -353,11 +353,11 @@ public final class Game implements GameListener {
 
                 if (showRenderDiagnostic && World.isInitDone()) {
                     String tileLine = "Tile count: " + World.getMap().getTileCount();
-                    container.getEngine().getGraphics().drawText(fpsFont, tileLine, Color.WHITE, 10, renderLine);
+                    container.getEngine().getGraphics().drawText(fpsFont, tileLine, Color.clouds, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
 
                     String sceneLine = "Scene objects: " + World.getMapDisplay().getGameScene().getElementCount();
-                    container.getEngine().getGraphics().drawText(fpsFont, sceneLine, Color.WHITE, 10, renderLine);
+                    container.getEngine().getGraphics().drawText(fpsFont, sceneLine, Color.clouds, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
                 }
 
@@ -366,7 +366,7 @@ public final class Game implements GameListener {
                     long netCommPing = ConnectionPerformanceClock.getNetCommPing();
                     if (serverPing > -1) {
                         container.getEngine().getGraphics().drawText(fpsFont, "Ping: " + serverPing + '+' +
-                                Math.max(0, netCommPing - serverPing) + " ms", Color.WHITE, 10, renderLine);
+                                Math.max(0, netCommPing - serverPing) + " ms", Color.clouds, 10, renderLine);
                         renderLine += fpsFont.getLineHeight();
                     }
                 }
