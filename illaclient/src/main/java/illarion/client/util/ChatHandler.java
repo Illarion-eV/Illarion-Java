@@ -149,6 +149,17 @@ public final class ChatHandler {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatHandler.class);
 
+    private String removeNpcKey(String theText, String easyNpcKey){
+    
+        int startIndex = theText.indexOf(easyNpcKey);
+        int stopIndex = startIndex + easyNpcKey.length();
+        StringBuilder textBuilder = new StringBuilder(theText);
+        textBuilder.delete(startIndex, stopIndex);
+        String retText = textBuilder.toString();
+        
+        return retText;
+    }
+
     /**
      * Handle a message by this processor. This method stores a message in the
      * ChatHandler thread so the handler takes care of the message later on.
@@ -191,8 +202,10 @@ public final class ChatHandler {
                 }
                 break;
         }
+        
 
         StringBuilder textBuilder = new StringBuilder();
+        String easyNpcKey = "#npc";
 
         if (mode == SpeechMode.Emote) {
             // we need some kind of name
@@ -200,12 +213,19 @@ public final class ChatHandler {
                 textBuilder.append(Lang.getMsg("chat.someone"));
             } else {
                 textBuilder.append(talkingChar.getName());
-            }
+            }   
 
             textBuilder.append(resultText);
 
             String emoteText = textBuilder.toString();
-            if (talkingChar != null && (talkingChar.isHuman() || logNpcSpeech == true)){ //only player text gets logged, not monster/npc/pet
+
+            boolean spokenViaEasyNpc = emoteText.contains(easyNpcKey);
+            
+            if (talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true){
+                emoteText = removeNpcKey(emoteText, easyNpcKey);
+            }
+            
+            if (talkingChar == null || talkingChar.isHuman() || logNpcSpeech == true || (talkingChar.isNPC() && spokenViaEasyNpc == false)){ //only player text gets logged, not monster/npc/pet
                 World.getPlayer().getChatLog().logText(emoteText); 
             }
             World.getGameGui().getChatGui().addChatMessage(emoteText, ChatGui.COLOR_EMOTE);
@@ -241,7 +261,7 @@ public final class ChatHandler {
                 bubbleText = resultText;
             }
             textBuilder.append(bubbleText);
-
+            
             de.lessvoid.nifty.tools.Color color;
             switch (mode) {
                 case Shout:
@@ -262,9 +282,17 @@ public final class ChatHandler {
             }
 
             String talkText = textBuilder.toString();
-            if (talkingChar != null && (talkingChar.isHuman() || logNpcSpeech == true)){ //only player text gets logged, not monster/npc/pet
+
+            boolean spokenViaEasyNpc = talkText.contains(easyNpcKey);
+            
+            if (talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true){
+                talkText = removeNpcKey(talkText, easyNpcKey);
+            }
+
+            if (talkingChar == null || talkingChar.isHuman() || logNpcSpeech == true || (talkingChar.isNPC() && spokenViaEasyNpc == false)){ //only player text gets logged, not monster/npc/pet
                 World.getPlayer().getChatLog().logText(talkText);
             }
+
             World.getGameGui().getChatGui().addChatMessage(talkText, color);
             World.getGameGui().getChatGui().showChatBubble(talkingChar, bubbleText, color);
         }
