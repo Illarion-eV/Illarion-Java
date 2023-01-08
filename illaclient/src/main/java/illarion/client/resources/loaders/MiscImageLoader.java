@@ -91,12 +91,12 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.MINI_MAP_EXCLAMATION, miniMapExclSprite, 1));
 
         Sprite questMarker1 = sf
-                .createSprite(getTextures(tm, GUI_PATH, "question_mark", 1), 0, 0, SpriteFactory.CENTER,
+                .createSprite(getTextures(tm, GUI_PATH, "question_mark", 1), 0, 23, SpriteFactory.CENTER,
                               SpriteFactory.BOTTOM, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_QUESTION_MARK, questMarker1, 1));
 
         Sprite questMarker2 = sf
-                .createSprite(getTextures(tm, GUI_PATH, "exclamation_mark", 1), 0, 0, SpriteFactory.CENTER,
+                .createSprite(getTextures(tm, GUI_PATH, "exclamation_mark", 1), 0, 23, SpriteFactory.CENTER,
                               SpriteFactory.BOTTOM, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_EXCLAMATION_MARK, questMarker2, 1));
 
