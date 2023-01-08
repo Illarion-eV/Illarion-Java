@@ -196,7 +196,9 @@ public final class ChatHandler {
             textBuilder.append(resultText);
 
             String emoteText = textBuilder.toString();
-            World.getPlayer().getChatLog().logText(emoteText);
+            if (talkingChar != null && talkingChar.isHuman()){ //only player text gets logged, not monster/npc/pet
+                World.getPlayer().getChatLog().logText(emoteText); 
+            }
             World.getGameGui().getChatGui().addChatMessage(emoteText, ChatGui.COLOR_EMOTE);
             World.getGameGui().getChatGui().showChatBubble(talkingChar, emoteText, ChatGui.COLOR_EMOTE);
         } else {
@@ -251,7 +253,9 @@ public final class ChatHandler {
             }
 
             String talkText = textBuilder.toString();
-            World.getPlayer().getChatLog().logText(talkText);
+            if (talkingChar != null && talkingChar.isHuman()){ //only player text gets logged, not monster/npc/pet
+                World.getPlayer().getChatLog().logText(talkText);
+            }
             World.getGameGui().getChatGui().addChatMessage(talkText, color);
             World.getGameGui().getChatGui().showChatBubble(talkingChar, bubbleText, color);
         }
