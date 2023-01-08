@@ -15,6 +15,7 @@
  */
 package illarion.client.util;
 
+import illarion.client.IllaClient;
 import illarion.client.gui.ChatGui;
 import illarion.client.world.Char;
 import illarion.client.world.World;
@@ -37,6 +38,8 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ChatHandler {
+
+    private boolean logNpcSpeech;
     /**
      * The possible speech modes that are displays on the screen.
      */
@@ -90,6 +93,11 @@ public final class ChatHandler {
          * @param findRegexp the regular expression used to find out if the line is fits this Chat type or not
          * @param replace the regular expression needed to isolate the actual text
          */
+
+         /**
+          * This is set {@code true} in case the player wants npc speech to show up in their text log file.
+          */
+
         SpeechMode(
                 Color modeColor,
                 @Nullable @RegEx String findRegexp,
@@ -151,6 +159,7 @@ public final class ChatHandler {
     public void handleMessage(
             @Nonnull String text, @Nonnull ServerCoordinate location, @Nonnull SpeechMode receivedMode) {
         Char talkingChar = World.getPeople().getCharacterAt(location);
+        logNpcSpeech = IllaClient.getCfg().getBoolean("logNpcSpeech");
 
         SpeechMode mode;
         String resultText;
@@ -196,7 +205,7 @@ public final class ChatHandler {
             textBuilder.append(resultText);
 
             String emoteText = textBuilder.toString();
-            if (talkingChar != null && talkingChar.isHuman()){ //only player text gets logged, not monster/npc/pet
+            if (talkingChar != null && (talkingChar.isHuman() || logNpcSpeech == true)){ //only player text gets logged, not monster/npc/pet
                 World.getPlayer().getChatLog().logText(emoteText); 
             }
             World.getGameGui().getChatGui().addChatMessage(emoteText, ChatGui.COLOR_EMOTE);
@@ -253,7 +262,7 @@ public final class ChatHandler {
             }
 
             String talkText = textBuilder.toString();
-            if (talkingChar != null && talkingChar.isHuman()){ //only player text gets logged, not monster/npc/pet
+            if (talkingChar != null && (talkingChar.isHuman() || logNpcSpeech == true)){ //only player text gets logged, not monster/npc/pet
                 World.getPlayer().getChatLog().logText(talkText);
             }
             World.getGameGui().getChatGui().addChatMessage(talkText, color);

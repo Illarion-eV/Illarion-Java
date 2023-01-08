@@ -48,6 +48,7 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox disableChatAfterSending;
     private CheckBox showQuestsOnGameMap;
     private CheckBox showQuestsOnMiniMap;
+    private CheckBox logNpcSpeech;
 
     private DropDown<String> sendCrashReports;
 
@@ -88,6 +89,7 @@ public final class OptionScreenController implements ScreenController {
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
         showQuestsOnGameMap = tabRoot.findNiftyControl("showQuestsOnGameMap", CheckBox.class);
         showQuestsOnMiniMap = tabRoot.findNiftyControl("showQuestsOnMiniMap", CheckBox.class);
+        logNpcSpeech = tabRoot.findNiftyControl("logNpcSpeech", CheckBox.class);
 
         //noinspection unchecked
         sendCrashReports = tabRoot.findNiftyControl("sendCrashReports", DropDown.class);
@@ -142,6 +144,7 @@ public final class OptionScreenController implements ScreenController {
         disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
         showQuestsOnGameMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnGameMap"));
         showQuestsOnMiniMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnMiniMap"));
+        logNpcSpeech.setChecked(IllaClient.getCfg().getBoolean("logNpcSpeech"));
 
         sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
@@ -196,6 +199,7 @@ public final class OptionScreenController implements ScreenController {
             ((CheckBoxView) disableChatAfterSending).update(disableChatAfterSending.isChecked());
             ((CheckBoxView) showQuestsOnGameMap).update(showQuestsOnGameMap.isChecked());
             ((CheckBoxView) showQuestsOnMiniMap).update(showQuestsOnMiniMap.isChecked());
+            ((CheckBoxView) logNpcSpeech).update(logNpcSpeech.isChecked());
         }
 
         if ("tabRoot#tab-content-panel#graphicsTab".equals(topic)) {
@@ -224,6 +228,7 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
         configSystem.set("showQuestsOnGameMap", showQuestsOnGameMap.isChecked());
         configSystem.set("showQuestsOnMiniMap", showQuestsOnMiniMap.isChecked());
+        configSystem.set("logNpcSpeech", logNpcSpeech.isChecked());
 
         configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
 
