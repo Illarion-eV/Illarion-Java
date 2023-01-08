@@ -306,7 +306,7 @@ public final class Char implements AnimatedMove {
         attributes.put(attribute, value);
 
         if (attribute == CharacterAttribute.HitPoints) {
-            if (avatar != null) {
+            if (avatar != null && !charId.isNPC()) {
                 avatar.setHealthPoints(value);
             }
             setAlive(value > 0);
@@ -506,9 +506,9 @@ public final class Char implements AnimatedMove {
         updateLight(newAvatar, LIGHT_SET);
 
         Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
-        if (healthPoints == null) {
+        if (healthPoints == null && !charId.isNPC()) {
             newAvatar.setHealthPoints(10000);
-        } else {
+        } else if (!charId.isNPC()) {
             newAvatar.setHealthPoints(healthPoints);
         }
 
