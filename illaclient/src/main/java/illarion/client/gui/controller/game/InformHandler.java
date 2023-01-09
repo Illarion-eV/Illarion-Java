@@ -298,13 +298,13 @@ public final class InformHandler implements InformGui, ScreenController {
         labelBuilder.font(FontLoader.BUBBLE_FONT);
         switch (priority) {
             case 1:
-                labelBuilder.color(new Color(0.93f, 0.94f, 0.95f, 1.0f));
+                labelBuilder.color(new Color(0.2f, 0.6f, 0.86f, 1.0f)); //peterriver colour
                 break;
             case 2:
-                labelBuilder.color(new Color(0.83f, 0.33f, 0.0f, 1.0f));
+                labelBuilder.color(new Color(0.83f, 0.33f, 0.0f, 1.0f)); //pumpkin colour
                 break;
             default:
-                labelBuilder.color(new Color(0.93f, 0.94f, 0.95f, 1.0f));
+                labelBuilder.color(new Color(0.2f, 0.6f, 0.86f, 1.0f)); //peterriver colour
         }
         labelBuilder.invisibleToMouse();
         labelBuilder.valignCenter();
