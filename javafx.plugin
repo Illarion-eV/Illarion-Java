@@ -16,15 +16,8 @@ buildscript {
     repositories {
         mavenLocal()
         maven {
-            name = 'BinTray'
-            url = 'http://dl.bintray.com/content/shemnon/javafx-gradle/'
-        }
-        maven {
-            name = 'CloudBees Snapshot'
-            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
-        }
-        ivy {
-            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
+            name = 'Illarion Repository'
+            url = 'http://illarion.org/media/java/maven/'
         }
         mavenCentral()
     }

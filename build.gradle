@@ -115,7 +115,7 @@ buildscript {
     dependencies {
         classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '5.2.1'
         classpath group: 'de.undercouch', name: 'gradle-download-task', version: '2.1.0'
-        classpath group: 'com.install4j', name: 'install4j-gradle', version: '6.0.4'
+        classpath group: 'com.install4j', name: 'install4j-gradle', version: '8.0.11'
     }
 }
 
