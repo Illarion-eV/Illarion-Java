@@ -221,7 +221,7 @@ public final class ChatHandler {
 
             boolean spokenViaEasyNpc = emoteText.contains(easyNpcKey);
             
-            if (talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true){
+            if ((talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true) || (talkingChar == null && spokenViaEasyNpc == true)){
                 emoteText = removeNpcKey(emoteText, easyNpcKey);
             }
             
@@ -260,6 +260,13 @@ public final class ChatHandler {
             } else {
                 bubbleText = resultText;
             }
+
+            boolean bubbleBelongsToEasyNpc = bubbleText.contains(easyNpcKey);
+
+            if ((talkingChar != null && talkingChar.isNPC() && bubbleBelongsToEasyNpc == true) || (bubbleBelongsToEasyNpc == true && talkingChar == null)){
+                bubbleText = removeNpcKey(bubbleText, easyNpcKey);
+            }
+
             textBuilder.append(bubbleText);
             
             de.lessvoid.nifty.tools.Color color;
@@ -285,7 +292,7 @@ public final class ChatHandler {
 
             boolean spokenViaEasyNpc = talkText.contains(easyNpcKey);
             
-            if (talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true){
+            if ((talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true) || (talkingChar == null && spokenViaEasyNpc == true)){
                 talkText = removeNpcKey(talkText, easyNpcKey);
             }
 
