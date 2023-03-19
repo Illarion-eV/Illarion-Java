@@ -79,6 +79,11 @@
                             <panel width="*"/>
                             <control name="checkbox" id="logNpcSpeech"/>
                         </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.hideNpcSpeechFromChatBox}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="hideNpcSpeechFromChatBox"/>
+                        </panel>
                     </control>
                     <control id="#graphicsTab" caption="Graphics" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">

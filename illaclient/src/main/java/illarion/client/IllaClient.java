@@ -359,6 +359,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
         cfg.setDefault("logNpcSpeech", false);
+        cfg.setDefault("hideNpcSpeechFromChatBox", false);
         /* Showing the avatar tag on a permanent base.
          * 0 -> none are shown
          * 1 -> other players only
