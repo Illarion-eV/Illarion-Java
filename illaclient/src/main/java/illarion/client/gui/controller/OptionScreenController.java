@@ -45,6 +45,7 @@ public final class OptionScreenController implements ScreenController {
     //private DropDown<String> charNameLength;
     //private CheckBox showCharId;
     private CheckBox wasdWalk;
+    private CheckBox zqsdWalk;
     private CheckBox disableChatAfterSending;
     private CheckBox showQuestsOnGameMap;
     private CheckBox showQuestsOnMiniMap;
@@ -86,6 +87,7 @@ public final class OptionScreenController implements ScreenController {
         //showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
 
         wasdWalk = tabRoot.findNiftyControl("wasdWalk", CheckBox.class);
+        zqsdWalk = tabRoot.findNiftyControl("zqsdWalk", CheckBox.class);
 
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
         showQuestsOnGameMap = tabRoot.findNiftyControl("showQuestsOnGameMap", CheckBox.class);
@@ -143,6 +145,7 @@ public final class OptionScreenController implements ScreenController {
         //charNameLength.selectItemByIndex(IllaClient.getCfg().getInteger(People.CFG_NAMEMODE_KEY) - 1);
         //showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
         wasdWalk.setChecked(IllaClient.getCfg().getBoolean("wasdWalk"));
+        zqsdWalk.setChecked(IllaClient.getCfg().getBoolean("zqsdWalk"));
         disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
         showQuestsOnGameMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnGameMap"));
         showQuestsOnMiniMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnMiniMap"));
@@ -199,6 +202,7 @@ public final class OptionScreenController implements ScreenController {
     public void updateVisibility(String topic, ElementShowEvent event) {
         if ("tabRoot#tab-content-panel#generalTab".equals(topic)) {
             ((CheckBoxView) wasdWalk).update(wasdWalk.isChecked());
+            ((CheckBoxView) zqsdWalk).update(zqsdWalk.isChecked());
             ((CheckBoxView) disableChatAfterSending).update(disableChatAfterSending.isChecked());
             ((CheckBoxView) showQuestsOnGameMap).update(showQuestsOnGameMap.isChecked());
             ((CheckBoxView) showQuestsOnMiniMap).update(showQuestsOnMiniMap.isChecked());
@@ -229,6 +233,7 @@ public final class OptionScreenController implements ScreenController {
         //configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
         //configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
         configSystem.set("wasdWalk", wasdWalk.isChecked());
+        configSystem.set("zqsdWalk", zqsdWalk.isChecked());
         configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
         configSystem.set("showQuestsOnGameMap", showQuestsOnGameMap.isChecked());
         configSystem.set("showQuestsOnMiniMap", showQuestsOnMiniMap.isChecked());

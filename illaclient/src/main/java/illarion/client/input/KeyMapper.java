@@ -51,12 +51,14 @@ public final class KeyMapper {
     @Nonnull
     private final Set<Key> keyPressed;
     private boolean useWasdWalking;
+    private boolean useZqsdWalking;
 
     public KeyMapper(@Nonnull Input input) {
         this.input = input;
         keyPressed = EnumSet.noneOf(Key.class);
 
         applyWasdWalkSettings();
+        applyZqsdWalkSettings();
         AnnotationProcessor.process(this);
     }
 
@@ -110,10 +112,21 @@ public final class KeyMapper {
         useWasdWalking = IllaClient.getCfg().getBoolean("wasdWalk");
     }
 
+    private void applyZqsdWalkSettings() {
+        useZqsdWalking = IllaClient.getCfg().getBoolean("zqsdWalk");
+    }
+
     @EventTopicSubscriber(topic = "wasdWalk")
     public void onWasdSettingsChanged(@Nonnull String configKey, @Nonnull ConfigChangedEvent event) {
         if ("wasdWalk".equals(configKey)) {
             applyWasdWalkSettings();
+        }
+    }
+
+    @EventTopicSubscriber(topic = "zqsdWalk")
+    public void onZqsdSettingsChanged(@Nonnull String configKey, @Nonnull ConfigChangedEvent event) {
+        if ("zqsdWalk".equals(configKey)) {
+            applyZqsdWalkSettings();
         }
     }
 
@@ -130,6 +143,11 @@ public final class KeyMapper {
                     handler.stopMovingTowards(Direction.NorthEast);
                 }
                 break;
+            case Z:
+                if (useZqsdWalking) {
+                    handler.stopMovingTowards(Direction.NorthEast);
+                }
+                break;
 
             case CursorLeft:
             case NumPad4:
@@ -140,13 +158,17 @@ public final class KeyMapper {
                     handler.stopMovingTowards(Direction.NorthWest);
                 }
                 break;
+            case Q:
+                if (useZqsdWalking) {
+                    handler.stopMovingTowards(Direction.NorthWest);
+                }
 
             case CursorDown:
             case NumPad2:
                 handler.stopMovingTowards(Direction.SouthWest);
                 break;
             case S:
-                if (useWasdWalking) {
+                if (useWasdWalking || useZqsdWalking) {
                     handler.stopMovingTowards(Direction.SouthWest);
                 }
                 break;
@@ -156,7 +178,7 @@ public final class KeyMapper {
                 handler.stopMovingTowards(Direction.SouthEast);
                 break;
             case D:
-                if (useWasdWalking) {
+                if (useWasdWalking || useZqsdWalking) {
                     handler.stopMovingTowards(Direction.SouthEast);
                 }
                 break;
@@ -213,6 +235,12 @@ public final class KeyMapper {
                 }
                 break;
             case Q:
+                if (useZqsdWalking) {
+
+                    startMovingTowards(Direction.NorthWest, firstPressed);
+
+                    break;
+                }
             case J:
                 if (firstPressed) {
                     World.getGameGui().getQuestGui().toggleQuestLog();
@@ -255,6 +283,11 @@ public final class KeyMapper {
                     startMovingTowards(Direction.NorthEast, firstPressed);
                 }
                 break;
+            case Z:
+                if (useZqsdWalking) {
+                    startMovingTowards(Direction.NorthEast, firstPressed);
+                }
+                break;
 
             case CursorLeft:
             case NumPad4:
@@ -271,7 +304,7 @@ public final class KeyMapper {
                 startMovingTowards(Direction.SouthWest, firstPressed);
                 break;
             case S:
-                if (useWasdWalking) {
+                if (useWasdWalking || useZqsdWalking) {
                     startMovingTowards(Direction.SouthWest, firstPressed);
                 }
                 break;
@@ -281,7 +314,7 @@ public final class KeyMapper {
                 startMovingTowards(Direction.SouthEast, firstPressed);
                 break;
             case D:
-                if (useWasdWalking) {
+                if (useWasdWalking || useZqsdWalking) {
                     startMovingTowards(Direction.SouthEast, firstPressed);
                 }
                 break;
