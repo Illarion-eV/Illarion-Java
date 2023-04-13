@@ -195,7 +195,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             builder.levelColor(new Color(0.75f, 0.22f, 0.17f, 1.0f));
         }
 
-        builder.worth(tooltip.getWorth().getTotalCopper() / 20);
+        builder.worth(tooltip.getWorth().getTotalCopper());
         if (tooltip.getWeight() > 0) {
             builder.weight(Integer.toString(tooltip.getWeight()));
         }
