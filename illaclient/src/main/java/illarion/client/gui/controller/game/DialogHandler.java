@@ -13,6 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
@@ -23,6 +24,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.FontLoader;
+import illarion.client.IllaClient;
 import illarion.client.gui.*;
 import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.gui.events.TooltipsRemovedEvent;
@@ -545,6 +547,20 @@ public final class DialogHandler
     public void finishProduction(int dialogId) {
         World.getUpdateTaskManager().addTask((container, delta) -> {
             if ((craftingDialog != null) && openCraftDialog && (craftingDialog.getDialogId() == dialogId)) {
+
+                String language = IllaClient.getCfg().getString("locale");
+
+                if (craftingDialog.getAmount() == 1) {
+                    GameGui gui = World.getGameGui();
+
+                    String workDone = "Produktion abgeschlossen.";
+
+                    if ("en".equals(language)) {
+                        workDone = "Crafting finished.";
+                    }
+                    gui.getInformGui().showScriptInform(0, workDone);
+                }
+
                 craftingDialog.setAmount(craftingDialog.getAmount() - 1);
                 craftingDialog.setProgress(0.f);
                 craftingInProgress = false;
