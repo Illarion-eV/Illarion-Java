@@ -178,10 +178,10 @@
             <control id="merchantDialog" name="dialog-merchant" width="500px" visible="false" hideOnClose="true"/>
             <control id="craftingDialog" name="dialog-crafting" visible="false" hideOnClose="true"/>
             <control id="questLog" name="window" style="nifty-window" title="${gamescreen-bundle.quest}"
-                     hideOnClose="true" visible="false" width="700px" height="305px">
+                     hideOnClose="true" visible="false" width="800px" height="455px">
                 <panel childLayout="horizontal">
-                    <panel childLayout="vertical" width="230px" paddingRight="8px">
-                        <control name="listBox" id="#questList" vertical="on" horizontal="off" displayItems="10"
+                    <panel childLayout="vertical" width="280px" paddingRight="8px">
+                        <control name="listBox" id="#questList" vertical="on" horizontal="off" displayItems="16"
                                  selection="Single" forceSelection="true" marginBottom="5px"
                                  style="nifty-listbox-no-background" />
                         <panel childLayout="horizontal">
