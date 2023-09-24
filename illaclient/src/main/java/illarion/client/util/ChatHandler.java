@@ -23,6 +23,7 @@ import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.graphic.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,8 +41,8 @@ import java.util.regex.Pattern;
 public final class ChatHandler {
 
     private boolean logNpcSpeech;
-
     private boolean hideNpcSpeechFromChatBox;
+    private boolean alertEnabled;
 
     /**
      * The possible speech modes that are displays on the screen.
@@ -170,14 +171,21 @@ public final class ChatHandler {
      * @param text the text that was spoken
      * @param location the location where the text was spoken
      */
-    public void handleMessage(
-            @Nonnull String text, @Nonnull ServerCoordinate location, @Nonnull SpeechMode receivedMode) {
+    public void handleMessage(@Nonnull String text, @Nonnull ServerCoordinate location, @Nonnull SpeechMode receivedMode) {
+
         Char talkingChar = World.getPeople().getCharacterAt(location);
         logNpcSpeech = IllaClient.getCfg().getBoolean("logNpcSpeech");
         hideNpcSpeechFromChatBox = IllaClient.getCfg().getBoolean("hideNpcSpeechFromChatBox");
+        alertEnabled = IllaClient.getCfg().getBoolean("RPalertEnabled");
+        long unixTime = System.currentTimeMillis() / 1000L;
+        long lastInputTime = IllaClient.lastInputTime;
 
         SpeechMode mode;
         String resultText;
+
+        if (talkingChar != null && talkingChar.isHuman() && alertEnabled && (unixTime > (lastInputTime + 300))){
+            IllaClient.RPAlert = true;
+        }
 
         switch (receivedMode) {
             case Whisper:
@@ -195,8 +203,7 @@ public final class ChatHandler {
                 resultText = text.trim();
                 break;
             default:
-                @SuppressWarnings("ConstantConditions") Matcher emoteMatcher = SpeechMode.Emote.getRegexp()
-                        .matcher(text);
+                @SuppressWarnings("ConstantConditions") Matcher emoteMatcher = SpeechMode.Emote.getRegexp().matcher(text);
                 if (emoteMatcher.find()) {
                     mode = SpeechMode.Emote;
                     resultText = emoteMatcher.replaceAll(SpeechMode.Emote.getReplacement());
@@ -224,8 +231,6 @@ public final class ChatHandler {
             String emoteText = textBuilder.toString();
 
             boolean spokenViaEasyNpc = emoteText.contains(easyNpcKey);
-
-            LOGGER.warn("Emote: {}", emoteText);
 
             if ((talkingChar != null && talkingChar.isNPC() && spokenViaEasyNpc == true) || (talkingChar == null && spokenViaEasyNpc == true)){
                 emoteText = removeNpcKey(emoteText, easyNpcKey);

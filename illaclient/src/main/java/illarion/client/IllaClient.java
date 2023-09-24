@@ -104,6 +104,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     private static boolean exitRequested;
 
+    public static long lastInputTime = 0;
+
+    public static boolean RPAlert = false;
+
     static {
         String server = System.getProperty("illarion.server", "realserver");
         switch ((server == null) ? "" : server) {
@@ -313,6 +317,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault(Player.CFG_SOUND_VOL, Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
         cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.25f);
+        cfg.setDefault("RPalertEnabled", true);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
 
