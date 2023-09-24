@@ -16,6 +16,8 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import org.illarion.engine.GameContainer;
+import illarion.client.util.UpdateTask;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.world.World;
@@ -34,7 +36,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SAY)
-public final class SayMsg implements ServerReply {
+public final class SayMsg implements UpdateTask, ServerReply {
     /**
      * The location the text was spoken at.
      */
@@ -65,8 +67,17 @@ public final class SayMsg implements ServerReply {
         }
 
         World.getChatHandler().handleMessage(text, location, SpeechMode.Normal);
+        World.getUpdateTaskManager().addTask(this);
+
         return ServerReplyResult.Success;
     }
+
+    @Override
+    public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+
+        World.getChatHandler().alertSound(container, delta);
+    }
+
 
     @Nonnull
     @Override

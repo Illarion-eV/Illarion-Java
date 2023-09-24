@@ -19,8 +19,13 @@ import illarion.client.IllaClient;
 import illarion.client.gui.ChatGui;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.client.resources.SoundFactory;
 import illarion.common.types.ServerCoordinate;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
+import org.illarion.engine.assets.SoundsManager;
+import org.illarion.engine.sound.Sound;
+import org.illarion.engine.sound.Sounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
@@ -43,7 +48,7 @@ public final class ChatHandler {
     private boolean logNpcSpeech;
     private boolean hideNpcSpeechFromChatBox;
     private boolean alertEnabled;
-
+    private boolean RPalertQueued = false;
     /**
      * The possible speech modes that are displays on the screen.
      */
@@ -164,6 +169,30 @@ public final class ChatHandler {
         return retText;
     }
 
+    public void alertSound(@Nonnull GameContainer container, int delta) {
+
+        if (RPalertQueued == false) {
+            return;
+        }
+
+        ServerCoordinate location = World.getPlayer().getLocation();
+        SoundsManager manager = container.getEngine().getAssets().getSoundsManager();
+        Sound sound = SoundFactory.getInstance().getSound(26, manager);
+        int dX = location.getX();
+        int dY = location.getY();
+        int dZ = location.getZ();
+
+        if (sound == null) {
+            return;
+        }
+
+        Sounds sounds = container.getEngine().getSounds();
+
+        sounds.playSound(sound, sounds.getSoundVolume(), dX, dY, dZ);
+
+        RPalertQueued = false;
+    }
+
     /**
      * Handle a message by this processor. This method stores a message in the
      * ChatHandler thread so the handler takes care of the message later on.
@@ -184,7 +213,7 @@ public final class ChatHandler {
         String resultText;
 
         if (talkingChar != null && talkingChar.isHuman() && alertEnabled && (unixTime > (lastInputTime + 300))){
-            IllaClient.RPAlert = true;
+            RPalertQueued = true;
         }
 
         switch (receivedMode) {

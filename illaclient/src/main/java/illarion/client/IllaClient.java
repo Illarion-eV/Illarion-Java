@@ -106,8 +106,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     public static long lastInputTime = 0;
 
-    public static boolean RPAlert = false;
-
     static {
         String server = System.getProperty("illarion.server", "realserver");
         switch ((server == null) ? "" : server) {
