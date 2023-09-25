@@ -177,7 +177,7 @@ public final class ChatHandler {
 
         ServerCoordinate location = World.getPlayer().getLocation();
         SoundsManager manager = container.getEngine().getAssets().getSoundsManager();
-        Sound sound = SoundFactory.getInstance().getSound(26, manager);
+        Sound sound = SoundFactory.getInstance().getSound(34, manager);
         int dX = location.getX();
         int dY = location.getY();
         int dZ = location.getZ();
