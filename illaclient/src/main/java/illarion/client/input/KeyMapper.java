@@ -133,6 +133,7 @@ public final class KeyMapper {
     public void handleKeyReleasedInput(@Nonnull Key key) {
         keyPressed.remove(key);
         KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
+        IllaClient.lastInputTime = System.currentTimeMillis() / 1000L;
         switch (key) {
             case CursorUp:
             case NumPad8:
@@ -207,6 +208,7 @@ public final class KeyMapper {
 
     public void handleKeyPressedInput(@Nonnull Key key) {
         boolean firstPressed = keyPressed.add(key);
+        IllaClient.lastInputTime = System.currentTimeMillis() / 1000L;
         switch (key) {
             case B:
                 if (firstPressed) {

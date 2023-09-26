@@ -65,6 +65,7 @@ public final class OptionScreenController implements ScreenController {
     private Slider soundVolume;
     private CheckBox musicOn;
     private Slider musicVolume;
+    private CheckBox RPalertEnabled;
 
     private TextField serverAddress;
     private TextField serverPort;
@@ -124,6 +125,7 @@ public final class OptionScreenController implements ScreenController {
         soundVolume = tabRoot.findNiftyControl("soundVolume", Slider.class);
         musicOn = tabRoot.findNiftyControl("musicOn", CheckBox.class);
         musicVolume = tabRoot.findNiftyControl("musicVolume", Slider.class);
+        RPalertEnabled = tabRoot.findNiftyControl("RPalertEnabled", CheckBox.class);
 
         Element serverTab = tabRoot.findElementById("#serverTab");
         if (serverTab == null) {
@@ -165,6 +167,7 @@ public final class OptionScreenController implements ScreenController {
         soundVolume.setValue(IllaClient.getCfg().getFloat("soundVolume"));
         musicOn.setChecked(IllaClient.getCfg().getBoolean("musicOn"));
         musicVolume.setValue(IllaClient.getCfg().getFloat("musicVolume"));
+        RPalertEnabled.setChecked(IllaClient.getCfg().getBoolean("RPalertEnabled"));
 
         if (serverAddress != null) {
             serverAddress.setText(IllaClient.getCfg().getString("serverAddress"));
@@ -218,6 +221,7 @@ public final class OptionScreenController implements ScreenController {
         if ("tabRoot#tab-content-panel#soundTab".equals(topic)) {
             ((CheckBoxView) soundOn).update(soundOn.isChecked());
             ((CheckBoxView) musicOn).update(musicOn.isChecked());
+            ((CheckBoxView) RPalertEnabled).update(RPalertEnabled.isChecked());
         }
 
         if ("tabRoot#tab-content-panel#serverTab".equals(topic)) {
@@ -259,6 +263,7 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("soundVolume", soundVolume.getValue());
         configSystem.set("musicOn", musicOn.isChecked());
         configSystem.set("musicVolume", musicVolume.getValue());
+        configSystem.set("RPalertEnabled", RPalertEnabled.isChecked());
 
         if (serverAddress != null) {
             if (serverResetSettings.isChecked()) {

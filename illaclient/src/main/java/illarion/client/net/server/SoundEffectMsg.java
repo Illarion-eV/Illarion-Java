@@ -15,6 +15,7 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.IllaClient;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.resources.SoundFactory;
@@ -77,14 +78,17 @@ public final class SoundEffectMsg implements UpdateTask, ServerReply {
         ServerCoordinate plyLoc = World.getPlayer().getLocation();
         SoundsManager manager = container.getEngine().getAssets().getSoundsManager();
         Sound sound = SoundFactory.getInstance().getSound(effectId, manager);
-        if (sound == null) {
-            return;
-        }
-        Sounds sounds = container.getEngine().getSounds();
-
         int dX = location.getX() - plyLoc.getX();
         int dY = location.getY() - plyLoc.getY();
         int dZ = location.getZ() - plyLoc.getZ();
+
+        if (sound == null) {
+            return;
+        }
+
+        Sounds sounds = container.getEngine().getSounds();
+
+        
         sounds.playSound(sound, sounds.getSoundVolume(), dX, dY, dZ);
     }
 
