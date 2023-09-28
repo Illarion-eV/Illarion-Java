@@ -85,7 +85,9 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
         EventBus.subscribe("soundVolume", this);
         EventBus.subscribe("musicOn", this);
         EventBus.subscribe("musicVolume", this);
-
+        EventBus.subscribe("RPalertEnabled", this);
+        EventBus.subscribe("alertVolume", this);
+    
         init = true;
     }
 
@@ -222,6 +224,22 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
             float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
             if (IllaClient.getCfg().getBoolean("soundOn")) {
                 sounds.setSoundVolume(soundVolume);
+            }
+        }
+        if ((setting == null) || "RPalertEnabled".equals(setting)) {
+            boolean alertEnabled = cfg.getBoolean("RPalertEnabled");
+
+            if (alertEnabled) {
+                float alertVolume = cfg.getFloat("alertVolume") / Player.MAX_CLIENT_VOL;
+                sounds.setAlertVolume(alertVolume);
+            } else {
+                sounds.setAlertVolume(0.f);
+            }
+        }
+        if ((setting == null) || "alertVolume".equals(setting)) {
+            float alertVolume = cfg.getFloat("alertVolume") / Player.MAX_CLIENT_VOL;
+            if (IllaClient.getCfg().getBoolean("RPalertEnabled")) {
+                sounds.setAlertVolume(alertVolume);
             }
         }
     }

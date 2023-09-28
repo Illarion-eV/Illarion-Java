@@ -133,6 +133,11 @@
                             <panel width="*"/>
                             <control name="checkbox" id="RPalertEnabled"/>
                         </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.alertVolume}"/>
+                            <panel width="*"/>
+                            <control name="horizontalSlider" min="0" max="100" id="alertVolume" width="220px"/>
+                        </panel>
                     </control>
                     <control id="#serverTab" caption="Server" name="tab" childLayout="vertical">
                         <control width="100%" name="label" text="${options-bundle.serverWarning}" wrap="true"

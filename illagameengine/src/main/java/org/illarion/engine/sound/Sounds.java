@@ -52,6 +52,20 @@ public interface Sounds {
     void setSoundVolume(float volume);
 
     /**
+     * Get the global sound effects volume.
+     *
+     * @return the global sound effects volume
+     */
+    float getAlertVolume();
+
+    /**
+     * Set the global volume of the sound effects.
+     *
+     * @param volume the volume of the sound effects
+     */
+    void setAlertVolume(float volume);
+
+    /**
      * Get the sound effects volume of a sound that is currently playing.
      *
      * @param sound the sound the handle belong to
@@ -88,6 +102,15 @@ public interface Sounds {
      * @param fadeInTime the time to fade the new track in
      */
     void playMusic(@Nonnull Music music, int fadeOutTime, int fadeInTime);
+
+    /**
+     * Play an alert
+     *
+     * @param sound the sound effect to play for the alert
+     * @param volume the volume of the alert, this volume is multiplied with the global alert volume
+     * @return the reference handle to the played alert
+     */
+    int playAlert(@Nonnull Sound sound, float volume);
 
     /**
      * Play a sound effect.

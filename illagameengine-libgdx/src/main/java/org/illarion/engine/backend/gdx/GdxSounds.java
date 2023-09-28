@@ -49,12 +49,19 @@ class GdxSounds implements Sounds {
     private float soundVolume;
 
     /**
+     * The currrent alert volume;
+     */
+
+    private float alertVolume;
+
+    /**
      * Create a new instance of the libGDX sound system.
      * Sets default volume to 100%
      */
     GdxSounds() {
         musicVolume = 1.f;
         soundVolume = 1.f;
+        alertVolume = 1.f;
     }
 
     @Override
@@ -86,6 +93,17 @@ class GdxSounds implements Sounds {
     @Override
     public void setSoundVolume(float volume) {
         soundVolume = volume;
+    }
+
+    @Override
+    public float getAlertVolume() {
+        return alertVolume;
+    }
+
+
+    @Override
+    public void setAlertVolume(float volume) {
+        alertVolume = volume;
     }
 
     @Override
@@ -151,6 +169,16 @@ class GdxSounds implements Sounds {
         }
         if (isSoundOn(getSoundVolume() * volume)) {
             return (int) ((GdxSound) sound).getWrappedSound().play(getSoundVolume() * volume);
+        }
+        return -1;
+    }
+
+    public int playAlert(@Nonnull Sound sound, float volume) {
+        if (!(sound instanceof GdxSound)) {
+            throw new IllegalArgumentException("Type of sound effect is wrong: " + sound.getClass());
+        }
+        if (isSoundOn(getAlertVolume() * volume)) {
+            return (int) ((GdxSound) sound).getWrappedSound().play(getAlertVolume() * volume);
         }
         return -1;
     }

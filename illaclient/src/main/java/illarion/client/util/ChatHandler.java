@@ -175,12 +175,8 @@ public final class ChatHandler {
             return;
         }
 
-        ServerCoordinate location = World.getPlayer().getLocation();
         SoundsManager manager = container.getEngine().getAssets().getSoundsManager();
         Sound sound = SoundFactory.getInstance().getSound(34, manager);
-        int dX = location.getX();
-        int dY = location.getY();
-        int dZ = location.getZ();
 
         if (sound == null) {
             return;
@@ -188,7 +184,7 @@ public final class ChatHandler {
 
         Sounds sounds = container.getEngine().getSounds();
 
-        sounds.playSound(sound, sounds.getSoundVolume(), dX, dY, dZ);
+        sounds.playAlert(sound, sounds.getAlertVolume());
 
         RPalertQueued = false;
     }
