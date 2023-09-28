@@ -80,7 +80,7 @@ final class ServerBand extends JRibbonBand {
 
             try {
 
-                URL requestURL = new URL("http://illarion.org/easyquest/xml_setqueststatus.php");
+                URL requestURL = new URL("https://illarion.org/easyquest/xml_setqueststatus.php");
 
                 HttpURLConnection conn = (HttpURLConnection) requestURL.openConnection();
                 conn.setDoOutput(true);

@@ -251,7 +251,7 @@ final class Utils {
         }
 
         try {
-            URL url = new URL("http://illarion.org/~nitram/test_npc.php");
+            URL url = new URL("https://illarion.org/~nitram/test_npc.php");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);

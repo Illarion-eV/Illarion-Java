@@ -24,7 +24,7 @@ project. This project is developed only by volunteers, who don't get
 paid for their work. However, there is much experience to be gained by joining
 the development of this project.
 
-For further information check out our homepage: http://illarion.org
+For further information check out our homepage: https://illarion.org
 
 Any changes to the applications can be applied using pull requests.
 

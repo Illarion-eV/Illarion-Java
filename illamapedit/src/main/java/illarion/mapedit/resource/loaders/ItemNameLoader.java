@@ -31,7 +31,7 @@ import java.util.HashMap;
  * @author Fredrik K
  */
 public final class ItemNameLoader implements Resource {
-    private static final String ITEM_NAME_URL = "http://illarion.org/data/itemnames.php";
+    private static final String ITEM_NAME_URL = "https://illarion.org/data/itemnames.php";
     @Nonnull
     private static final ItemNameLoader INSTANCE = new ItemNameLoader();
 
