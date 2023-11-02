@@ -17,6 +17,7 @@ package illarion.client.input;
 
 import illarion.common.memory.Poolable;
 import org.illarion.engine.input.Button;
+import illarion.client.IllaClient;
 
 import javax.annotation.Nonnull;
 
@@ -40,6 +41,7 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
      */
     protected AbstractMouseOnMapEvent(@Nonnull Button key, int x, int y) {
         super(x, y);
+        IllaClient.lastInputTime = System.currentTimeMillis() / 1000L; // Registers that the user is active client-side when clicking the mouse, for RP alert purposes
         this.key = key;
     }
 
