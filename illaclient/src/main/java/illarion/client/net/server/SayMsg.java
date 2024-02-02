@@ -78,7 +78,6 @@ public final class SayMsg implements UpdateTask, ServerReply {
         World.getChatHandler().alertSound(container, delta);
     }
 
-
     @Nonnull
     @Override
     @Contract(pure = true)
