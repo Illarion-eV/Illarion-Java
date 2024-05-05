@@ -434,8 +434,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     public void onStartScreen() {
         setHeightOfChatLog(CHAT_COLLAPSED_HEIGHT);
         World.getUpdateTaskManager().addTask((container, delta) -> {
-            keyEvent(NiftyStandardInputEvent.SubmitText);
-            keyEvent(NiftyStandardInputEvent.SubmitText);
+            chatMsg.setText("");
+            keyEvent(NiftyStandardInputEvent.Escape);
         });
         AnnotationProcessor.process(this);
         assert nifty != null;
