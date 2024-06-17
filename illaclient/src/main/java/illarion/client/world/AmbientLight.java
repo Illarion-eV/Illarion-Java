@@ -207,7 +207,11 @@ final class AmbientLight {
         double sunRiseSetSpan = getSunRiseSetTime(phaseOfTheSun);
 
         /* Light of the sun. */
-        if (secondOfDay < middleOfDay) {
+        if (dayInYear >= 361) {
+            /* It's Mas, it's always dark */
+            return (true) ? Color.BLACK : Color.BLACK;
+        
+        } else if (secondOfDay < middleOfDay) {
             /* Before noon. So there may be a sunrise at hand. */
             double middleOfSunrise = middleOfDay - (daylightTimeSpan / 2.0);
             double beginOfSunrise = middleOfSunrise - (sunRiseSetSpan / 2.0);
