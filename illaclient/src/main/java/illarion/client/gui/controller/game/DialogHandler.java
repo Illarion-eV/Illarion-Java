@@ -626,7 +626,7 @@ public final class DialogHandler
         builder.buttonRight(Lang.getMsg("gui.dialog.character.cancel"));
         builder.dialogId(charId.getAsInteger());
         builder.lookAt(lookAt);
-        builder.maxLength(255);
+        builder.maxLength(50);
         builder.initalText((currentCustomName == null) ? "" : currentCustomName);
 
         builder.style("illarion-dialog-character");
