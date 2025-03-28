@@ -86,12 +86,21 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         }
 
         String producer = parameter.get("producer");
-        if (!isNullOrEmpty(producer)) {
+        if (!isNullOrEmpty(producer) && producer.length() < 18) {
             Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
             applyTextToLabel(producedBy, parameter.get("producer"));
             largeToolTip = true;
+            removeElement(element.findElementById("#createByLine2"));
+            removeElement(element.findElementById("#createByLine3"));
+        } else if(!isNullOrEmpty(producer)) {
+            Label producedBy = element.findNiftyControl("#createdByLabel2", Label.class);
+            applyTextToLabel(producedBy, parameter.get("producer"));
+            largeToolTip = true;
+            removeElement(element.findElementById("#createByLine"));
         } else {
             removeElement(element.findElementById("#createByLine"));
+            removeElement(element.findElementById("#createByLine2"));
+            removeElement(element.findElementById("#createByLine3"));
         }
 
         String money = parameter.get("worth");

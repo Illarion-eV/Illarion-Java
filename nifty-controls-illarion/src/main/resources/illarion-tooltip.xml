@@ -38,6 +38,12 @@
                 <control name="label" style="#createdByTitle" text="${illarion-tooltip-bundle.createdBy}"/>
                 <control name="label" id="#createdByLabel" style="#createdByLabel"/>
             </panel>
+            <panel childLayout="horizontal" style="#createByLine" id="#createByLine2">
+                <control name="label" style="#createdByTitle" text="${illarion-tooltip-bundle.createdBy}"/>
+            </panel>
+            <panel childLayout="horizontal" style="#createByLine" id="#createByLine3">
+                <control name="label" id="#createdByLabel2" style="#createdByLabel"/>
+            </panel>
             <panel childLayout="horizontal" style="#worthLine" id="#worthLine">
                 <control name="label" style="#worthLabel" text="${illarion-tooltip-bundle.worth}"/>
                 <control name="label" id="#worthGoldCount" style="#worthGoldCount"/>
