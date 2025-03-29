@@ -34,6 +34,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import illarion.common.types.ItemId;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
@@ -52,6 +53,7 @@ public final class KeyMapper {
     private final Set<Key> keyPressed;
     private boolean useWasdWalking;
     private boolean useZqsdWalking;
+    private boolean useItemWithE;
 
     public KeyMapper(@Nonnull Input input) {
         this.input = input;
@@ -59,6 +61,7 @@ public final class KeyMapper {
 
         applyWasdWalkSettings();
         applyZqsdWalkSettings();
+        applyuseItemWithE();
         AnnotationProcessor.process(this);
     }
 
@@ -116,6 +119,10 @@ public final class KeyMapper {
         useZqsdWalking = IllaClient.getCfg().getBoolean("zqsdWalk");
     }
 
+    private void applyuseItemWithE() {
+        useItemWithE = IllaClient.getCfg().getBoolean("useItemWithE");
+    }
+
     @EventTopicSubscriber(topic = "wasdWalk")
     public void onWasdSettingsChanged(@Nonnull String configKey, @Nonnull ConfigChangedEvent event) {
         if ("wasdWalk".equals(configKey)) {
@@ -127,6 +134,13 @@ public final class KeyMapper {
     public void onZqsdSettingsChanged(@Nonnull String configKey, @Nonnull ConfigChangedEvent event) {
         if ("zqsdWalk".equals(configKey)) {
             applyZqsdWalkSettings();
+        }
+    }
+
+    @EventTopicSubscriber(topic = "useItemWithE")
+    public void onuseItemWithEChanged(@Nonnull String configKey, @Nonnull ConfigChangedEvent event) {
+        if ("useItemWithE".equals(configKey)) {
+            applyuseItemWithE();
         }
     }
 
@@ -267,6 +281,33 @@ public final class KeyMapper {
                     if (mapTile != null) {
                         mapTile.getInteractive().use();
                     }
+                }
+                break;
+
+            case E:
+                if (useItemWithE) {
+                    illarion.client.world.items.InventorySlot slot = World.getPlayer().getInventory().getItem(6);
+                    if (!slot.containsItem()) {
+                        slot = World.getPlayer().getInventory().getItem(5);
+                        if (!slot.containsItem()) {
+                            break;
+                            }
+                        else {
+                            slot.getInteractive().use();
+                            break;
+                        }
+                    }
+
+                    ItemId itemId = slot.getItemID();
+                    Integer occupied = 228;
+
+                    if (itemId.getValue() == occupied){
+                        slot = World.getPlayer().getInventory().getItem(5);
+                        if (!slot.containsItem()) {
+                        break;
+                        }
+                    }
+                    slot.getInteractive().use();
                 }
                 break;
 
