@@ -50,7 +50,7 @@ public class MyMemoryProvider implements TranslationProvider {
     public MyMemoryProvider() {
         URL url = null;
         try {
-            url = new URL("http://api.mymemory.translated.net/get");
+            url = new URL("https://api.mymemory.translated.net/get");
         } catch (MalformedURLException e) {
             log.error("Failed to resolve the URL to the translator service. Service is not active.", e);
         }
