@@ -57,7 +57,7 @@ import org.illarion.engine.input.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import illarion.common.config.Config;
-
+import illarion.client.util.AudioPlayer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -366,6 +366,34 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
 
     @Override
     public void onStartScreen() {
+
+        Config configSystem = IllaClient.getCfg();
+
+        boolean musicOn = configSystem.getBoolean("musicOn");
+        boolean soundOn = configSystem.getBoolean("soundOn");
+
+        @Nullable Element soundBtn = activeScreen.findElementById("toggleSoundEffectBtn");
+        if (soundBtn == null) {
+            return;
+        }
+        @Nullable Element musicBtn = activeScreen.findElementById("toggleBackgroundMusicBtn");
+        if (musicBtn == null) {
+            return;
+        }
+
+        if (musicOn) {
+            musicBtn.startEffect(EffectEventId.onCustom, null, "musicOn");
+        } else {
+            musicBtn.startEffect(EffectEventId.onCustom, null, "musicOff");
+        }
+
+        if (soundOn) {
+            soundBtn.startEffect(EffectEventId.onCustom, null, "soundOn");
+        } else {
+            soundBtn.startEffect(EffectEventId.onCustom, null, "soundOff");
+        }
+
+
         activeNifty.subscribeAnnotations(this);
         AnnotationProcessor.process(this);
     }
@@ -446,6 +474,8 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         } else {
             configSystem.set("musicOn", true);
             musicBtn.startEffect(EffectEventId.onCustom, null, "musicOn");
+            AudioPlayer audioPlayer = AudioPlayer.getInstance();
+            audioPlayer.playLastMusic();
         }
     }
 
