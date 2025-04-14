@@ -56,6 +56,7 @@ import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import illarion.common.config.Config;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -327,6 +328,28 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         toggleRunMode();
     }
 
+    /**
+     * The event subscriber for click events on the sound effect mute/unmute button.
+     *
+     * @param topic the event topic
+     * @param data the event data
+     */
+    @NiftyEventSubscriber(id = "toggleSoundEffectBtn")
+    public void onToggleSoundEffectButtonClicked(String topic, ButtonClickedEvent data) {
+        toggleSoundEffect();
+    }
+
+        /**
+     * The event subscriber for click events on the background music mute/unmute button.
+     *
+     * @param topic the event topic
+     * @param data the event data
+     */
+    @NiftyEventSubscriber(id = "toggleBackgroundMusicBtn")
+    public void onToggleBackgroundMusicButtonClicked(String topic, ButtonClickedEvent data) {
+        toggleBackgroundMusic();
+    }
+
     private boolean isShiftPressed() {
         return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
     }
@@ -396,6 +419,60 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             runBtn.stopEffect(EffectEventId.onCustom);
         } else {
             runBtn.startEffect(EffectEventId.onCustom, null, "pulse");
+        }
+    }
+
+    /**
+     * Toggle the image of the button and mute/unmute background music
+     */
+    public void toggleBackgroundMusic() {
+
+        Config configSystem = IllaClient.getCfg();
+
+        boolean musicOn = configSystem.getBoolean("musicOn");
+        
+        if (activeScreen == null) {
+            return;
+        }
+
+        @Nullable Element musicBtn = activeScreen.findElementById("toggleBackgroundMusicBtn");
+        if (musicBtn == null) {
+            return;
+        }
+
+        if (musicOn) {
+            configSystem.set("musicOn", false);
+            musicBtn.startEffect(EffectEventId.onCustom, null, "musicOff");
+        } else {
+            configSystem.set("musicOn", true);
+            musicBtn.startEffect(EffectEventId.onCustom, null, "musicOn");
+        }
+    }
+
+        /**
+     * Toggle the image of the button and mute/unmute sound effects
+     */
+    public void toggleSoundEffect() {
+
+        Config configSystem = IllaClient.getCfg();
+
+        boolean soundOn = configSystem.getBoolean("soundOn");
+        
+        if (activeScreen == null) {
+            return;
+        }
+
+        @Nullable Element soundBtn = activeScreen.findElementById("toggleSoundEffectBtn");
+        if (soundBtn == null) {
+            return;
+        }
+
+        if (soundOn) {
+            configSystem.set("soundOn", false);
+            soundBtn.startEffect(EffectEventId.onCustom, null, "soundOff");
+        } else {
+            configSystem.set("soundOn", true);
+            soundBtn.startEffect(EffectEventId.onCustom, null, "soundOn");
         }
     }
 

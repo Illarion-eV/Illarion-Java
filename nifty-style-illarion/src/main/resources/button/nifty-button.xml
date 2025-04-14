@@ -140,6 +140,26 @@
         <attributes visible="false"/>
     </style>
 
+    <!-- Style for the background music button -->
+    <style id="nifty-button-toggle-backgroundMusic#panel">
+        <attributes backgroundImage="gui/button/buttonMusic.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-toggle-backgroundMusic#text">
+        <attributes visible="false"/>
+    </style>
+
+    <!-- Style for the sound effect button -->
+    <style id="nifty-button-toggle-soundEffect#panel">
+        <attributes backgroundImage="gui/button/buttonSound.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-toggle-soundEffect#text">
+        <attributes visible="false"/>
+    </style>
+
     <!-- Style for the minimap button -->
     <style id="nifty-button-minimap#panel">
         <attributes backgroundImage="gui/button/minimap.png" width="24px" height="24px" childLayout="center"

@@ -48,6 +48,20 @@
 
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
                     <panel align="right" marginBottom="3px" childLayout="vertical">
+                        <control name="button" id="toggleSoundEffectBtn" style="nifty-button-toggle-soundEffect" valign="bottom"
+                                 focusable="false" marginBottom="10px">
+                            <effect>
+                                <onCustom name="imageOverlay" customKey="soundOff" filename="gui/button/buttonSoundMuted.png" neverStopRendering="true" post="true"/>
+                                <onCustom name="imageOverlay" customKey="soundOn" filename="gui/button/buttonSound.png" neverStopRendering="true" post="true"/>
+                            </effect>
+                        </control>
+                        <control name="button" id="toggleBackgroundMusicBtn" style="nifty-button-toggle-backgroundMusic" valign="bottom"
+                                 focusable="false" marginBottom="10px">
+                            <effect>
+                                <onCustom name="imageOverlay" customKey="musicOff" filename="gui/button/buttonMusicMuted.png" neverStopRendering="true" post="true"/>
+                                <onCustom name="imageOverlay" customKey="musicOn" filename="gui/button/buttonMusic.png" neverStopRendering="true" post="true"/>
+                            </effect>
+                        </control>
                         <control name="button" id="openMiniMapBtn" style="nifty-button-minimap" valign="bottom"
                                  focusable="false" marginBottom="10px"/>
                         <control name="button" id="openSkillsBtn" style="nifty-button-skills" valign="bottom"
