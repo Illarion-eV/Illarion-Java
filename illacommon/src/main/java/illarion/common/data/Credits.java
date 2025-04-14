@@ -101,7 +101,10 @@ public final class Credits {
         CreditsList gameMaster = new CreditsList("Spielleiter", "Game Master");
         CreditsList communityManager = new CreditsList("Community-Manager", "Community Manager");
         CreditsList qualityAssurance = new CreditsList("Qualitätsprüfung", "Quality Assurance");
+        CreditsList attributions = new CreditsList("", "Attributions");
         CreditsList specialThanks = new CreditsList("Besonderen Dank", "Special Thanks");
+
+        CreditsPerson.create("dani_trias - Sound files used for the lute ( https://freesound.org/people/dani_trias/ )", attributions);
 
         CreditsPerson.create("Andreas", "Vilarion", "Grob",
                 projectManager, chiefServer, gameplay, client, website, easyNPC, easyQuest, server, qualityAssurance);
@@ -192,6 +195,7 @@ public final class Credits {
         multiPosList.add(gameMaster);
         multiPosList.add(communityManager);
         multiPosList.add(qualityAssurance);
+        multiPosList.add(attributions);
         multiPosList.add(specialThanks);
     }
 
