@@ -105,6 +105,7 @@ public final class Credits {
         CreditsList specialThanks = new CreditsList("Besonderen Dank", "Special Thanks");
 
         CreditsPerson.create("dani_trias - Sound files used for the lute ( https://freesound.org/people/dani_trias/ )", attributions);
+        CreditsPerson.create("Carlos Carty - Sound files used for the panpipe (https://creativecommons.org/licenses/by/4.0/ , https://freesound.org/people/CarlosCarty/)", attributions);
 
         CreditsPerson.create("Andreas", "Vilarion", "Grob",
                 projectManager, chiefServer, gameplay, client, website, easyNPC, easyQuest, server, qualityAssurance);
