@@ -92,12 +92,16 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws GdxEngineException in case the initialization goes wrong
      */
     public ApplicationGameContainer(
-            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
+            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen, boolean background) throws GdxEngineException {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
         config.vSyncEnabled = true;
-        config.backgroundFPS = 10;
+        if (background){
+            config.backgroundFPS = 10;
+        }else{
+            config.backgroundFPS = 60;
+        }
         config.foregroundFPS = 60;
         config.useGL30 = false;
         config.depth = 0;

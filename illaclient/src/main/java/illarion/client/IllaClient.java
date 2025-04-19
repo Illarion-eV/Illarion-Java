@@ -83,6 +83,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final String CFG_FULLSCREEN = "fullscreen";
     @Nonnull
     public static final String CFG_RESOLUTION = "resolution";
+    @Nonnull
+    public static final String CFG_BACKGROUNDFPS = "limitBackgroundFps";
     /**
      * The default server the client connects too. The client will always connect to this server.
      */
@@ -256,6 +258,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         int width;
         int height;
         boolean fullScreen;
+        boolean background;
         if (cfg.getBoolean(CFG_FULLSCREEN)) {
             // Determine the dimensions of the window to create
             GraphicResolution res = null;
@@ -279,11 +282,16 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             height = cfg.getInteger("windowHeight");
             fullScreen = false;
         }
+        if (cfg.getBoolean(CFG_BACKGROUNDFPS)) {
+            background = true;
+        } else {
+            background = false;
+        }
 
         try {
             // Get the game container used to display the game from the engine, using the dimensions from earlier
             gameContainer = EngineManager
-                    .createDesktopGame(Backend.libGDX, game, width, height, fullScreen);
+                    .createDesktopGame(Backend.libGDX, game, width, height, fullScreen, background);
         } catch (@Nonnull EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -294,6 +302,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
+        EventBus.subscribe(CFG_BACKGROUNDFPS, this);
 
         try {
             gameContainer.setResizeable(true);
@@ -325,6 +334,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("windowHeight", defaultResolution.getHeight());
         cfg.setDefault("savePassword", false);
         cfg.setDefault("showFps", false);
+        cfg.setDefault(CFG_BACKGROUNDFPS, true);
         cfg.setDefault("showPing", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
 

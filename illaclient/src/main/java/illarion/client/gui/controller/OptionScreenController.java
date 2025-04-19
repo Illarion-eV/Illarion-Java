@@ -58,6 +58,7 @@ public final class OptionScreenController implements ScreenController {
     private DropDown<String> resolutions;
     private CheckBox fullscreen;
     private CheckBox showFps;
+    private CheckBox limitBackgroundFps;
     private CheckBox showPing;
     private DropDown<String> translationProviders;
     private DropDown<String> translationDirections;
@@ -111,6 +112,7 @@ public final class OptionScreenController implements ScreenController {
 
         fullscreen = tabRoot.findNiftyControl("fullscreen", CheckBox.class);
         showFps = tabRoot.findNiftyControl("showFps", CheckBox.class);
+        limitBackgroundFps = tabRoot.findNiftyControl("limitBackgroundFps", CheckBox.class);
         showPing = tabRoot.findNiftyControl("showPing", CheckBox.class);
 
         //noinspection unchecked
@@ -163,6 +165,7 @@ public final class OptionScreenController implements ScreenController {
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
         showFps.setChecked(IllaClient.getCfg().getBoolean("showFps"));
+        limitBackgroundFps.setChecked(IllaClient.getCfg().getBoolean("limitBackgroundFps"));
         showPing.setChecked(IllaClient.getCfg().getBoolean("showPing"));
 
         translationProviders.selectItemByIndex(IllaClient.getCfg().getInteger(Translator.CFG_KEY_PROVIDER));
@@ -222,6 +225,7 @@ public final class OptionScreenController implements ScreenController {
 
         if ("tabRoot#tab-content-panel#graphicsTab".equals(topic)) {
             ((CheckBoxView) showFps).update(showFps.isChecked());
+            ((CheckBoxView) limitBackgroundFps).update(limitBackgroundFps.isChecked());
             ((CheckBoxView) showPing).update(showPing.isChecked());
         }
 
@@ -262,6 +266,7 @@ public final class OptionScreenController implements ScreenController {
 
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
         configSystem.set("showFps", showFps.isChecked());
+        configSystem.set("limitBackgroundFps", limitBackgroundFps.isChecked());
         configSystem.set("showPing", showPing.isChecked());
 
         configSystem.set(Translator.CFG_KEY_PROVIDER, translationProviders.getSelectedIndex());

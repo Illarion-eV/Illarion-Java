@@ -95,6 +95,7 @@ public final class Game implements GameListener {
     private int activeListener = STATE_NONE;
     private int targetListener = STATE_NONE;
     private boolean showFPS;
+    private boolean limitBackgroundFPS;
     private boolean showPing;
 
     /**
@@ -104,6 +105,7 @@ public final class Game implements GameListener {
         gameStates = new GameState[6];
         AnnotationProcessor.process(this);
         showFPS = IllaClient.getCfg().getBoolean("showFps");
+        limitBackgroundFPS = IllaClient.getCfg().getBoolean("limitBackgroundFps");
         showPing = IllaClient.getCfg().getBoolean("showPing");
     }
 
@@ -380,6 +382,11 @@ public final class Game implements GameListener {
     @EventTopicSubscriber(topic = "showFps")
     public void onFpsConfigChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
         showFPS = event.getConfig().getBoolean(event.getKey());
+    }
+
+    @EventTopicSubscriber(topic = "limitBackgroundFps")
+    public void onBackgroundFpsConfigChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
+        limitBackgroundFPS = event.getConfig().getBoolean(event.getKey());
     }
 
     @EventTopicSubscriber(topic = "showPing")

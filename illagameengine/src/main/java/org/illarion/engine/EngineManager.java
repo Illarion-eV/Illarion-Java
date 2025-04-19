@@ -38,6 +38,7 @@ public final class EngineManager {
      * @param width the width of the window
      * @param height the height of the window
      * @param fullScreen {@code true} in case this application is supposed to show up as full screen application
+     * @param background Whether or not the game should limit background fps
      * @return the container that displays the desktop game
      * @throws EngineException in case the creation of the game container fails
      */
@@ -47,7 +48,8 @@ public final class EngineManager {
             @Nonnull GameListener gameListener,
             int width,
             int height,
-            boolean fullScreen) throws EngineException {
+            boolean fullScreen,
+            boolean background) throws EngineException {
         String engineClassRef = backend.getDesktopContainerClass();
         if (engineClassRef == null) {
             throw new EngineException("Selected backend " + backend.name() + " does not support desktop games.");
@@ -62,8 +64,8 @@ public final class EngineManager {
             @SuppressWarnings("unchecked") Class<DesktopGameContainer> desktopGameClass = (Class<DesktopGameContainer>) clazz;
 
             Constructor<DesktopGameContainer> constructor = desktopGameClass
-                    .getConstructor(GameListener.class, int.class, int.class, boolean.class);
-            return constructor.newInstance(gameListener, width, height, fullScreen);
+                    .getConstructor(GameListener.class, int.class, int.class, boolean.class, boolean.class);
+            return constructor.newInstance(gameListener, width, height, fullScreen, background);
         } catch (@Nonnull ClassNotFoundException e) {
             throw new EngineException("Selected backend " + backend.name() + " is not available.", e);
         } catch (@Nonnull NoSuchMethodException e) {
