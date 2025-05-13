@@ -281,16 +281,11 @@ public class MavenDownloader {
     }
 
     private void setupRepositories() {
-        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/",
-                setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/"),
-                setupRepository("antelink", ".com/content/repositories/central/"),
-                setupRepository("exist", "http://repo.exist.com/maven2/"),
-                setupRepository("ibiblio.net", "http://www.ibiblio.net/pub/packages/maven2/"),
-                setupRepository("central-uk", "http://uk.maven.org/maven2/")));
+        repositories.add(setupRepository("central", "https://repo1.maven.org/maven2/",
+                setupRepository("antelink", ".com/content/repositories/central/")));
 
         illarionRepository = setupRepository("illarion", "https://illarion.org/media/java/maven", true, snapshot);
         repositories.add(illarionRepository);
-        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/"));
 
         session.setOffline(offline);
 
