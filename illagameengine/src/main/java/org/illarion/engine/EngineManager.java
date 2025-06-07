@@ -49,7 +49,8 @@ public final class EngineManager {
             int width,
             int height,
             boolean fullScreen,
-            boolean background) throws EngineException {
+            boolean background,
+            boolean isVsync) throws EngineException {
         String engineClassRef = backend.getDesktopContainerClass();
         if (engineClassRef == null) {
             throw new EngineException("Selected backend " + backend.name() + " does not support desktop games.");
@@ -64,8 +65,8 @@ public final class EngineManager {
             @SuppressWarnings("unchecked") Class<DesktopGameContainer> desktopGameClass = (Class<DesktopGameContainer>) clazz;
 
             Constructor<DesktopGameContainer> constructor = desktopGameClass
-                    .getConstructor(GameListener.class, int.class, int.class, boolean.class, boolean.class);
-            return constructor.newInstance(gameListener, width, height, fullScreen, background);
+                    .getConstructor(GameListener.class, int.class, int.class, boolean.class, boolean.class, boolean.class);
+            return constructor.newInstance(gameListener, width, height, fullScreen, background, isVsync);
         } catch (@Nonnull ClassNotFoundException e) {
             throw new EngineException("Selected backend " + backend.name() + " is not available.", e);
         } catch (@Nonnull NoSuchMethodException e) {

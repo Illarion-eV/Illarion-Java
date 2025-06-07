@@ -109,7 +109,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws GdxEngineException in case the initialization goes wrong
      */
     public ApplicationGameContainer(
-            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen, boolean background) throws GdxEngineException {
+            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen, boolean background, boolean isVsync) throws GdxEngineException {
         if (SharedLibraryLoader.os == Os.MacOsX) {
             Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
         }
@@ -265,6 +265,14 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.setTitle(title);
         if (gdxApplication != null) {
             gdxApplication.getGraphics().setTitle(title);
+        }
+    }
+
+    @Override
+    public void setVsync(boolean isVsync) {
+        config.useVsync(isVsync);
+        if (gdxApplication != null) {
+            gdxApplication.getGraphics().setVSync(isVsync);
         }
     }
 

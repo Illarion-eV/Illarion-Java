@@ -107,6 +107,11 @@
                             <control name="checkbox" id="fullscreen"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.vsync}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="vsync"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.showFps}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="showFps"/>

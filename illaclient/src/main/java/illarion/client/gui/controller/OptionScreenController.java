@@ -57,6 +57,7 @@ public final class OptionScreenController implements ScreenController {
 
     private DropDown<String> resolutions;
     private CheckBox fullscreen;
+    private CheckBox vsync;
     private CheckBox showFps;
     private CheckBox limitBackgroundFps;
     private CheckBox showPing;
@@ -111,6 +112,7 @@ public final class OptionScreenController implements ScreenController {
         resolutions.addAllItems(getResolutionList());
 
         fullscreen = tabRoot.findNiftyControl("fullscreen", CheckBox.class);
+        vsync = tabRoot.findNiftyControl("vsync", CheckBox.class);
         showFps = tabRoot.findNiftyControl("showFps", CheckBox.class);
         limitBackgroundFps = tabRoot.findNiftyControl("limitBackgroundFps", CheckBox.class);
         showPing = tabRoot.findNiftyControl("showPing", CheckBox.class);
@@ -164,6 +166,7 @@ public final class OptionScreenController implements ScreenController {
         sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
+        vsync.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_VSYNC));
         showFps.setChecked(IllaClient.getCfg().getBoolean("showFps"));
         limitBackgroundFps.setChecked(IllaClient.getCfg().getBoolean("limitBackgroundFps"));
         showPing.setChecked(IllaClient.getCfg().getBoolean("showPing"));
@@ -265,6 +268,7 @@ public final class OptionScreenController implements ScreenController {
         }
 
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
+        configSystem.set(IllaClient.CFG_VSYNC, vsync.isChecked());
         configSystem.set("showFps", showFps.isChecked());
         configSystem.set("limitBackgroundFps", limitBackgroundFps.isChecked());
         configSystem.set("showPing", showPing.isChecked());

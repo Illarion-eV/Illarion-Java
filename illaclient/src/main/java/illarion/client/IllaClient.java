@@ -84,6 +84,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @Nonnull
     public static final String CFG_RESOLUTION = "resolution";
     @Nonnull
+    public static final String CFG_VSYNC = "vsync";
+    @Nonnull
     public static final String CFG_BACKGROUNDFPS = "limitBackgroundFps";
     /**
      * The default server the client connects too. The client will always connect to this server.
@@ -258,7 +260,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         int width;
         int height;
         boolean fullScreen;
-        boolean background;
         if (cfg.getBoolean(CFG_FULLSCREEN)) {
             // Determine the dimensions of the window to create
             GraphicResolution res = null;
@@ -282,16 +283,14 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             height = cfg.getInteger("windowHeight");
             fullScreen = false;
         }
-        if (cfg.getBoolean(CFG_BACKGROUNDFPS)) {
-            background = true;
-        } else {
-            background = false;
-        }
+
+        boolean isVsync = cfg.getBoolean(CFG_VSYNC);
+        boolean background = cfg.getBoolean(CFG_BACKGROUNDFPS);
 
         try {
             // Get the game container used to display the game from the engine, using the dimensions from earlier
             gameContainer = EngineManager
-                    .createDesktopGame(Backend.libGDX, game, width, height, fullScreen, background);
+                    .createDesktopGame(Backend.libGDX, game, width, height, fullScreen, background, isVsync);
         } catch (@Nonnull EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -303,6 +302,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
         EventBus.subscribe(CFG_BACKGROUNDFPS, this);
+        EventBus.subscribe(CFG_VSYNC, this);
 
         try {
             gameContainer.setResizeable(true);
@@ -327,6 +327,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("RPalertEnabled", true);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
+        cfg.setDefault(CFG_VSYNC, true);
 
         GraphicResolution defaultResolution = new GraphicResolution();
         cfg.setDefault(CFG_RESOLUTION, defaultResolution.toString());
@@ -560,7 +561,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     /**
      * If the config is changed AND the changed config is either the resolution
-     * or the fullscreen boolean, updates the relevant config
+     * or the fullscreen boolean or the vsync boolean, updates the relevant config.
      *
      * Otherwise, does nothing.
      *
@@ -594,6 +595,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             } catch (@Nonnull EngineException | IllegalArgumentException e) {
                 LOGGER.error("Failed to apply graphic mode: {}", resolutionString);
             }
+        } else if (CFG_VSYNC.equals(topic)) {
+            boolean isVsync = cfg.getBoolean(CFG_VSYNC);
+            gameContainer.setVsync(isVsync);
         }
     }
 }

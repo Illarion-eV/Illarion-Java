@@ -43,6 +43,9 @@ public interface DesktopGameContainer extends GameContainer {
      */
     void setTitle(@Nonnull String title);
 
+    /** Set the usage of vsync. */
+    void setVsync(boolean isVsync);
+
     /**
      * Set the size of the window.
      *
