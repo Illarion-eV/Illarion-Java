@@ -1242,9 +1242,17 @@ if (context.isUnattended()) {
     </linuxDeb>
     <macosArchive name="macOS Bundle Archive (x64)" id="1010" mediaFileName="illarion-${compiler:sys.version}" launcherId="23">
       <jreBundle jreBundleSource="preCreated" includedJre="macos-amd64-1.8.0_452_unpacked" />
+      <topLevelFiles>
+        <file name=".DS_Store" file="mac/DS_Store_amd64" />
+        <symlink name="&quot; &quot;" target="/Applications" />
+      </topLevelFiles>
     </macosArchive>
     <macosArchive name="macOS Bundle Archive (ARM)" id="1012" mediaFileName="illarion-arm-${compiler:sys.version}" architecture="aarch64" launcherId="23">
       <jreBundle jreBundleSource="preCreated" includedJre="macos-aarch64-1.8.0_452_unpacked" />
+      <topLevelFiles>
+        <file name=".DS_Store" file="mac/DS_Store_aarch64" />
+        <symlink name="&quot; &quot;" target="/Applications" />
+      </topLevelFiles>
     </macosArchive>
   </mediaSets>
 </install4j>
