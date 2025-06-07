@@ -84,9 +84,6 @@ public final class JavaLauncher {
                 if (cfg.getBoolean("launchAggressive")) {
                     callList.add("-XX:+AggressiveOpts");
                 }
-                if (OSDetection.isMacOSX()) {
-                    callList.add("-XstartOnFirstThread");
-                }
                 callList.add(startupClass);
                 printCallList(callList);
                 if (launchCallList(callList)) {
