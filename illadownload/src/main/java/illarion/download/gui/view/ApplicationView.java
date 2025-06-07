@@ -35,22 +35,8 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
     private static final Logger log = LoggerFactory.getLogger(ApplicationView.class);
 
     ApplicationView(@Nonnull GuiModel model) throws IOException {
-        boolean isApplet;
-        try {
-            isApplet = model.getHostServices().getWebContext() != null;
-        } catch (Exception e) {
-            isApplet = false;
-        }
-
         Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
-
-        if (isApplet) {
-            root.getStyleClass().add("applet");
-            getHeader().setVisible(false);
-        } else {
-            root.getStyleClass().add("application");
-        }
-
+        root.getStyleClass().add("application");
         getChildren().add(root);
         maximizeOnAnchorPane(root);
     }
