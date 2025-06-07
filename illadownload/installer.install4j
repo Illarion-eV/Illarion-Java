@@ -1217,31 +1217,34 @@ if (context.isUnattended()) {
   </installerGui>
   <mediaSets>
     <windows name="Windows" id="60" jreBitType="32">
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_172" directDownload="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_452" directDownload="true" />
     </windows>
     <windows name="Windows (x64)" id="226" mediaFileName="${compiler:sys.shortName}-${compiler:sys.version}-x64">
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-1.8.0_172" directDownload="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-1.8.0_452" directDownload="true" />
     </windows>
     <unixInstaller name="Unix Installer" id="64" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-x86-1.8.0_172" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-x86-1.8.0_452" />
     </unixInstaller>
     <unixInstaller name="Unix Installer (x64)" id="420" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="illarion">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_172" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_452" />
     </unixInstaller>
     <linuxRPM name="Linux RPM" id="65" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-x86-1.8.0_172" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-x86-1.8.0_452" />
     </linuxRPM>
     <linuxRPM name="Linux RPM (x64)" id="416" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_172" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_452" />
     </linuxRPM>
     <linuxDeb name="Linux Deb Archive" id="66" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="x86">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-x86-1.8.0_172" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-x86-1.8.0_452" />
     </linuxDeb>
     <linuxDeb name="Linux Deb Archive (x64)" id="411" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="amd64">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_172" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_452" />
     </linuxDeb>
-    <macos name="Mac OS X Single Bundle" id="590" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" launcherId="23">
-      <jreBundle jreBundleSource="preCreated" includedJre="macosx-amd64-1.8.0_172" />
-    </macos>
+    <macosArchive name="macOS Bundle Archive (x64)" id="1010" mediaFileName="illarion-${compiler:sys.version}" launcherId="23">
+      <jreBundle jreBundleSource="preCreated" includedJre="macos-amd64-1.8.0_452_unpacked" />
+    </macosArchive>
+    <macosArchive name="macOS Bundle Archive (ARM)" id="1012" mediaFileName="illarion-arm-${compiler:sys.version}" architecture="aarch64" launcherId="23">
+      <jreBundle jreBundleSource="preCreated" includedJre="macos-aarch64-1.8.0_452_unpacked" />
+    </macosArchive>
   </mediaSets>
 </install4j>
