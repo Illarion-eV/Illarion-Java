@@ -23,7 +23,6 @@ import org.illarion.engine.backend.shared.AbstractForwardingInput;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.InputListener;
 import org.illarion.engine.input.Key;
-import org.lwjgl.input.Keyboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +135,6 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         this.gdxInput = gdxInput;
         gdxInput.setInputProcessor(this);
         events = new LinkedList<>();
-        Keyboard.enableRepeatEvents(true);
     }
 
     /**
@@ -581,6 +579,11 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
+    public boolean touchCancelled(int x, int y, int pointer, int button) {
+        return touchUp(x, y, pointer, button);
+    }
+
+    @Override
     public boolean touchDragged(int x, int y, int pointer) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
@@ -613,10 +616,10 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean scrolled(int amount) {
+    public boolean scrolled(float amountX, float amountY) {
         events.offer(() -> {
             assert inputListener != null;
-            inputListener.mouseWheelMoved(getMouseX(), getMouseY(), -amount);
+            inputListener.mouseWheelMoved(getMouseX(), getMouseY(), -(int)amountY);
         });
         return true;
     }

@@ -16,8 +16,8 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Audio;
-import com.badlogic.gdx.backends.lwjgl.audio.OpenALAudio;
-import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
+import com.badlogic.gdx.backends.lwjgl3.audio.OpenALLwjgl3Audio;
+import com.badlogic.gdx.backends.lwjgl3.audio.OpenALMusic;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ class SaveGdxOpenALMusic extends OpenALMusic {
     private final OpenALMusic internalMusic;
 
     public SaveGdxOpenALMusic(@Nonnull Audio audio, @Nonnull FileHandle ref) {
-        super((OpenALAudio) audio, ref);
+        super((OpenALLwjgl3Audio) audio, ref);
         internalMusic = (OpenALMusic) audio.newMusic(ref);
     }
 

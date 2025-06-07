@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import illarion.common.util.FastMath;
 import org.illarion.engine.MouseCursor;
 import org.illarion.engine.backend.shared.AbstractCursorManager;
 
@@ -68,16 +67,8 @@ class GdxCursorManager extends AbstractCursorManager {
         try {
             Pixmap cursorPixels = new Pixmap(files.internal(ref));
 
-            int cursorHeight = cursorPixels.getHeight();
-            int cursorWidth = cursorPixels.getWidth();
-
-            int minSize = org.lwjgl.input.Cursor.getMinCursorSize();
-            int maxSize = org.lwjgl.input.Cursor.getMaxCursorSize();
-            cursorHeight = FastMath.clamp(cursorHeight, minSize, maxSize);
-            cursorWidth = FastMath.clamp(cursorWidth, minSize, maxSize);
-
-            cursorHeight = MathUtils.nextPowerOfTwo(cursorHeight);
-            cursorWidth = MathUtils.nextPowerOfTwo(cursorWidth);
+            int cursorHeight = MathUtils.nextPowerOfTwo(cursorPixels.getHeight());
+            int cursorWidth = MathUtils.nextPowerOfTwo(cursorPixels.getWidth());
 
             if ((cursorHeight != cursorPixels.getHeight()) || (cursorWidth != cursorPixels.getWidth()) ||
                     (cursorPixels.getFormat() != Format.RGBA8888)) {

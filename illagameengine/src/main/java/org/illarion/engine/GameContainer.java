@@ -71,14 +71,6 @@ public interface GameContainer {
     void exitGame();
 
     /**
-     * Get the title of the game.
-     *
-     * @return the games title
-     */
-    @Nonnull
-    String getTitle();
-
-    /**
      * Get the current amount of frames that are rendered per second.
      *
      * @return the current FPS
