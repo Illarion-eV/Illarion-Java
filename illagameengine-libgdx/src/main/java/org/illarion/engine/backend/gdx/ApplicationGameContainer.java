@@ -21,6 +21,8 @@ import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
+import com.badlogic.gdx.utils.Os;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.GameListener;
 import org.illarion.engine.MouseCursor;
@@ -108,6 +110,10 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      */
     public ApplicationGameContainer(
             @Nonnull GameListener gameListener, int width, int height, boolean fullScreen, boolean background) throws GdxEngineException {
+        if (SharedLibraryLoader.os == Os.MacOsX) {
+            Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        }
+
         this.gameListener = gameListener;
         config = new Lwjgl3ApplicationConfiguration();
         config.useVsync(isVsync);
