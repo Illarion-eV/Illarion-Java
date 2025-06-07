@@ -84,6 +84,9 @@ public final class JavaLauncher {
                 if (cfg.getBoolean("launchAggressive")) {
                     callList.add("-XX:+AggressiveOpts");
                 }
+                if (OSDetection.isMacOSX()) {
+                    callList.add("-XstartOnFirstThread");
+                }
                 callList.add(startupClass);
                 printCallList(callList);
                 if (launchCallList(callList)) {
@@ -113,7 +116,7 @@ public final class JavaLauncher {
 
                 Pattern versionRegex = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)");
                 Optional<Matcher> versionMatcher = reader.lines()
-                        .filter(s -> s.startsWith("java version"))
+                        .filter(s -> s.contains("version"))
                         .map(versionRegex::matcher)
                         .filter(Matcher::find)
                         .findFirst();
