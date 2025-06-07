@@ -101,7 +101,7 @@ public final class OSDetection {
         }
 
         String archName = System.getProperty("os.arch"); //$NON-NLS-1$
-        if (archName.contains("amd64") || archName.contains("x86_64")) { //$NON-NLS-1$
+        if (archName.contains("amd64") || archName.contains("x86_64") || archName.contains("aarch64")) { //$NON-NLS-1$
             arch = BIT64;
         } else if (archName.contains("i386") || archName.contains("i586") || archName.contains("i686") ||
                 archName.contains("x86")) { //$NON-NLS-1$
