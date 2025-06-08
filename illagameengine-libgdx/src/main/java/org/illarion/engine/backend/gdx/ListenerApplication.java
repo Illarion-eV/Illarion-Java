@@ -61,6 +61,7 @@ class ListenerApplication extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
+        if (width == 0 && height == 0) return;
         listener.resize(container, width, height);
     }
 
