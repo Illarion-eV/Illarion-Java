@@ -70,6 +70,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
      * The number of polls between triggering the hold down key event.
      */
     private final int holdKeyDownPollInterval = 3;
+    private final int holdKeyDownInitialDelay = 30;
+    private boolean hasHoldKeyDownPassedInitialDelay;
 
     /**
      * Create a new input device and set the input implementation that provides the input data.
@@ -298,6 +300,15 @@ public class IgeInputSystem implements InputSystem, InputListener {
         }
 
         holdKeyDownPollCounter++;
+
+        if (!hasHoldKeyDownPassedInitialDelay) {
+            if (holdKeyDownPollCounter < holdKeyDownInitialDelay) {
+                return;
+            } else {
+                hasHoldKeyDownPassedInitialDelay = true;
+            }
+        }
+
         if (holdKeyDownPollCounter < holdKeyDownPollInterval) {
             return;
         }
@@ -332,6 +343,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             if (keyCode == holdKeyDownKey) {
                 holdKeyDownKey = 0;
                 holdKeyDownPollCounter = 0;
+                hasHoldKeyDownPassedInitialDelay = false;
             }
 
             boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
