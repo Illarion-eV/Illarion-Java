@@ -170,8 +170,8 @@ public final class JavaLauncher {
             }
             return orgPath;
         }
-        //noinspection DynamicRegexReplaceableByCompiledPattern
-        return orgPath.replace(" ", "\\ ");
+        // ProcessBuilder does not invoke a shell: Escaping is not needed on Mac/Linux
+        return orgPath;
     }
 
     /**
