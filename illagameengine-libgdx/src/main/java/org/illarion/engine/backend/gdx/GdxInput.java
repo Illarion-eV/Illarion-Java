@@ -258,6 +258,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             case Keys.DOWN:
                 return Key.CursorDown;
             case Keys.ENTER:
+            case Keys.NUMPAD_ENTER:
                 return Key.Enter;
             case Keys.BACKSPACE:
                 return Key.Backspace;
