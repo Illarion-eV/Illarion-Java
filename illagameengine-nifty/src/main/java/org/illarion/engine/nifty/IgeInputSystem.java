@@ -58,6 +58,18 @@ public class IgeInputSystem implements InputSystem, InputListener {
      */
     @Nullable
     private NiftyInputConsumer currentConsumer;
+    /**
+     * The current non-printable key that is down
+     */
+    private int holdKeyDownKey;
+    /**
+     * The number of polls the hold down key event was paused.
+     */
+    private int holdKeyDownPollCounter;
+    /**
+     * The number of polls between triggering the hold down key event.
+     */
+    private final int holdKeyDownPollInterval = 3;
 
     /**
      * Create a new input device and set the input implementation that provides the input data.
@@ -255,6 +267,13 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.keyDown(key);
         } else {
             int keyCode = getNiftyKeyId(key);
+
+            if (keyCode == KeyboardInputEvent.KEY_BACK || keyCode == KeyboardInputEvent.KEY_DELETE ||
+                    keyCode == KeyboardInputEvent.KEY_LEFT || keyCode == KeyboardInputEvent.KEY_RIGHT) {
+                log.debug("Saving key for {} because its hold event needs to be emulated.", key);
+                holdKeyDownKey = keyCode;
+            }
+
             boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
             boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true, shiftDown,
@@ -268,6 +287,30 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 stalledKeyDownKey = null;
             }
         }
+    }
+
+    private void pollHoldDownKey() {
+        int key = holdKeyDownKey;
+        NiftyInputConsumer consumer = currentConsumer;
+
+        if (key == 0 || consumer == null) {
+            return;
+        }
+
+        holdKeyDownPollCounter++;
+        if (holdKeyDownPollCounter < holdKeyDownPollInterval) {
+            return;
+        }
+
+        boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+        boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
+        KeyboardInputEvent event = new KeyboardInputEvent(key, Character.MIN_VALUE,
+                true, shiftDown, controlDown);
+        if (!currentConsumer.processKeyboardEvent(event)) {
+            log.debug("Nifty failed to consume hold down key event: {}", key);
+        }
+
+        holdKeyDownPollCounter = 0;
     }
 
     @Override
@@ -285,6 +328,12 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 stalledKeyDownKey = null;
             }
             int keyCode = getNiftyKeyId(key);
+
+            if (keyCode == holdKeyDownKey) {
+                holdKeyDownKey = 0;
+                holdKeyDownPollCounter = 0;
+            }
+
             boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
             boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             KeyboardInputEvent event = new KeyboardInputEvent(
@@ -436,6 +485,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
     @Override
     public void forwardEvents(@Nonnull NiftyInputConsumer inputEventConsumer) {
         currentConsumer = inputEventConsumer;
+        pollHoldDownKey();
         input.poll();
         currentConsumer = null;
     }
