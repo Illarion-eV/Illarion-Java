@@ -30,6 +30,9 @@ import illarion.client.resources.BookFactory;
 import illarion.client.util.Lang;
 import illarion.common.data.*;
 import org.illarion.engine.GameContainer;
+import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputFilter;
+import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,6 +61,8 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
     private Nifty nifty;
     private Screen screen;
+    private TextField textField;
+    private int currentValue;
 
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
@@ -68,6 +73,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
         bookTextContent = bookDisplay.getElement().findElementById("#textContent");
         bookScrollArea = bookDisplay.getElement().findNiftyControl("#scrollArea", ScrollPanel.class);
         pageNumberLabel = bookDisplay.getElement().findNiftyControl("#pageNumber", Label.class);
+        textField = bookDisplay.getElement().findNiftyControl("numberInput", TextField.class);
 
         bookDisplay.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosX")));
         bookDisplay.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosY")));
@@ -203,6 +209,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     public void onNextButtonClickedEvent(String topic, ButtonClickedEvent data) {
         if ((showPage + 1) < getTotalPageCount()) {
             showPage++;
+            textField.setText(Integer.toString(showPage));
             dirty = true;
         }
     }
@@ -211,9 +218,27 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     public void onBackButtonClickedEvent(String topic, ButtonClickedEvent data) {
         if (showPage > 0) {
             showPage--;
+            textField.setText(Integer.toString(showPage));
             dirty = true;
         }
     }
+
+    @NiftyEventSubscriber(id = "numberInput")
+    public void onNumberInputChanged(final String id, final TextFieldChangedEvent event) {
+
+
+        String displayText = textField.getDisplayedText();
+
+        if (displayText != null && !displayText.trim().isEmpty()) {
+            int newPage = Integer.parseInt(displayText);
+
+            if ((newPage >= 0) && (newPage < getTotalPageCount())) {
+                showPage = newPage;
+                dirty = true;
+            }
+        }
+    }
+
 
     @NiftyEventSubscriber(id = "book")
     public void onHideWindow(String topic, WindowClosedEvent data) {

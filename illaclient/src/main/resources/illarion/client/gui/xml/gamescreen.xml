@@ -177,6 +177,7 @@
                     <panel style="nifty-panel-small" childLayout="horizontal" align="center">
                         <control name="button" label="${gamescreen-bundle.back}" id="#buttonBack" margin="5px,10px"
                                  focusable="false" />
+                        <control name="textfield" id="numberInput" filter="digits" width="25px"/>
                         <control name="button" label="${gamescreen-bundle.next}" id="#buttonNext" margin="5px,10px"
                                  focusable="false" />
                     </panel>
