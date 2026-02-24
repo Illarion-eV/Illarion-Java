@@ -925,7 +925,11 @@ public final class Char implements AnimatedMove {
 
             // lizards
             case 5:
-                key = "character.name.fallback.lizard";
+                if (avatarId.getTypeId() == 0) {
+                    key = "character.name.fallback.lizard.male";
+                } else {
+                    key = "character.name.fallback.lizard.female";
+                }
                 break;
 
             // And everyone else
