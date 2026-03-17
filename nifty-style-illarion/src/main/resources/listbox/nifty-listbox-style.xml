@@ -31,7 +31,7 @@
         <interact onClick="listBoxItemClicked()"/>
         <effect>
             <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
-            <onCustom customKey="select" name="colorBar" post="false" color="#051901ff" neverStopRendering="true"
+            <onCustom customKey="select" name="colorBar" post="false" color="#344900ff" neverStopRendering="true"
                       timeType="infinite"/>
             <onCustom customKey="select" name="textColor" post="false" color="#eeef" neverStopRendering="true"
                       timeType="infinite"/>
