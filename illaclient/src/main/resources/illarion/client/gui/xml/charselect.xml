@@ -27,14 +27,14 @@
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="500px" width="520px" align="center" valign="center" backgroundColor="#0000"
+            <panel height="500px" width="540px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
                 <control name="label" id="statusText" text=""/>
                 <panel height="30px"/>
-                <panel width="520px" align="center" valign="center"
+                <panel width="100%" align="center" valign="center"
                        childLayout="horizontal" visibleToMouse="true">
-                    <panel width="520px" align="center" valign="center" backgroundColor="#0000"
+                    <panel width="400px" align="center" valign="center" backgroundColor="#0000"
                            childLayout="absolute" visibleToMouse="true">
                         <panel id="character-list" childLayout="center" visibleToMouse="true" align="center"
                                x="0px" y="0px" width="100%" height="100%">
@@ -51,15 +51,15 @@
                         </panel>
                     </panel>
 
-                    <panel width="20px">
+                    <panel width="25px">
                     </panel>
 
-                    <panel width="100px" align="center" valign="center" backgroundColor="#0000"
+                    <panel width="115px" align="center" valign="center" backgroundColor="#0000"
                            childLayout="vertical" visibleToMouse="true">
-                        <control id="reloadBtn" name="button" label="${charselect-bundle.reload}" width="100" height="35">
+                        <control id="reloadBtn" name="button" label="${charselect-bundle.reload}" width="100%" height="35">
                             <interact onRelease="reloadCharacters()"/>
                         </control>
-                        <control id="editorBtn" name="button" label="${charselect-bundle.editor}" width="100" height="70">
+                        <control id="editorBtn" name="button" label="${charselect-bundle.editor}" width="100%" height="70">
                             <interact onRelease="openEditor()"/>
                         </control>
                     </panel>
