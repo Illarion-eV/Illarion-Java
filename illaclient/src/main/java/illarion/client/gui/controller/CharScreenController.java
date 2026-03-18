@@ -28,6 +28,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.Game;
 import illarion.client.Login;
+import illarion.client.Servers;
 import illarion.client.util.Lang;
 import illarion.common.config.ConfigChangedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -261,11 +262,9 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     public void openEditor() {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
-                Desktop.getDesktop().browse(new URI("https://illarion.org/community/account/us_charlist.php"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+                Desktop.getDesktop().browse(new URI(Servers.CHARACTER_EDIT_URL));
+            } catch (IOException | URISyntaxException e1) {
+                log.warn("Can't launch browser: ", e1);
             }
         }
     }

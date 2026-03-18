@@ -73,6 +73,11 @@ public enum Servers {
     private final int serverPort;
 
     /**
+     * The URL of character edit to launch.
+     */
+    public static final String CHARACTER_EDIT_URL = "https://illarion.org/community/account/us_charlist.php";
+
+    /**
      * Default ENUM constructor for the enumeration entries. It creates a definition of a server and stores it to the
      * enumeration constants.
      *
