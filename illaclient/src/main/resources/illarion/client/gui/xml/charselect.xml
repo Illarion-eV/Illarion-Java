@@ -23,35 +23,60 @@
                    imageMode="repeat:0,0,1024,422"/>
         </layer>
 
-        <layer id="layer2" childLayout="center">
+        <layer id="character-select" childLayout="center">
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
+            <panel height="500px" width="520px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
                 <control name="label" id="statusText" text=""/>
                 <panel height="30px"/>
-                <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
-                       childLayout="vertical" visibleToMouse="true">
-                    <panel childLayout="center" visibleToMouse="true" align="center">
-                        <control id="myListBox" name="listBox" vertical="on" horizontal="off"
-                                 displayItems="5" selection="Single" forceSelection="true"/>
+                <panel width="520px" align="center" valign="center"
+                       childLayout="horizontal" visibleToMouse="true">
+                    <panel width="520px" align="center" valign="center" backgroundColor="#0000"
+                           childLayout="absolute" visibleToMouse="true">
+                        <panel id="character-list" childLayout="center" visibleToMouse="true" align="center"
+                               x="0px" y="0px" width="100%" height="100%">
+                            <control id="myListBox" name="listBox" vertical="on" horizontal="off"
+                                     displayItems="5" selection="Single" forceSelection="true"/>
+                        </panel>
+                        <panel id="no-character-available" childLayout="center" visibleToMouse="true" align="center"
+                               x="0px" y="0px" width="100%" height="100%">
+                            <control name="label" text="${charselect-bundle.no-character-found}"/>
+                        </panel>
+                        <panel id="loading-chars" childLayout="center" visibleToMouse="true" align="center"
+                               x="0px" y="0px" width="100%" height="100%">
+                            <control name="label" text="${charselect-bundle.receivingCharacters}"/>
+                        </panel>
                     </panel>
 
-                    <panel height="30px"/>
+                    <panel width="20px">
+                    </panel>
 
-                    <panel childLayout="horizontal" visibleToMouse="true">
-                        <panel width="90px"/>
-                        <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100" height="35">
-                            <interact onRelease="play()"/>
+                    <panel width="100px" align="center" valign="center" backgroundColor="#0000"
+                           childLayout="vertical" visibleToMouse="true">
+                        <control id="reloadBtn" name="button" label="${charselect-bundle.reload}" width="100" height="35">
+                            <interact onRelease="reloadCharacters()"/>
                         </control>
-                        <panel width="20px"/>
-                        <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100"
-                                 height="35">
-                            <interact onRelease="logout()"/>
+                        <control id="editorBtn" name="button" label="${charselect-bundle.editor}" width="100" height="70">
+                            <interact onRelease="openEditor()"/>
                         </control>
                     </panel>
+                </panel>
+
+                <panel height="30px"/>
+
+                <panel childLayout="horizontal" visibleToMouse="true">
+                    <panel width="90px"/>
+                    <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100" height="35">
+                        <interact onRelease="play()"/>
+                    </control>
+                    <panel width="20px"/>
+                    <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100"
+                             height="35">
+                        <interact onRelease="logout()"/>
+                    </control>
                 </panel>
             </panel>
         </layer>
