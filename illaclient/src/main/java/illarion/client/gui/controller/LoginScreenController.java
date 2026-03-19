@@ -345,7 +345,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             }
             @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
             if (charScreenController instanceof CharScreenController) {
-                ((CharScreenController) charScreenController).fillMyListBox();
+                ((CharScreenController) charScreenController).fillCharsListBox();
             }
             nifty.gotoScreen(charSelectScreen.getScreenId());
         }
