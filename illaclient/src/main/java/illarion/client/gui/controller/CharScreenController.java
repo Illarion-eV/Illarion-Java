@@ -15,6 +15,7 @@
  */
 package illarion.client.gui.controller;
 
+import com.badlogic.gdx.Gdx;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.Label;
@@ -38,10 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -260,12 +257,9 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     }
 
     public void openEditor() {
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            try {
-                Desktop.getDesktop().browse(new URI(Servers.CHARACTER_EDIT_URL));
-            } catch (IOException | URISyntaxException e1) {
-                log.warn("Can't launch browser: ", e1);
-            }
+        boolean openOk = Gdx.net.openURI(Servers.CHARACTER_EDIT_URL);
+        if (!openOk) {
+            log.warn("Can't launch browser");
         }
     }
 
