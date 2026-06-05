@@ -37,6 +37,7 @@ import illarion.common.config.Config;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
+import illarion.common.data.SkillLoader;
 import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
 import org.illarion.nifty.controls.progress.builder.ProgressBuilder;
@@ -79,11 +80,13 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         skillWindow = screen.findNiftyControl("characterInformation", Window.class);
         //skillWindow.getElement().getParent().layoutElements();
 
-        createSkillEntries();
+        SkillLoader.load();
     }
 
     @Override
     public void onStartScreen() {
+        createSkillEntries();
+
         Element skillWindowElement = getSkillWindowElement();
         if (skillWindowElement != null) {
             skillWindowElement.setConstraintX(new SizeValue(IllaClient.getCfg().getString("skillWindowPosX")));
@@ -105,7 +108,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         }
 
         internalHideSkillWindow();
-        resetAllEntries();
+        removeSkillEntries();
     }
 
     @Override
@@ -153,6 +156,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         if (content == null) {
             return;
         }
+        content.getChildren().forEach(Element::markForRemoval);
 
         for (SkillGroup group : SkillGroups.getInstance().getSkillGroups()) {
             String groupId = content.getId() + "#group" + Integer.toString(group.getGroupId());
@@ -216,6 +220,15 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         }
     }
 
+    private void removeSkillEntries() {
+        Element content = getContentPanel();
+
+        if (content != null) {
+            content.getChildren().forEach(Element::markForRemoval);
+            layoutDirty = true;
+        }
+    }
+
     /**
      * This value is set {@code true} in case the layout needs to be updated.
      */
@@ -275,27 +288,6 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             }
         }
         return null;
-    }
-
-    private void resetAllEntries() {
-        Element content = getContentPanel();
-
-        if (content != null) {
-            SizeValue zero = SizeValue.px(0);
-            for (@Nonnull Element groupPanel : content.getChildren()) {
-                groupPanel.setConstraintHeight(zero);
-                groupPanel.setMarginBottom(zero);
-
-                for (@Nonnull Element groupMember : groupPanel.getChildren()) {
-                    groupMember.setConstraintHeight(zero);
-
-                    for (@Nonnull Element skillEntry : groupMember.getChildren()) {
-                        skillEntry.setConstraintHeight(zero);
-                    }
-                }
-            }
-            layoutDirty = true;
-        }
     }
 
     /**

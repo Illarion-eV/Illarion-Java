@@ -111,6 +111,7 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
         hitPoints = playerChar.getAttribute(CharacterAttribute.HitPoints);
         foodPoints = playerChar.getAttribute(CharacterAttribute.FoodPoints);
         manaPoints = playerChar.getAttribute(CharacterAttribute.ManaPoints);
+        currentManaPoints = 0;
         isMage = false;
     }
 
