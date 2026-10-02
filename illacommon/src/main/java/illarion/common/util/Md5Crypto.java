@@ -20,12 +20,14 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
  * This class is able to calculate a salted MD5 that is compatible to the MD5 created by the Unix crypt command.
+ * Messages are encoded as UTF-8.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -68,7 +70,7 @@ public class Md5Crypto {
         }
 
         Charset charset = Charset.forName("ISO-8859-1");
-        byte[] messageBytes = message.getBytes(charset);
+        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
         byte[] magicBytes = magic.getBytes(charset);
         byte[] saltBytes = cleanedSalt.getBytes(charset);
 
@@ -83,13 +85,13 @@ public class Md5Crypto {
         md5Digest.update(magicBytes);
         md5Digest.update(saltBytes);
 
-        for (int messageLength = message.length(); messageLength > 0; messageLength -= 16) {
+        for (int messageLength = messageBytes.length; messageLength > 0; messageLength -= 16) {
             md5Digest.update(currentDigest, 0, Math.min(messageLength, 16));
         }
 
         Arrays.fill(currentDigest, (byte) 0);
 
-        for (int i = message.length(); i != 0; i >>>= 1) {
+        for (int i = messageBytes.length; i != 0; i >>>= 1) {
             if ((i & 1) == 0) {
                 md5Digest.update(messageBytes, 0, 1);
             } else {
