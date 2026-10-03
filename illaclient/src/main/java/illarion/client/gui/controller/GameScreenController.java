@@ -79,9 +79,9 @@ public final class GameScreenController implements GameGui, ScreenController {
     private final CloseGameHandler closeGameHandler;
 
     /**
-     * Indicates that the screen has been setup by calling bind(Nifty, Screen)
+     * Indicates that the screen and all child controllers have finished starting.
      */
-    private boolean ready;
+    private volatile boolean ready;
 
     /**
      * Initializes all of the child handlers, adds them to appropriate collections
@@ -288,6 +288,8 @@ public final class GameScreenController implements GameGui, ScreenController {
      */
     @Override
     public void onEndScreen() {
+        ready = false;
+
         childControllers.forEach(ScreenController::onEndScreen);
         World.cleanEnvironment();
         IllaClient.getCfg().save();
@@ -299,6 +301,7 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Override
     public void onStartScreen() {
         childControllers.forEach(ScreenController::onStartScreen);
+        ready = true;
     }
 
     /**
@@ -310,6 +313,10 @@ public final class GameScreenController implements GameGui, ScreenController {
      */
     @Override
     public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+        if (!ready) {
+            return;
+        }
+
         for (UpdatableHandler childController : childUpdateControllers) {
             childController.update(container, delta);
         }
@@ -317,15 +324,15 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     /**
      * Calls bind() for all child ScreenControllers with the given arguments
-     * Sets ready to {@code true} once all children are ready
      * @param nifty     The Nifty object for this instance of the game
      * @param screen    The Screen for this instance of the game
      */
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
+        ready = false;
+
         for (ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
         }
-        ready = true;
     }
 }
