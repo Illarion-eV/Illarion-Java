@@ -16,16 +16,14 @@
 package illarion.build
 
 import org.gradle.api.file.FileTree
-import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.Project
 import org.gradle.api.java.archives.Manifest
-import org.gradle.api.java.archives.internal.DefaultManifest
-import org.gradle.util.ConfigureUtil
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class ConvertPluginConvention {
-    private ProjectInternal project
+    private Project project
 
     def String atlasNameExtension
     def File privateKey
@@ -35,15 +33,15 @@ class ConvertPluginConvention {
 
     List metaInf
 
-    DefaultManifest manifest
+    Manifest manifest
 
-    ConvertPluginConvention(ProjectInternal project) {
+    ConvertPluginConvention(Project project) {
         this.project = project
         manifest = manifest()
         metaInf = []
         resourceDirectory = new File(project.projectDir, "src/main/resources");
         resources = project.fileTree(dir: resourceDirectory)
-        outputDirectory = new File(project.buildDir, "resources")
+        outputDirectory = project.layout.buildDirectory.dir("converted-resources").get().asFile
     }
 
     public def setResourceDirectory(File dir) {
@@ -69,6 +67,12 @@ class ConvertPluginConvention {
      * @param closure The closure to use to configure the manifest.
      */
     public Manifest manifest(Closure closure) {
-        return ConfigureUtil.configure(closure, new DefaultManifest(project.fileResolver));
+        Manifest result = project.extensions.getByType(org.gradle.api.plugins.JavaPluginExtension).manifest()
+
+        if (closure != null) {
+            project.configure(result, closure)
+        }
+
+        return result
     }
 }

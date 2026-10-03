@@ -29,6 +29,8 @@ include "nifty-style-illarion"
 
 rootProject.name = "illarion"
 rootProject.children.each {
+    it.projectDir = file(it.name)
+
     switch (it.name) {
         case "illabuild":
             it.name = "build";

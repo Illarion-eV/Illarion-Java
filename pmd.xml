@@ -1,4 +1,5 @@
-<?xml version="1.0"?><!--
+<?xml version="1.0"?>
+<!--
   ~ This file is part of the Illarion project.
   ~
   ~ Copyright © 2016 - Illarion e.V.
@@ -13,37 +14,19 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   -->
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Illarion Ruleset"
-         xmlns="http://pmd.sf.net/ruleset/1.0.0"
-         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
-         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
-    <description>
-        This is the PMD ruleset for Illarion.
-    </description>
-
-    <rule ref="rulesets/java/basic.xml" />
-    <rule ref="rulesets/java/braces.xml" />
-    <rule ref="rulesets/java/controversial.xml/DontImportSun" />
-    <rule ref="rulesets/java/controversial.xml/SuspiciousOctalEscape" />
-    <rule ref="rulesets/java/design.xml">
-        <exclude name="SwitchStmtsShouldHaveDefault" />
-        <exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
+<ruleset name="Illarion Ruleset" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>Illarion checks using the PMD 7 rule categories.</description>
+    <rule ref="category/java/errorprone.xml"/>
+    <rule ref="category/java/bestpractices.xml"/>
+    <rule ref="category/java/design.xml">
+        <exclude name="AvoidDeeplyNestedIfStmts"/>
+        <exclude name="LoosePackageCoupling"/>
     </rule>
-    <rule ref="rulesets/java/imports.xml" />
-    <rule ref="rulesets/java/finalizers.xml" />
-    <rule ref="rulesets/java/strings.xml">
-        <exclude name="AvoidDuplicateLiterals" />
-        <exclude name="ConsecutiveAppendsShouldReuse" />
-    </rule>
-    <rule ref="rulesets/java/sunsecure.xml" />
-    <rule ref="rulesets/java/unnecessary.xml">
-        <exclude name="UselessParentheses" />
-    </rule>
-    <rule ref="rulesets/java/unusedcode.xml" />
-
-    <rule ref="rulesets/java/design.xml/AvoidDeeplyNestedIfStmts">
+    <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts">
         <properties>
-            <property name="problemDepth" value="5" />
+            <property name="problemDepth" value="5"/>
         </properties>
     </rule>
 </ruleset>

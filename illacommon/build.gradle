@@ -15,20 +15,22 @@
  */
 import de.undercouch.gradle.tasks.download.Download
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 apply from: '../versions.gradle'
 
-archivesBaseName = 'illarion_common'
+base {
+    archivesName = 'illarion_common'
+}
 
 dependencies {
-    compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.ogce', name: 'xpp3', version: '1.1.6'
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'biz.futureware.mantis', name: 'mantis-axis-soap-client', version: '1.2.19'
+    api "org.jetbrains:annotations:15.0"
+    api "org.slf4j:slf4j-api:${project.ext.slf4jVersion}"
+    api "org.slf4j:log4j-over-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:jcl-over-slf4j:${project.ext.slf4jVersion}"
+    api "org.ogce:xpp3:1.1.6"
+    api "org.bushe:eventbus:1.4"
+    api "biz.futureware.mantis:mantis-axis-soap-client:1.2.19"
 }
 
 processResources.dependsOn("downloadSkills")
@@ -70,13 +72,13 @@ publishing {
             from components.java
 
             artifact sourceJar {
-                classifier "sources"
+                archiveClassifier = "sources"
             }
         }
     }
     repositories {
         maven {
-            url project.ext.mavenRepo
+            url = uri(project.ext.mavenRepo)
         }
     }
 }

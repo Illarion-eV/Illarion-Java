@@ -1,4 +1,4 @@
--target 1.8
+-target 11
 
 -dontoptimize
 -optimizationpasses 10
@@ -51,6 +51,14 @@
 -keep public class ch.qos.logback.classic.spi.** { *; }
 
 -keep class org.xmlpull.mxp1.MXParserFactory
+
+-keep class org.xmlpull.mxp1.MXParser {
+    public <init>();
+}
+
+-keep class org.xmlpull.mxp1_serializer.MXSerializer {
+    public <init>();
+}
 
 -keep class org.slf4j.impl.**
 

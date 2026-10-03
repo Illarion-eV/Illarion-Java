@@ -13,16 +13,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 apply from: '../versions.gradle'
 
-archivesBaseName = 'illarion_engine_nifty'
+base {
+    archivesName = 'illarion_engine_nifty'
+}
+
 dependencies {
-    compile project(':common')
-    compile project(':engine')
-    compile group: 'com.github.nifty-gui', name: 'nifty', version: project.ext.niftyGuiVersion
+    api project(':common')
+    api project(':engine')
+    api "com.github.nifty-gui:nifty:${project.ext.niftyGuiVersion}"
 }
 
 jar {
@@ -51,13 +54,13 @@ publishing {
             from components.java
 
             artifact sourceJar {
-                classifier "sources"
+                archiveClassifier = "sources"
             }
         }
     }
     repositories {
         maven {
-            url project.ext.mavenRepo
+            url = uri(project.ext.mavenRepo)
         }
     }
 }

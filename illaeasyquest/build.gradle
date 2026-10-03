@@ -13,26 +13,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'application'
 apply plugin: 'maven-publish'
 
 apply from: '../versions.gradle'
 
-archivesBaseName = 'illarion_easyquest'
-mainClassName = 'illarion.easyquest.gui.MainFrame'
+base {
+    archivesName = 'illarion_easyquest'
+}
+
+application {
+    mainClass = 'illarion.easyquest.gui.MainFrame'
+}
 
 dependencies {
-    compile project(':common')
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.github.insubstantial', name: 'substance', version: project.ext.insubstantialVersion
-    compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
-    compile group: 'org.tinyjee.jgraphx', name: 'jgraphx', version: '3.4.1.3'
+    api project(':common')
+    api "org.slf4j:slf4j-api:${project.ext.slf4jVersion}"
+    api "org.slf4j:jul-to-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:jcl-over-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:log4j-over-slf4j:${project.ext.slf4jVersion}"
+    api "ch.qos.logback:logback-classic:${project.ext.logbackVersion}"
+    api "org.bushe:eventbus:1.4"
+    api "com.github.insubstantial:substance:${project.ext.insubstantialVersion}"
+    api "com.github.insubstantial:substance-flamingo:${project.ext.insubstantialVersion}"
+    api "org.tinyjee.jgraphx:jgraphx:3.4.1.3"
 }
 
 processResources.dependsOn {
@@ -84,13 +89,13 @@ publishing {
             from components.java
 
             artifact sourceJar {
-                classifier "sources"
+                archiveClassifier = "sources"
             }
         }
     }
     repositories {
         maven {
-            url project.ext.mavenRepo
+            url = uri(project.ext.mavenRepo)
         }
     }
 }

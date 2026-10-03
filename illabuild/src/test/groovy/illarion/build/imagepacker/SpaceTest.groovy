@@ -28,10 +28,10 @@ class SpaceTest {
     @Test
     void parametersTest() {
         def space = new Space(1, 2, 3, 4);
-        assertEquals(space.x, 1, "Applying parameter x failed")
-        assertEquals(space.y, 2, "Applying parameter x failed")
-        assertEquals(space.height, 3, "Applying parameter x failed")
-        assertEquals(space.width, 4, "Applying parameter x failed")
+        assert space.x == 1 : 'Applying parameter x failed'
+        assert space.y == 2 : 'Applying parameter y failed'
+        assert space.height == 3 : 'Applying parameter height failed'
+        assert space.width == 4 : 'Applying parameter width failed'
     }
 
     @Test

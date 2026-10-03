@@ -13,43 +13,64 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-import com.install4j.gradle.Install4jTask
 
-apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'maven-publish'
-apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
-apply plugin: 'install4j'
 
-def hasTargetDistDir = project.hasProperty('targetDistDir')
-def hasInstall4jDir = project.hasProperty('install4jDir')
-def hasInstall4jTargetDir = project.hasProperty('install4jTargetDir')
+['targetDistDir', 'install4jDir', 'install4jTargetDir', 'keyFile'].each { legacyProperty ->
+    if (project.hasProperty(legacyProperty)) {
+        throw new GradleException("${legacyProperty} belongs to the retired JavaFX/install4j release pipeline. " +
+                'See README.md: release packaging requires a separate migration.')
+    }
+}
 
-archivesBaseName = 'illarion_download'
-mainClassName = 'illarion.download.Application'
+base {
+    archivesName = 'illarion_download'
+}
+
+application {
+    mainClass = 'illarion.download.Application'
+    applicationDefaultJvmArgs = ['--enable-native-access=ALL-UNNAMED']
+}
+
+def os = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+def arch = System.getProperty('os.arch').toLowerCase(Locale.ROOT)
+def fxPlatform = os.contains('win') ? 'win' : os.contains('mac') ? 'mac' : 'linux'
+
+if (arch in ['aarch64', 'arm64']) {
+    fxPlatform += '-aarch64'
+}
 
 dependencies {
-    compile project(':common')
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'org.ogce', name: 'xpp3', version: '1.1.6'
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.google.guava', name: 'guava', version: '21.0'
-    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
-    compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
-    compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
-    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
+    api project(':common')
+    api "org.slf4j:slf4j-api:${project.ext.slf4jVersion}"
+    api "org.slf4j:jul-to-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:jcl-over-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:log4j-over-slf4j:${project.ext.slf4jVersion}"
+    api "ch.qos.logback:logback-classic:${project.ext.logbackVersion}"
+    api "org.ogce:xpp3:1.1.6"
+    api "org.bushe:eventbus:1.4"
+    api "com.google.guava:guava:21.0"
+    api "org.eclipse.aether:aether-api:1.1.0"
+    api "org.eclipse.aether:aether-connector-basic:1.1.0"
+    api "org.eclipse.aether:aether-transport-http:1.1.0"
+    api "org.apache.maven:maven-aether-provider:3.3.9"
+}
+
+dependencies {
+    ['base', 'graphics', 'controls', 'fxml'].each { module ->
+        implementation("org.openjfx:javafx-${module}:25.0.4:${fxPlatform}") {
+            transitive = false
+        }
+    }
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
         attributes \
-                 'Main-Class': 'illarion.download.gui.GuiApplication', \
+                 'Main-Class': 'illarion.download.Application', \
                  'JavaFX-Feature-Proxy': 'None', \
                  'Permissions': 'all-permissions', \
                  'Codebase': 'illarion.org', \
@@ -64,149 +85,6 @@ jar {
     }
 }
 
-task publishDownloaderBundle() {}
-
-if (hasTargetDistDir) {
-    publish.dependsOn {
-        publishDownloader
-    }
-}
-if (hasInstall4jTargetDir) {
-    publishDownloaderBundle.dependsOn {
-        createInstall4j
-    }
-}
-
-startScripts.dependsOn {
-    jfxJar
-}
-
-javafx {
-    id 'IllaLauncher'
-    appID 'IllaLauncher'
-    appName 'Illarion-Launcher'
-    mainClass project.mainClassName
-
-    embedLauncher = true
-
-    category = 'Games'
-    copyright = 'Copyright (c) 2013 Illarion e.V.'
-    description = 'This is the downloader and launcher of Illarion.'
-    licenseType = 'AGPLv3'
-    vendor = 'Illarion e.V.'
-    installSystemWide = false
-    menu = true
-    shortcut = true
-
-    if (project.hasProperty('keyFile')) {
-        apply from: project.keyFile
-        releaseKey {
-            alias = project.ext.storealias
-            keyStore = project.ext.keystore
-            storePass = project.ext.storepass
-            storeType = project.ext.storetype
-        }
-        signingMode 'release'
-    }
-    packaging 'none'
-
-    profiles {
-        windows {
-            javaRuntime = '<NO RUNTIME>'
-        }
-        macosx {
-            javaRuntime = '<NO RUNTIME>'
-        }
-        linux {
-            javaRuntime = '<NO RUNTIME>'
-        }
-    }
-
-    width = 620
-    height = 410
-    embedJNLP = true
-    codebase = 'https://illarion.org/media/java/launcher'
-}
-
-if (hasTargetDistDir) {
-    task clearDistDir(type: Delete) {
-        delete project.distsDir
-    }
-    jfxDeploy {
-        doFirst {
-            clearDistDir
-        }
-    }
-    task publishDownloader(type: Copy, dependsOn: 'jfxDeploy') {
-        from project.distsDir
-        into file(project.targetDistDir)
-    }
-}
-if (hasInstall4jTargetDir && hasInstall4jDir) {
-    task cleanUpForInstall4j(type: Delete) {
-        delete new File(project.buildDir, 'install4j')
-    }
-    task createInstall4jDirectory(dependsOn: cleanUpForInstall4j) {
-        def sourceDir = new File(project.buildDir, 'install4j')
-        sourceDir.mkdirs()
-    }
-    task assembleForInstall4j(type: Copy) {
-        dependsOn jfxJar, createInstall4jDirectory
-
-        from new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
-        configurations.runtime.each { File file ->
-            if (!file.absolutePath.startsWith(System.getProperty('java.home'))) {
-                from file
-            }
-        }
-        into new File(project.buildDir, 'install4j')
-    }
-
-    if (project.hasProperty('keyFile')) {
-        apply from: project.keyFile
-    }
-
-    install4j {
-        installDir = file(project.install4jDir)
-        faster = false
-        if (project.hasProperty('keyFile')) {
-            disableSigning = false
-            winKeystorePassword = project.ext.storepass
-            macKeystorePassword = project.ext.storepass
-        } else {
-            disableSigning = true
-        }
-    }
-
-    task createInstall4j(type: Install4jTask) {
-        dependsOn 'assembleForInstall4j'
-
-        def sourceDir = new File(project.buildDir, 'install4j')
-
-        inputs.dir sourceDir
-        inputs.file new File(project.projectDir, 'installer.install4j')
-        outputs.dir project.install4jTargetDir
-
-        def keyStore = null
-        if (project.hasProperty('keyFile')) {
-            keyStore = project.ext.keystore
-        }
-
-        projectFile = new File(project.projectDir, 'installer.install4j')
-        destination = file(project.install4jTargetDir)
-
-        def releaseVersion = project.version.toString().replace('-SNAPSHOT', '')
-        if (project.hasProperty('setupVersion')) {
-            releaseVersion = project.setupVersion
-        }
-        release = releaseVersion
-
-        variables = [sourceDir: sourceDir,
-                     iconsDir : new File(project.projectDir, 'icons'),
-                     keyStore : keyStore]
-    }
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -215,7 +93,7 @@ publishing {
     }
     repositories {
         maven {
-            url project.ext.mavenRepo
+            url = uri(project.ext.mavenRepo)
         }
     }
 }

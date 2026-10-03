@@ -15,35 +15,29 @@
  */
 package illarion.download.cleanup;
 
-import org.easymock.TestSubject;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockObjectFactory;
 import org.testng.Assert;
-import org.testng.IObjectFactory;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.easymock.EasyMock.expect;
-import static org.powermock.api.easymock.PowerMock.*;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("ALL")
-@PrepareForTest({Files.class, VersionComparator.class})
 public class VersionComparatorTest {
-    @TestSubject
     private VersionComparator comparator;
+    private Path temporaryRoot;
 
     @BeforeClass
-    public void setUp() {
+    public void setUp() throws IOException {
+        temporaryRoot = Files.createTempDirectory("illarion-version-test");
         comparator = new VersionComparator();
     }
 
@@ -51,297 +45,274 @@ public class VersionComparatorTest {
     public void compareDirectoriesReleases() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.0");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.0");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result < 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 > 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoriesReleasesMatch() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.1");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result == 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 == 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoriesSnapshots() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.0-SNAPSHOT");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.0-SNAPSHOT");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result < 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 > 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoriesSnapshotsMatch() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result == 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 == 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoriesReleaseSnapshot1() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.0-SNAPSHOT");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.0-SNAPSHOT");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result < 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 > 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoriesReleaseSnapshot2() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.0");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.0");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result < 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 > 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoriesReleaseSnapshot3() {
         assert comparator != null;
 
-        Path firstDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
+        Path firstDir = testPath("bin", "org", "illarion", "download", "2.1.1.1");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1-SNAPSHOT");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstDir)).andReturn(true).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstDir, true);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstDir, secondDir);
         Assert.assertTrue(result < 0);
 
         int result2 = comparator.compare(secondDir, firstDir);
         Assert.assertTrue(result2 > 0);
-        verifyAll();
     }
 
     @Test
     public void compareDirectoryFile() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
-        Path secondDir = Paths.get("bin", "org", "illarion", "download", "2.1.1.1");
+        Path firstFile = testPath("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
+        Path secondDir = testPath("bin", "org", "illarion", "download", "2.1.1.1");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondDir)).andReturn(true).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondDir, true);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondDir);
         Assert.assertTrue(result < 0);
 
         int result2 = comparator.compare(secondDir, firstFile);
         Assert.assertTrue(result2 > 0);
-        verifyAll();
     }
 
     @Test
     public void compareFilesReleases() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
-        Path secondFile = Paths.get("bin", "org", "illarion", "download", "2.1.1.0", "download-2.1.1.0.jar");
+        Path firstFile = testPath("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
+        Path secondFile = testPath("bin", "org", "illarion", "download", "2.1.1.0", "download-2.1.1.0.jar");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondFile)).andReturn(false).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondFile, false);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondFile);
         Assert.assertTrue(result > 0);
 
         int result2 = comparator.compare(secondFile, firstFile);
         Assert.assertTrue(result2 < 0);
-        verifyAll();
     }
 
     @Test
     public void compareFilesReleasesMatch() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
-        Path secondFile = Paths.get("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
+        Path firstFile = testPath("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
+        Path secondFile = testPath("bin", "org", "illarion", "download", "2.1.1.1", "download-2.1.1.1.jar");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondFile)).andReturn(false).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondFile, false);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondFile);
         Assert.assertTrue(result == 0);
 
         int result2 = comparator.compare(secondFile, firstFile);
         Assert.assertTrue(result2 == 0);
-        verifyAll();
     }
 
     @Test
     public void compareFilesSnapshots1() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download",
+        Path firstFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-SNAPSHOT.jar");
-        Path secondFile = Paths.get("bin", "org", "illarion", "download",
+        Path secondFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.0-SNAPSHOT", "download-2.1.1.0-SNAPSHOT.jar");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondFile)).andReturn(false).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondFile, false);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondFile);
         Assert.assertTrue(result > 0);
 
         int result2 = comparator.compare(secondFile, firstFile);
         Assert.assertTrue(result2 < 0);
-        verifyAll();
     }
 
     @Test
     public void compareFilesSnapshots2() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download",
+        Path firstFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-SNAPSHOT.jar");
-        Path secondFile = Paths.get("bin", "org", "illarion", "download",
+        Path secondFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-20150607.174327-14.jar");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondFile)).andReturn(false).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondFile, false);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondFile);
         Assert.assertTrue(result > 0);
 
         int result2 = comparator.compare(secondFile, firstFile);
         Assert.assertTrue(result2 < 0);
-        verifyAll();
     }
 
     @Test
     public void compareFilesSnapshots3() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download",
+        Path firstFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-20150610-205023-15.jar");
-        Path secondFile = Paths.get("bin", "org", "illarion", "download",
+        Path secondFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-20150607.174327-14.jar");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondFile)).andReturn(false).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondFile, false);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondFile);
         Assert.assertTrue(result > 0);
 
         int result2 = comparator.compare(secondFile, firstFile);
         Assert.assertTrue(result2 < 0);
-        verifyAll();
     }
 
     @Test
     public void compareFilesSnapshotsMatch() {
         assert comparator != null;
 
-        Path firstFile = Paths.get("bin", "org", "illarion", "download",
+        Path firstFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-20150607.174327-14.jar");
-        Path secondFile = Paths.get("bin", "org", "illarion", "download",
+        Path secondFile = testPath("bin", "org", "illarion", "download",
                 "2.1.1.1-SNAPSHOT", "download-2.1.1.1-20150607.174327-14.jar");
 
-        mockStaticPartial(Files.class, "isDirectory", Path.class, LinkOption[].class);
-        expect(Files.isDirectory(firstFile)).andReturn(false).anyTimes();
-        expect(Files.isDirectory(secondFile)).andReturn(false).anyTimes();
+        preparePath(firstFile, false);
+        preparePath(secondFile, false);
 
-        replayAll();
         int result = comparator.compare(firstFile, secondFile);
         Assert.assertTrue(result == 0);
 
         int result2 = comparator.compare(secondFile, firstFile);
         Assert.assertTrue(result2 == 0);
-        verifyAll();
     }
 
-    @BeforeMethod
-    public void prepareTests() {
-        resetAll();
+    private Path testPath(String first, String... more) {
+        return temporaryRoot.resolve(Paths.get(first, more));
     }
 
-    @ObjectFactory
-    public IObjectFactory getObjectFactory() {
-        return new PowerMockObjectFactory();
+    private void preparePath(Path path, boolean directory) {
+        try {
+            if (directory) {
+                Files.createDirectories(path);
+            } else {
+                Files.createDirectories(path.getParent());
+
+                if (!Files.exists(path)) {
+                    Files.createFile(path);
+                }
+            }
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    @AfterClass
+    public void cleanUp() throws IOException {
+        try (Stream<Path> paths = Files.walk(temporaryRoot)) {
+            for (Path path : (Iterable<Path>) paths.sorted(Comparator.reverseOrder())::iterator) {
+                Files.delete(path);
+            }
+        }
     }
 }

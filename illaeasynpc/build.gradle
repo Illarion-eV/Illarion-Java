@@ -13,15 +13,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'application'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
 
 apply from: '../versions.gradle'
 
-archivesBaseName = 'illarion_easynpc'
-mainClassName = 'illarion.easynpc.gui.MainFrame'
+base {
+    archivesName = 'illarion_easynpc'
+}
+
+application {
+    mainClass = 'illarion.easynpc.gui.MainFrame'
+}
 
 project.extensions.antlr = [
         grammarpackage: "illarion.easynpc.grammar",
@@ -42,22 +47,22 @@ configurations {
 }
 
 dependencies {
-    compile project(':common')
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
-    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.github.insubstantial', name: 'substance', version: project.ext.insubstantialVersion
-    compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.1'
-    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.6.1'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7'
+    api project(':common')
+    api "org.slf4j:slf4j-api:${project.ext.slf4jVersion}"
+    api "org.slf4j:jul-to-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:jcl-over-slf4j:${project.ext.slf4jVersion}"
+    api "org.slf4j:log4j-over-slf4j:${project.ext.slf4jVersion}"
+    api "ch.qos.logback:logback-classic:${project.ext.logbackVersion}"
+    api "org.bushe:eventbus:1.4"
+    api "com.github.insubstantial:substance:${project.ext.insubstantialVersion}"
+    api "com.github.insubstantial:substance-flamingo:${project.ext.insubstantialVersion}"
+    api "com.fifesoft:rsyntaxtextarea:4.0.1"
+    api "com.fifesoft:autocomplete:4.0.0"
+    api "org.antlr:antlr4-runtime:4.7"
 
-    antlr4 group: 'org.antlr', name: 'antlr4', version: '4.7'
+    antlr4 "org.antlr:antlr4:4.7"
 
-    runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion, changing: true
+    runtimeOnly "org.illarion:rsc_tables:${project.ext.illarionResourcesVersion}"
 }
 
 task antlrOutputDir {
@@ -76,15 +81,14 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
     inputs.files grammars.files
     outputs.dir file(outputDir)
 
-    main = 'org.antlr.v4.Tool'
+    mainClass = 'org.antlr.v4.Tool'
     classpath = configurations.antlr4
 
     args = ["-o", "${outputDir}"/*, "-atn"*/, "-visitor", "-package", antlr.grammarpackage, grammars.files].flatten()
 
 }
 
-tasks.withType(FindBugs) {
-    exclude '**/illarion/easynpc/grammar/*'
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
     excludeFilter = file("$projectDir/findbugs-exclude.xml")
 }
 
@@ -129,13 +133,13 @@ publishing {
             from components.java
 
             artifact sourceJar {
-                classifier "sources"
+                archiveClassifier = "sources"
             }
         }
     }
     repositories {
         maven {
-            url project.ext.mavenRepo
+            url = uri(project.ext.mavenRepo)
         }
     }
 }

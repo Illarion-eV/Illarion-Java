@@ -13,15 +13,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
-archivesBaseName = 'illarion_engine_libgdx'
+base {
+    archivesName = 'illarion_engine_libgdx'
+}
+
 dependencies {
-    compile project(':engine')
-    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.13.1'
-    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl3', version: '1.13.1'
-    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.13.1', classifier: 'natives-desktop'
+    api project(':engine')
+    api "com.badlogicgames.gdx:gdx:1.13.1"
+    api "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.13.1"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.13.1:natives-desktop"
 }
 
 jar {
@@ -50,13 +53,13 @@ publishing {
             from components.java
 
             artifact sourceJar {
-                classifier "sources"
+                archiveClassifier = "sources"
             }
         }
     }
     repositories {
         maven {
-            url project.ext.mavenRepo
+            url = uri(project.ext.mavenRepo)
         }
     }
 }

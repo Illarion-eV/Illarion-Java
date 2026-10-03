@@ -40,7 +40,7 @@ import javax.xml.validation.SchemaFactory
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ResourceConverter extends DefaultTask {
+abstract class ResourceConverter extends DefaultTask {
     /**
      * The file names of the book files that were found but not handled yet.
      */
@@ -51,6 +51,7 @@ public class ResourceConverter extends DefaultTask {
      * Crypto instance used to crypt the table files.
      */
     @Nonnull
+    @Internal
     final def crypto = new Crypto();
 
     /**
@@ -63,7 +64,8 @@ public class ResourceConverter extends DefaultTask {
      * The file that contains the private key to use
      */
     @InputFile
-    def File privateKey;
+    @Optional
+    abstract org.gradle.api.file.RegularFileProperty getPrivateKey()
 
     /**
      * The file names of the table files that were found but not handled yet.
@@ -75,15 +77,16 @@ public class ResourceConverter extends DefaultTask {
      * The base name for the texture atlas files
      */
     @Input
-    def String atlasName;
+    abstract org.gradle.api.provider.Property<String> getAtlasName()
 
     @InputFiles
-    def FileCollection resources;
+    abstract org.gradle.api.file.ConfigurableFileCollection getResources()
 
-    def File resourceDirectory
+    @Internal
+    abstract org.gradle.api.file.DirectoryProperty getResourceDirectory()
 
     @OutputDirectory
-    def File outputDirectory;
+    abstract org.gradle.api.file.DirectoryProperty getOutputDirectory()
 
     /**
      * The file names of texture files that were found in the list and were not handled yet.
@@ -100,7 +103,8 @@ public class ResourceConverter extends DefaultTask {
         getResources().each { file ->
             analyseAndOrderFile(file)
         }
-        convert(getResourceDirectory(), getOutputDirectory())
+
+        convert(getResourceDirectory().get().asFile, getOutputDirectory().get().asFile)
     }
 
     /**
@@ -216,7 +220,7 @@ public class ResourceConverter extends DefaultTask {
     }
 
     def getTargetFile(File targetDirectory, File sourceFile, Closure<String> additionalReplace = null) {
-        def resourceDir = getResourceDirectory().absolutePath
+        def resourceDir = getResourceDirectory().get().asFile.absolutePath
         def filePath = sourceFile.absolutePath.replace(resourceDir, "")
         if (additionalReplace != null) {
             filePath = additionalReplace.call(filePath)
@@ -263,9 +267,9 @@ public class ResourceConverter extends DefaultTask {
             return
         }
 
-        if (getPrivateKey() != null) {
+        if (getPrivateKey().isPresent()) {
             try {
-                crypto.loadPrivateKey(new FileInputStream(getPrivateKey()))
+                crypto.loadPrivateKey(new FileInputStream(getPrivateKey().get().asFile))
             } catch (final FileNotFoundException ignored) {
                 // did not work
             }
@@ -297,7 +301,7 @@ public class ResourceConverter extends DefaultTask {
         packer.printTypeCounts()
         textureFiles.clear()
 
-        def baseName = "${getAtlasName()}-atlas"
+        def baseName = "${getAtlasName().get()}-atlas"
         def atlasFiles = 0
         def atlasMarkupWriter = new StringWriter()
         def atlasMarkup = new MarkupBuilder(atlasMarkupWriter)
