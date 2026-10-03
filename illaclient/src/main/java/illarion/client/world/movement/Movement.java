@@ -100,7 +100,10 @@ public class Movement {
      * to keep track of where the player REALLY is.
      */
     @Nullable
-    private ServerCoordinate playerLocation;
+    private volatile ServerCoordinate playerLocation;
+
+    // Guarded by animator, together with movement requests and warp cancellation.
+    private long locationRevision;
 
     public Movement(@Nonnull Player player, @Nonnull Input input, @Nonnull AnimatedMove movementReceiver) {
         this.player = player;
@@ -155,31 +158,39 @@ public class Movement {
     }
 
     void activate(@Nonnull MovementHandler handler) {
-        if (!isActive(handler)) {
-            MovementHandler oldHandler = activeHandler;
-            if (oldHandler != null) {
-                oldHandler.disengage(false);
+        synchronized (animator) {
+            if (!isActive(handler)) {
+                MovementHandler oldHandler = activeHandler;
+                if (oldHandler != null) {
+                    oldHandler.disengage(false);
+                }
+
+                activeHandler = handler;
+                log.debug(marker, "New movement handler is assuming control: {}", activeHandler);
             }
-            activeHandler = handler;
-            log.debug(marker, "New movement handler is assuming control: {}", activeHandler);
+
+            update();
         }
-        update();
     }
 
     void disengage(@Nonnull MovementHandler handler) {
-        if (isActive(handler)) {
-            activeHandler = null;
-        } else {
-            log.debug(marker, "Tried to disengage a movement handler ({}) that was not active!", handler);
+        synchronized (animator) {
+            if (isActive(handler)) {
+                activeHandler = null;
+            } else {
+                log.debug(marker, "Tried to disengage a movement handler ({}) that was not active!", handler);
+            }
         }
     }
 
     boolean isActive(@Nonnull MovementHandler handler) {
-        return (activeHandler != null) && handler.equals(activeHandler);
+        synchronized (animator) {
+            return (activeHandler != null) && handler.equals(activeHandler);
+        }
     }
 
     public void executeServerRespTurn(@Nonnull Direction direction) {
-        executorService.submit(() -> executeServerRespTurnInternal(direction));
+        submitMovementTask(() -> executeServerRespTurnInternal(direction));
     }
 
     private void executeServerRespTurnInternal(@Nonnull Direction direction) {
@@ -191,7 +202,7 @@ public class Movement {
     }
 
     public void executeServerRespMoveTooEarly() {
-        executorService.submit(() -> {
+        submitMovementTask(() -> {
             log.debug(
                     "Response indicates that the request was received too early. A new request is required later.");
             resendMoveToServer();
@@ -200,13 +211,15 @@ public class Movement {
 
     public void executeServerRespMove(
             @Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
-        ServerCoordinate orgLocation = playerLocation;
-        if (orgLocation == null) {
-            throw new IllegalStateException("The player location is currently unknown.");
-        }
+        synchronized (animator) {
+            ServerCoordinate orgLocation = playerLocation;
+            if (orgLocation == null) {
+                throw new IllegalStateException("The player location is currently unknown.");
+            }
 
-        executorService.submit(() -> executeServerRespMoveInternal(orgLocation, mode, target, duration));
-        playerLocation = target;
+            submitMovementTask(() -> executeServerRespMoveInternal(orgLocation, mode, target, duration));
+            playerLocation = target;
+        }
     }
 
     private void executeServerRespMoveInternal(
@@ -268,18 +281,28 @@ public class Movement {
     }
 
     public void executeServerLocation(@Nonnull ServerCoordinate target) {
-        World.getUpdateTaskManager().addTask((container, delta) -> {
+        synchronized (animator) {
+            locationRevision++;
             MovementHandler currentHandler = activeHandler;
+            activeHandler = null;
+
             if (currentHandler != null) {
-                currentHandler.disengage(false);
+                // Finish any in-flight path calculation before clearing its handler's private state.
+                executorService.submit(() -> {
+                    synchronized (animator) {
+                        if (activeHandler != currentHandler) {
+                            currentHandler.disengage(false);
+                        }
+                    }
+                });
             }
-        });
 
-        stepInProgress = false;
-        animator.cancelAll();
-
-        playerLocation = target;
-        World.getPlayer().setLocation(target);
+            animator.cancelAll();
+            lastSendMoveCommand = null;
+            stepInProgress = false;
+            playerLocation = target;
+            player.setLocation(target);
+        }
     }
 
     /**
@@ -321,9 +344,11 @@ public class Movement {
      * Notify the handler that everything is ready to request the next step from the server.
      */
     void reportReadyForNextStep() {
-        log.debug("Reported ready for the next step.");
-        stepInProgress = false;
-        update();
+        synchronized (animator) {
+            log.debug("Reported ready for the next step.");
+            stepInProgress = false;
+            update();
+        }
     }
 
     /**
@@ -335,49 +360,75 @@ public class Movement {
      * or not.
      */
     public void update() {
-        if (Thread.currentThread().getName().startsWith(THEAD_NAME_HEADER)) {
-            updateImpl();
-        } else {
-            executorService.submit(this::updateImpl);
+        synchronized (animator) {
+            long taskRevision = locationRevision;
+            executorService.submit(() -> updateImpl(taskRevision));
         }
     }
 
-    private void updateImpl() {
-        if (playerLocation == null) {
-            // We are not ready set to do anything. Let's wait.
-            log.debug("Received early update on the movement system. Can't do much yet. Standing by.");
-            return;
-        }
-        if (stepInProgress) {
-            return;
-        }
-        MovementHandler handler = activeHandler;
-        if (handler != null) {
-            long start = System.currentTimeMillis();
-            StepData nextStep = handler.getNextStep(playerLocation);
-            if (log.isDebugEnabled(marker)) {
-                log.debug(marker, "Requesting new step data from handler: {} (took {} milliseconds)", nextStep,
-                          System.currentTimeMillis() - start);
-            }
-            if (nextStep != null) {
-                if (nextStep.getDirection() != null) {
-                    switch (nextStep.getMovementMode()) {
-                        case None:
-                            sendTurnToServer(nextStep.getDirection());
-                            scheduleEarlyTurn(nextStep.getDirection());
-                            break;
-                        default:
-                            stepInProgress = true;
-                            sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
-                            scheduleEarlyTurn(nextStep.getDirection());
-                            scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
+    private void submitMovementTask(@Nonnull Runnable task) {
+        synchronized (animator) {
+            long taskRevision = locationRevision;
+            executorService.submit(() -> {
+                synchronized (animator) {
+                    if (taskRevision == locationRevision) {
+                        task.run();
                     }
                 }
+            });
+        }
+    }
 
-                if (nextStep.getPostStepAction() != null) {
-                    nextStep.getPostStepAction().run();
-                }
+    private void updateImpl(long taskRevision) {
+        MovementHandler handler;
+        ServerCoordinate origin;
+        synchronized (animator) {
+            if ((taskRevision != locationRevision) || stepInProgress || (playerLocation == null)) {
+                return;
             }
+
+            handler = activeHandler;
+            origin = playerLocation;
+        }
+
+        if (handler == null) {
+            return;
+        }
+
+        // Path finding must not hold the monitor used by animation callbacks on the render thread.
+        long start = System.currentTimeMillis();
+        StepData nextStep = handler.getNextStep(origin);
+        log.debug(marker, "Requesting new step data from handler: {} (took {} milliseconds)",
+                nextStep, System.currentTimeMillis() - start);
+
+        synchronized (animator) {
+            if ((taskRevision != locationRevision) || (handler != activeHandler) || stepInProgress) {
+                return;
+            }
+
+            if (nextStep != null) {
+                performStep(nextStep);
+            }
+        }
+    }
+
+    private void performStep(@Nonnull StepData nextStep) {
+        if (nextStep.getDirection() != null) {
+            switch (nextStep.getMovementMode()) {
+                case None:
+                    sendTurnToServer(nextStep.getDirection());
+                    scheduleEarlyTurn(nextStep.getDirection());
+                    break;
+                default:
+                    stepInProgress = true;
+                    sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
+                    scheduleEarlyTurn(nextStep.getDirection());
+                    scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
+            }
+        }
+
+        if (nextStep.getPostStepAction() != null) {
+            nextStep.getPostStepAction().run();
         }
     }
 
@@ -454,7 +505,10 @@ public class Movement {
     }
 
     public void shutdown() {
-        activeHandler = null;
-        executorService.shutdown();
+        synchronized (animator) {
+            locationRevision++;
+            activeHandler = null;
+            executorService.shutdown();
+        }
     }
 }

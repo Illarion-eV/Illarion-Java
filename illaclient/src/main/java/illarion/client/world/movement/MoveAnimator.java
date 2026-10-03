@@ -17,7 +17,6 @@ package illarion.client.world.movement;
 
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.util.UpdateTaskManager;
 import illarion.client.world.Char;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
@@ -61,6 +60,8 @@ class MoveAnimator implements AnimatedMove {
 
     private boolean animationInProgress;
     private boolean reportingDone;
+    // Invalidates deferred render updates when their animation queue is cancelled.
+    private long generation;
 
     @Nullable
     private Direction lastRequestedTurn;
@@ -78,6 +79,17 @@ class MoveAnimator implements AnimatedMove {
         this.moveAnimation = moveAnimation;
     }
 
+    private void scheduleUpdate(@Nonnull Runnable task) {
+        long taskGeneration = generation;
+        World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+            synchronized (this) {
+                if (taskGeneration == generation) {
+                    task.run();
+                }
+            }
+        });
+    }
+
     private void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         scheduleTask(new MovingTask(this, mode, target, duration));
     }
@@ -85,7 +97,7 @@ class MoveAnimator implements AnimatedMove {
     private void scheduleTask(@Nonnull MoveAnimatorTask task) {
         taskQueue.offer(task);
         if (!animationInProgress) {
-            World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+            scheduleUpdate(() -> {
                 if (!animationInProgress) {
                     executeNext();
                 }
@@ -93,7 +105,8 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
-    void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
+    synchronized void scheduleEarlyMove(
+            @Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         if (uncomfirmedMoveTask != null) {
             log.warn(marker,
                     "Scheduling another early move is not possible as there is already one set. Scheduled Move: {}, NewTarget: {}. Try repairing by canceling all pending moves.",
@@ -128,15 +141,14 @@ class MoveAnimator implements AnimatedMove {
      *
      * @param allowedTarget allowed target location
      */
-    void cancelMove(@Nonnull ServerCoordinate allowedTarget) {
+    synchronized void cancelMove(@Nonnull ServerCoordinate allowedTarget) {
         Player parentPlayer = movement.getPlayer();
 
         MovingTask task = uncomfirmedMoveTask;
-        UpdateTaskManager utm = World.getUpdateTaskManager();
         if (task == null) {
             log.debug(marker, "Received cancel move, but there is no unconfirmed move. Settings location to {}",
                     allowedTarget);
-            utm.addTaskForLater((container, delta) -> {
+            scheduleUpdate(() -> {
                 log.debug(marker, "Setting player location to {} now.", allowedTarget);
                 parentPlayer.setLocation(allowedTarget);
             });
@@ -147,7 +159,7 @@ class MoveAnimator implements AnimatedMove {
                 confirmedMoveTask = null;
                 if (moveAnimation.isRunning()) {
                     log.debug(marker, "Received cancel move, move was already in progress. Resetting");
-                    utm.addTaskForLater((container, delta) -> {
+                    scheduleUpdate(() -> {
                         log.debug(marker, "Resetting location to {} for cancel.", allowedTarget);
                         parentPlayer.setLocation(allowedTarget);
                         parentPlayer.getCharacter().resetAnimation(true);
@@ -155,7 +167,7 @@ class MoveAnimator implements AnimatedMove {
                     });
                 } else {
                     log.debug(marker, "Move seems to be done already.");
-                    utm.addTaskForLater((container, delta) -> parentPlayer.setLocation(allowedTarget));
+                    scheduleUpdate(() -> parentPlayer.setLocation(allowedTarget));
                 }
             } else {
                 log.debug(marker, "Move did not start yet. We are good.");
@@ -171,10 +183,11 @@ class MoveAnimator implements AnimatedMove {
      * @param target the target of the move
      * @param duration the duration of the move
      */
-    void confirmMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
+    synchronized void confirmMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         MovingTask task = uncomfirmedMoveTask;
-        if (task == null) {
-            log.debug(marker, "No unconfirmed move found. Schedule the move.");
+        if ((task == null) || (!task.isExecuted() && !taskQueue.contains(task))) {
+            log.debug(marker, "No queued or executing prediction found. Schedule the move.");
+            uncomfirmedMoveTask = null;
             confirmedMoveTask = null;
             scheduleMove(mode, target, duration);
         } else {
@@ -203,7 +216,9 @@ class MoveAnimator implements AnimatedMove {
                                  "Move to the wrong location. Resetting. Expected location: {} Player location: {}",
                                  target, parentPlayer.getLocation());
                         /* Crap! We are moving to the wrong place... */
-                        movement.executeServerLocation(target);
+                        // Correct the prediction without invalidating later server replies.
+                        cancelAll();
+                        parentPlayer.setLocation(target);
                         movement.reportReadyForNextStep();
                     }
                 } else {
@@ -223,27 +238,34 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
-    void scheduleTurn(@Nonnull Direction direction) {
+    synchronized void scheduleTurn(@Nonnull Direction direction) {
         if (lastRequestedTurn != direction) {
             lastRequestedTurn = direction;
             scheduleTask(new TurningTask(this, direction));
         }
     }
 
-    void cancelAll() {
+    synchronized void cancelAll() {
         log.debug("All moves canceled!");
+        generation++;
         taskQueue.clear();
-        moveAnimation.stop();
+        uncomfirmedMoveTask = null;
+        confirmedMoveTask = null;
         lastRequestedTurn = null;
+
+        // stop() reports position and completion synchronously; neither may request another step.
+        reportingDone = true;
+        moveAnimation.stop();
+        animationInProgress = false;
     }
 
-    void executeTurn(@Nonnull Direction direction) {
+    synchronized void executeTurn(@Nonnull Direction direction) {
         log.debug("Executing turn to {} now.", direction);
         movement.getPlayer().getCharacter().setDirection(direction);
         executeNext();
     }
 
-    void executeMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
+    synchronized void executeMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         log.debug("Executing move (Mode: {}) to {} (Duration: {}ms) now.", mode, target, duration);
         Player parentPlayer = movement.getPlayer();
         Char playerCharacter = parentPlayer.getCharacter();
@@ -275,7 +297,7 @@ class MoveAnimator implements AnimatedMove {
         return new DisplayCoordinate(x, y, layer);
     }
 
-    private boolean executeNext() {
+    private synchronized boolean executeNext() {
         boolean reportReady = false; /* Report ready for next move if nothing is to do. */
         @Nullable MovingTask confirmedTask = confirmedMoveTask;
         if ((confirmedTask != null) && confirmedTask.isExecuted()) {
@@ -323,7 +345,7 @@ class MoveAnimator implements AnimatedMove {
     }
 
     @Override
-    public void setPosition(@Nonnull DisplayCoordinate position) {
+    public synchronized void setPosition(@Nonnull DisplayCoordinate position) {
         if (isReportingRequired()) {
             int remaining = moveAnimation.timeRemaining();
             if (remaining < 20) {
@@ -345,7 +367,7 @@ class MoveAnimator implements AnimatedMove {
     }
 
     @Override
-    public void animationFinished(boolean finished) {
+    public synchronized void animationFinished(boolean finished) {
         if (isReportingRequired()) {
             log.debug(marker, "Requesting next move at the end of the animation.");
             reportingDone = true;
