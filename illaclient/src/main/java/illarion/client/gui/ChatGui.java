@@ -53,6 +53,14 @@ import javax.annotation.Nullable;
 
 public interface ChatGui {
     /**
+     * Save the current reading position before a layout change.
+     *
+     * @return an action restoring the reading position after the final layout
+     */
+    @Nonnull
+    Runnable saveScrollPosition();
+
+    /**
      * The default color of text entries.
      */
     Color COLOR_DEFAULT = new Color("#ECF0F1");

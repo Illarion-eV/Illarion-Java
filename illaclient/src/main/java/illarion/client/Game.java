@@ -97,6 +97,7 @@ public final class Game implements GameListener {
     private boolean showFPS;
     private boolean limitBackgroundFPS;
     private boolean showPing;
+    private boolean guiResolutionChanged;
 
     /**
      * Create the game with the fitting title, showing the name of the application and its version.
@@ -278,6 +279,7 @@ public final class Game implements GameListener {
 
         if (nifty != null) {
             nifty.resolutionChanged();
+            guiResolutionChanged = true;
         }
 
         GameState activeListener = getCurrentState();
@@ -319,6 +321,23 @@ public final class Game implements GameListener {
         }
     }
 
+    private void renderGui() {
+        assert nifty != null;
+
+        Runnable restorePosition = null;
+        if (guiResolutionChanged && World.isInitDone()) {
+            restorePosition = World.getGameGui().getChatGui().saveScrollPosition();
+        }
+
+        // Nifty applies resolution changes at the end of rendering, after intermediate layouts.
+        nifty.render(false);
+        guiResolutionChanged = false;
+
+        if (restorePosition != null) {
+            restorePosition.run();
+        }
+    }
+
     /**
      * Perform all rendering operations
      * If more diagnostic data should be shown, add to this method
@@ -332,7 +351,7 @@ public final class Game implements GameListener {
         if (activeListener != null) {
             activeListener.render(container);
         }
-        nifty.render(false);
+        renderGui();
 
         if (showFPS || showPing) {
             Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
