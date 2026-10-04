@@ -39,6 +39,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -336,8 +337,17 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (questList == null) {
             return;
         }
-        List<QuestEntry> selectedEntries = questList.getItems();
-        selectedEntries.forEach(QuestHandler::updateQuest);
+
+        List<QuestEntry> entries = questList.getItems();
+        entries.forEach(QuestHandler::updateQuest);
+
+        // Refresh every quest's map markers before restoring the actual minimap selection.
+        QuestEntry selectedEntry = getSelectedQuest();
+        if (selectedEntry == null) {
+            World.getMap().applyQuestTargetLocations(Collections.emptyList());
+        } else {
+            updateQuest(selectedEntry);
+        }
     }
 
     private static void updateQuest(@Nonnull QuestEntry quest) {
