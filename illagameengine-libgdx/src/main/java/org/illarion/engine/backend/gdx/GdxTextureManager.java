@@ -58,6 +58,9 @@ class GdxTextureManager extends AbstractTextureManager<Pixmap> {
             return new GdxTexture(region);
         } catch (@Nonnull GdxRuntimeException e) {
             return null;
+        } finally {
+            // The unmanaged texture owns its GPU data; the upload consumes the temporary CPU buffer.
+            preLoadData.dispose();
         }
     }
 }

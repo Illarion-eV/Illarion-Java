@@ -75,13 +75,34 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     /**
      * This flag is set {@code true} in case the map requires to be rendered again.
      */
+    @GuardedBy("worldMapPixels")
     private boolean mapDirty;
 
-    GdxWorldMap(@Nonnull WorldMapDataProvider provider) {
-        this.provider = provider;
+    /**
+     * Marks the native buffers as released, also for background refreshes.
+     */
+    private volatile boolean disposed;
 
-        worldMapPixels = new Pixmap(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, Format.RGB888);
-        worldMapTexture = new GdxTexture(new TextureRegion(new Texture(worldMapPixels)));
+    GdxWorldMap(@Nonnull WorldMapDataProvider provider) {
+        this(provider, new Pixmap(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, Format.RGB888));
+    }
+
+    /**
+     * Create a map taking ownership of the supplied pixel buffer.
+     *
+     * @param provider the source of map tiles
+     * @param pixels the pixel buffer retained until the map is disposed
+     */
+    GdxWorldMap(@Nonnull WorldMapDataProvider provider, @Nonnull Pixmap pixels) {
+        this.provider = provider;
+        worldMapPixels = pixels;
+        try {
+            worldMapTexture = new GdxTexture(new TextureRegion(new Texture(worldMapPixels)));
+        } catch (RuntimeException | Error failure) {
+            worldMapPixels.dispose();
+            throw failure;
+        }
+
         tempDrawingColor = new Color();
     }
 
@@ -105,36 +126,40 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void setTile(@Nonnull ServerCoordinate loc, int tileId, int overlayId, boolean blocked) {
-        if (mapOrigin == null) {
-            throw new IllegalStateException("World map is not ready yet. The origin is not set.");
-        }
-
-        if (loc.getZ() != mapOrigin.getZ()) {
-            return;
-        }
-
-        int texPosX = loc.getX() - mapOrigin.getX();
-        int texPosY = loc.getY() - mapOrigin.getY();
-
-        if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
-            return;
-        }
-
-        if (tileId != NO_TILE) {
-            GdxGraphics.transferColor(MapColor.getColor(tileId), tempDrawingColor);
-            if (overlayId != NO_TILE) {
-                org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
-                tempDrawingColor.r += mapColor.getRedf();
-                tempDrawingColor.g += mapColor.getGreenf();
-                tempDrawingColor.b += mapColor.getBluef();
-                tempDrawingColor.mul(0.5f);
+        synchronized (worldMapPixels) {
+            if (disposed) {
+                return;
             }
-            if (blocked) {
-                tempDrawingColor.mul(0.7f);
-            }
-            tempDrawingColor.a = 1.f;
 
-            synchronized (worldMapPixels) {
+            if (mapOrigin == null) {
+                throw new IllegalStateException("World map is not ready yet. The origin is not set.");
+            }
+
+            if (loc.getZ() != mapOrigin.getZ()) {
+                return;
+            }
+
+            int texPosX = loc.getX() - mapOrigin.getX();
+            int texPosY = loc.getY() - mapOrigin.getY();
+
+            if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
+                return;
+            }
+
+            if (tileId != NO_TILE) {
+                GdxGraphics.transferColor(MapColor.getColor(tileId), tempDrawingColor);
+                if (overlayId != NO_TILE) {
+                    org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
+                    tempDrawingColor.r += mapColor.getRedf();
+                    tempDrawingColor.g += mapColor.getGreenf();
+                    tempDrawingColor.b += mapColor.getBluef();
+                    tempDrawingColor.mul(0.5f);
+                }
+                if (blocked) {
+                    tempDrawingColor.mul(0.7f);
+                }
+                tempDrawingColor.a = 1.f;
+
                 worldMapPixels.setColor(tempDrawingColor);
                 worldMapPixels.drawPixel(texPosX, texPosY);
                 mapDirty = true;
@@ -147,6 +172,10 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void setTileChanged(@Nonnull ServerCoordinate location) {
+        if (disposed) {
+            return;
+        }
+
         if (mapOrigin == null) {
             throw new IllegalStateException("World map is not ready yet. The origin is not set.");
         }
@@ -166,13 +195,17 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void setMapChanged() {
+        if (disposed) {
+            return;
+        }
+
         if (mapOrigin == null) {
             throw new IllegalStateException("World map is not ready yet. The origin is not set.");
         }
         currentlyFetchingTiles = true;
         for (int x = 0; x < WorldMap.WORLD_MAP_WIDTH; x++) {
             for (int y = 0; y < WorldMap.WORLD_MAP_HEIGHT; y++) {
-                if (cancelFetchingTiles) {
+                if (cancelFetchingTiles || disposed) {
                     break;
                 }
                 provider.requestTile(new ServerCoordinate(mapOrigin, x, y, 0), this);
@@ -197,6 +230,10 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void clear() {
+        if (disposed) {
+            return;
+        }
+
         cancelFetchingTiles = true;
         if (currentlyFetchingTiles) {
             synchronized (this) {
@@ -210,6 +247,10 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
         }
         cancelFetchingTiles = false;
         synchronized (worldMapPixels) {
+            if (disposed) {
+                return;
+            }
+
             worldMapPixels.setColor(Color.BLACK);
             worldMapPixels.fill();
             mapDirty = true;
@@ -218,8 +259,8 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void render(@Nonnull GameContainer container) {
-        if (mapDirty) {
-            synchronized (worldMapPixels) {
+        synchronized (worldMapPixels) {
+            if (!disposed && mapDirty) {
                 worldMapTexture.getTextureRegion().getTexture().draw(worldMapPixels, 0, 0);
                 mapDirty = false;
             }
@@ -228,6 +269,18 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void dispose() {
-        worldMapTexture.getTextureRegion().getTexture().dispose();
+        synchronized (worldMapPixels) {
+            if (disposed) {
+                return;
+            }
+
+            disposed = true;
+            // Delayed provider callbacks must not write to the released native buffer.
+            try {
+                worldMapTexture.getTextureRegion().getTexture().dispose();
+            } finally {
+                worldMapPixels.dispose();
+            }
+        }
     }
 }
