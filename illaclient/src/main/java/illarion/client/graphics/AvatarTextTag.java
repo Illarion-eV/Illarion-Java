@@ -98,7 +98,16 @@ public final class AvatarTextTag {
      * Default constructor.
      */
     public AvatarTextTag() {
-        font = FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
+        this(FontLoader.getInstance().getFont(FontLoader.SMALL_FONT));
+    }
+
+    /**
+     * Create a tag using the supplied font for measurement and rendering.
+     *
+     * @param font the font used by this tag
+     */
+    AvatarTextTag(@Nonnull Font font) {
+        this.font = font;
     }
 
     /**
@@ -198,8 +207,8 @@ public final class AvatarTextTag {
         dimensionsDirty = true;
     }
 
-    private void calculateTextLocations() {
-        if (!dimensionsDirty || (displayCoordinate == null)) {
+    private void calculateTextDimensions() {
+        if (!dimensionsDirty) {
             return;
         }
 
@@ -235,8 +244,7 @@ public final class AvatarTextTag {
         healthStateOffsetX = (width - healthWidth) / 2;
         healthStateOffsetY = nameHeight;
 
-        displayRect.set(displayCoordinate.getX() - (getWidth() / 2),
-                        displayCoordinate.getY() - avatarHeight - getHeight() - 5, width, height);
+        dimensionsDirty = false;
     }
 
     public boolean render(@Nonnull Graphics g) {
@@ -269,6 +277,13 @@ public final class AvatarTextTag {
     }
 
     public void update(@Nonnull GameContainer container, int delta) {
-        calculateTextLocations();
+        if (displayCoordinate == null) {
+            return;
+        }
+
+        calculateTextDimensions();
+        // Position can change even when the cached text dimensions remain valid.
+        displayRect.set(displayCoordinate.getX() - (getWidth() / 2),
+                        displayCoordinate.getY() - avatarHeight - getHeight() - 5, width, height);
     }
 }
