@@ -65,6 +65,11 @@
                             <control name="checkbox" id="showQuestsOnMiniMap"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.showOwnAvatarTag}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="showOwnAvatarTag"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.report}"/>
                             <panel width="*"/>
                             <control name="dropDown" id="sendCrashReports" width="220px"/>

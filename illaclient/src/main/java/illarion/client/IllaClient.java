@@ -382,6 +382,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
          * 2 -> other players and monsters
          */
         cfg.setDefault("showAvatarTagPermanently", 0);
+        cfg.setDefault("showOwnAvatarTag", false);
         cfg.set("limitPathFindingToMouseDirection", true);
         cfg.set("followMousePathFinding", true);
         cfg.setDefault("preLoadBagCount", 2);

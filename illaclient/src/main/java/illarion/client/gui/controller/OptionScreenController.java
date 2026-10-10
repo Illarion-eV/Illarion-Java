@@ -50,6 +50,7 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox disableChatAfterSending;
     private CheckBox showQuestsOnGameMap;
     private CheckBox showQuestsOnMiniMap;
+    private CheckBox showOwnAvatarTag;
     private CheckBox logNpcSpeech;
     private CheckBox hideNpcSpeechFromChatBox;
 
@@ -98,6 +99,7 @@ public final class OptionScreenController implements ScreenController {
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
         showQuestsOnGameMap = tabRoot.findNiftyControl("showQuestsOnGameMap", CheckBox.class);
         showQuestsOnMiniMap = tabRoot.findNiftyControl("showQuestsOnMiniMap", CheckBox.class);
+        showOwnAvatarTag = tabRoot.findNiftyControl("showOwnAvatarTag", CheckBox.class);
         logNpcSpeech = tabRoot.findNiftyControl("logNpcSpeech", CheckBox.class);
         hideNpcSpeechFromChatBox = tabRoot.findNiftyControl("hideNpcSpeechFromChatBox", CheckBox.class);
 
@@ -160,6 +162,7 @@ public final class OptionScreenController implements ScreenController {
         disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
         showQuestsOnGameMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnGameMap"));
         showQuestsOnMiniMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnMiniMap"));
+        showOwnAvatarTag.setChecked(IllaClient.getCfg().getBoolean("showOwnAvatarTag"));
         logNpcSpeech.setChecked(IllaClient.getCfg().getBoolean("logNpcSpeech"));
         hideNpcSpeechFromChatBox.setChecked(IllaClient.getCfg().getBoolean("hideNpcSpeechFromChatBox"));
 
@@ -222,6 +225,7 @@ public final class OptionScreenController implements ScreenController {
             ((CheckBoxView) disableChatAfterSending).update(disableChatAfterSending.isChecked());
             ((CheckBoxView) showQuestsOnGameMap).update(showQuestsOnGameMap.isChecked());
             ((CheckBoxView) showQuestsOnMiniMap).update(showQuestsOnMiniMap.isChecked());
+            ((CheckBoxView) showOwnAvatarTag).update(showOwnAvatarTag.isChecked());
             ((CheckBoxView) logNpcSpeech).update(logNpcSpeech.isChecked());
             ((CheckBoxView) hideNpcSpeechFromChatBox).update(hideNpcSpeechFromChatBox.isChecked());
         }
@@ -256,6 +260,7 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
         configSystem.set("showQuestsOnGameMap", showQuestsOnGameMap.isChecked());
         configSystem.set("showQuestsOnMiniMap", showQuestsOnMiniMap.isChecked());
+        configSystem.set("showOwnAvatarTag", showOwnAvatarTag.isChecked());
         configSystem.set("logNpcSpeech", logNpcSpeech.isChecked());
         configSystem.set("hideNpcSpeechFromChatBox", hideNpcSpeechFromChatBox.isChecked());
 

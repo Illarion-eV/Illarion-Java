@@ -349,7 +349,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         Input input = container.getEngine().getInput();
 
         if (World.getPlayer().isPlayer(parentChar.getCharId())) {
-            renderName = false;
+            renderName = (usedAlpha > HIDE_NAME_ALPHA) && IllaClient.getCfg().getBoolean("showOwnAvatarTag");
         } else if (getAlpha() > HIDE_NAME_ALPHA) {
             renderName = World.getPeople().isAvatarTagShown(parentChar.getCharId()) || input.isKeyDown(Key.RightAlt) ||
                          isMouseInInteractionRect(input);
